@@ -1,0 +1,2 @@
+ErrorDocument 404 /php_1_Андрей_Лаба/Errors_http/error_404.php
+ErrorDocument 503 /php_1_Андрей_Лаба/Errors_http/error_503.php
