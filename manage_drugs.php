@@ -175,17 +175,49 @@ try{
                 }
             }
         }
+        // if ($tableName === 'users' && $fieldName === 'name') {
+        //     if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
+        //     $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
+        //     }else{
+        //     $stmt = $conn->prepare("UPDATE users SET name = ? WHERE id = ?");
+        //     if ($stmt) {
+        //     $stmt->bind_param('si', $inputValue, $formId);
+        //     $stmt->execute();
+        //     $stmt->close();
+        //     } else {
+        //     echo "Ошибка подготовки запроса: " . $conn->error;
+        //     }
+        //     }
+        // }
         if ($tableName === 'users' && $fieldName === 'name') {
             if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
                 $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
-            }else{
-                $stmt = $conn->prepare("UPDATE users SET name = ? WHERE id = ?");
-                if ($stmt) {
-                    $stmt->bind_param('si', $inputValue, $formId);
-                    $stmt->execute();
-                    $stmt->close();
-                } else {
+            } else {
+                // Check if the name already exists for another user
+                $checkStmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE name = ? AND id <> ?");
+                
+                if (!$checkStmt) {
                     echo "Ошибка подготовки запроса: " . $conn->error;
+                    exit;
+                }
+
+                $checkStmt->bind_param('si', $inputValue, $formId);
+                $checkStmt->execute();
+                $checkStmt->bind_result($count);
+                $checkStmt->fetch();
+                $checkStmt->close();
+
+                if ($count > 0) {
+                    $_SESSION['error_message'] = 'Пользователь с таким именем уже существует.';
+                } else {
+                    $stmt = $conn->prepare("UPDATE users SET name = ? WHERE id = ?");
+                    if ($stmt) {
+                        $stmt->bind_param('si', $inputValue, $formId);
+                        $stmt->execute();
+                        $stmt->close();
+                    } else {
+                        echo "Ошибка подготовки запроса: " . $conn->error;
+                    }
                 }
             }
         }
@@ -500,7 +532,7 @@ try{
         } elseif (!filter_var($quantity, FILTER_VALIDATE_INT) || $quantity <= 0) {
             $_SESSION['error_message'] = 'Число продукции должно быть положительным целым числом.';
         }
-         else {
+        else {
             $cost_pre_version = $price * $quantity;
             $name = $conn->real_escape_string(htmlspecialchars($name, ENT_QUOTES, 'UTF-8'));
             $manufacturer_id = $conn->real_escape_string(htmlspecialchars($manufacturer_id, ENT_QUOTES, 'UTF-8'));
@@ -510,6 +542,8 @@ try{
             $cost =  $conn->real_escape_string(htmlspecialchars($cost_pre_version, ENT_QUOTES, 'UTF-8'));
             $insert_query = "INSERT INTO drugs (name, manufacturer_id, provider_id, price, quantity, cost) VALUES ('$name', '$manufacturer_id', '$provider_id', '$price', '$quantity', '$cost_pre_version')";
             $conn->query($insert_query);
+            header("Location: table.php");
+            exit();
         }
     }
 
