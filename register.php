@@ -30,6 +30,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $input_username = trim($_POST['name']);
         $input_password = trim($_POST['password']);
         $confirm_password = trim($_POST['confirm_password']);
+        $roleUoD = 2;
+        if (isset($_POST['role'])) {
+            $role = $_POST['role']; 
+            if ($role == '0') {
+                $roleUoD = 2;
+            } else if ($role == '1') {
+                $roleUoD = 0;
+            }
+        } else {
+            $_SESSION['error_message'] = "Пожалуйста, выберите роль.";
+        }
 
         // Валидация ввода
         if (empty($input_username) || empty($input_password) || empty($confirm_password)) {
@@ -55,11 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $hashed_password = password_hash($input_password, PASSWORD_BCRYPT);
 
                 // Вставка нового пользователя в базу данных
-                $insert_query = "INSERT INTO users (name, password, type) VALUES ('$input_username', '$hashed_password', 0)";
+                $insert_query = "INSERT INTO users (name, password, type) VALUES ('$input_username', '$hashed_password', $roleUoD)";
 
                 if ($conn->query($insert_query) === TRUE) {
                     $_SESSION['user'] = $input_username;
-                    $_SESSION['user_type'] = 0;
+                    $_SESSION['user_type'] = $roleUoD;
                     $success_message = "Регистрация успешна. Добро пожаловать, $input_username!";
                     
                     // Перенаправление на index.php после успешной регистрации

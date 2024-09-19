@@ -1,10 +1,6 @@
 
 
 <?php
-//test
-
-
-
 	include 'sessionConf.php';
 	include 'register.php'; // Подключаем файл обработки регистрации
 ?>

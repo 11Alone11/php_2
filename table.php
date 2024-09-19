@@ -396,6 +396,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <?php
 else:
+	if($_SESSION["user_type"] == 0):
+
     // echo "<p>У вас нет доступа к этой странице.</p>";
 ?>
 <!DOCTYPE html>
@@ -503,6 +505,48 @@ else:
 		</tbody>
 	</table>
 
+	<h1 class="title mb20 mt20">Мои заявки на покупку</h1>
+	
+	<table>
+		<thead>
+			<tr>
+				<th class="column-name"><a href="?order_by_supplier=name&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Название</a></th>
+				<th class="column-supplier"><a href="?order_by_supplier=customer&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Заказчик</a></th>		
+				<th class="column-manufacturer"><a href="?order_by_supplier=manufacturer&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Производитель</a></th>
+				<th class="column-price"><a href="?order_by_supplier=price&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Цена</a></th>
+				<th class="column-quantity"><a href="?order_by_supplier=quantity&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Количество</a></th>
+				<th class="column-cost"><a href="?order_by_supplier=cost&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Стоимость</a></th>
+				<th class="column-actions">Действия</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			if (isset($result_supplier_orders)) {
+				while ($row = $result_supplier_orders->fetch_assoc()) {
+					?>
+					<tr>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['customer']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
+						<td>
+							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
+								<input type="hidden" name="delete_supplier_order" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
+								<button type="submit" class="button" onclick="return confirm('Вы уверены, что хотите отказать в предзаказе?');">Удалить</button>
+							</form>
+						</td>
+					</tr>
+					<?php
+				}
+			} else {
+				echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
+			}
+			?>
+		</tbody>
+	</table>
+
 	<div id="popup" class="popup">
 		<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="popup__content">
 			<input type="hidden" id="formType" name="formType">
@@ -604,9 +648,260 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 
 </html>
+
+<?php	
+else:
+
+?>
+
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Добро пожаловать домой, Сиджей</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+	<h1 class="title mb20 mt20">Закупка лекарствами</h1>
+	<form method="POST" action="
+    <?php   
+        // session_unset();
+        // session_destroy(); 
+    ?>">
+		<button type="submit" name="logout" class="button button__fixed button__fixed_right">
+			Выйти
+		</button>
+	</form>
+
+	<a href="index.php" class="button button__fixed">
+		На главную
+	</a>
+	<!-- Форма поиска лекарств-->
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+		<p class="title">Поиск</p>
+		<input type="text" name="search_for_shopper" class="input" placeholder="Поиск..." value="<?php echo htmlspecialchars($search_query_shopper); ?>">
+		<button type="submit" name="search" class="button">Поиск</button>
+		<?php if (isset($_SESSION['error_message'])): ?>
+		<div class="auth__message">
+			✖ <?php echo htmlspecialchars($_SESSION['error_message']); ?>
+			<?php unset($_SESSION['error_message']); ?>
+		</div>
+		<?php endif; ?>
+	</form>
+
+	<!-- Таблица с данными о лекарствах -->
+	<h1 class="title mb20 mt20">Все лекарства</h1>
+	
+	<table>
+		<thead>
+			<tr>
+				<th class="column-name"><a href="?order_by_shopper=name&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Название</a></th>
+				<th class="column-manufacturer"><a href="?order_by_shopper=manufacturer&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Производитель</a></th>
+				<th class="column-supplier"><a href="?order_by_shopper=supplier&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Поставщик</a></th>		
+				<th class="column-price"><a href="?order_by_shopper=price&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Цена</a></th>
+				<th class="column-quantity"><a href="?order_by_shopper=quantity&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Количество</a></th>
+				<th class="column-actions">Действия</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			if (isset($result_shopper)) {
+				while ($row = $result_shopper->fetch_assoc()) {
+					?>
+					<tr>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
+						<td>
+							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;" data-drug-id="<?php echo htmlspecialchars($row['id']); ?>">
+								<input type="hidden" name="add_to_cart" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
+								<input type="hidden" name="desired_quantity" value="">
+								<button type="button" class="button" onclick="getQuantity(<?php echo htmlspecialchars($row['id']); ?>)">Добавить</button>
+							</form>
+						</td>
+					</tr>
+					<?php
+				}
+			} else {
+				echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
+			}
+			?>
+		</tbody>
+	</table>
+
+	<!-- Таблица с данными о лекарствах пользователя-->
+	<h1 class="title mb20 mt20">Моя корзина</h1>
+	
+	<table>
+		<thead>
+			<tr>
+				<th class="column-name"><a href="?order_by_shopper_cart=name&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Название</a></th>
+				<th class="column-manufacturer"><a href="?order_by_shopper_cart=manufacturer&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Производитель</a></th>
+				<th class="column-supplier"><a href="?order_by_shopper_cart=supplier&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Поставщик</a></th>		
+				<th class="column-price"><a href="?order_by_shopper_cart=price&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Цена</a></th>
+				<th class="column-quantity"><a href="?order_by_shopper_cart=quantity&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Количество</a></th>
+				<th class="column-cost"><a href="?order_by_shopper_cart=cost&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Стоимость</a></th>
+				<th class="column-actions">Действия</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			if (isset($result_cart_user)) {
+				while ($row = $result_cart_user->fetch_assoc()) {
+					?>
+					<tr>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
+						<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
+						<td>
+							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
+								<input type="hidden" name="delete_shopper_drug" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
+								<button type="submit" class="button" onclick="return confirm('Вы уверены, что хотите отменить покупку этого лекарства?');">Удалить</button>
+							</form>
+						</td>
+					</tr>
+					<?php
+				}
+			} else {
+				echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
+			}
+			?>
+		</tbody>
+	</table>
+
+
+
+	<div id="popup" class="popup">
+		<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="popup__content">
+			<input type="hidden" id="formType" name="formType">
+			<input type="hidden" id="formId" name="formId">
+			<input type="hidden" id="tableName" name="tableName">
+			<input type="hidden" id="fieldName" name="fieldName"> 
+			<input type="text" id="popupInput" name="input" class="input" placeholder="Название" required>
+			<button type="submit" class="button popup__button">Сохранить</button>
+		</form>
+	</div>
+
+</body>
+
+<script>
+function getQuantity(drugId) {
+    let quantity = prompt("Введите количество (целое число):");
+    
+    // Проверка на целое число
+    if (quantity !== null && Number.isInteger(+quantity) && +quantity > 0) {
+        // Устанавливаем значение в скрытое поле
+        let form = document.querySelector(`form[data-drug-id='${drugId}']`);
+        form.querySelector("input[name='desired_quantity']").value = quantity; 
+        
+        // Отправляем форму
+        form.submit();
+    } else {
+        alert("Пожалуйста, введите корректное целое число больше нуля.");
+    }
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	// Открываем попап при клике на кнопку
+	document.querySelectorAll('.openPopup').forEach((element) => {
+		element.addEventListener('click', function(event) {
+			const clickedText = event.target.innerText;
+			const type = event.target.dataset.type;
+			const id = event.target.dataset.id;
+			const table = event.target.dataset.table; // Получаем таблицу
+			const field = event.target.dataset.field; // Получаем поле
+
+			document.getElementById('popupInput').value = clickedText;
+			event.stopPropagation();
+			openPopup(type, id, table, field); // Передаем таблицу и поле
+		});
+	})
+
+
+	// Функция для открытия попапа
+	function openPopup(type, id, table, field) {
+		const formType = document.querySelector('#formType');
+		const formId = document.querySelector('#formId');
+		const tableName = document.querySelector('#tableName');
+		const fieldName = document.querySelector('#fieldName');
+
+		formType.value = type; // Измени на .value
+		formId.value = id; // Измени на .value
+		tableName.value = table; // Измени на .value
+		fieldName.value = field; // Измени на .value
+
+		const popup = document.getElementById("popup");
+		popup.classList.add("popup_open");
+	}
+
+	// Обработчик для закрытия попапа при клике вне формы
+	document.addEventListener('click', function(event) {
+		const popup = document.getElementById("popup");
+		const popupContent = document.querySelector(".popup__content");
+
+		// Проверяем, был ли клик не по форме (вне .popup__content)
+		if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
+			popup.classList.remove("popup_open"); // Закрываем попап
+		}
+	});
+
+	// Предотвращаем закрытие попапа при клике внутри формы
+	document.querySelector('.popup__content').addEventListener('click', function(event) {
+		event.stopPropagation();
+	});
+});
+</script>
+
+
+<style>
+.popup {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 999;
+	display: none;
+	justify-content: center;
+	align-items: center;
+}
+
+.popup__button {
+	max-width: 120px;
+
+}
+
+.popup__content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 24px;
+	background-color: #fff;
+	border-radius: 20px;
+	border: 2px solid #000;
+}
+
+.popup_open {
+	display: flex;
+}
+</style>
+
+</html>
+
 <?php	
 endif;
-
+endif;
 ?>
 
 

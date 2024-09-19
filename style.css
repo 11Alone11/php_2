@@ -412,6 +412,9 @@ tr:hover {
 .column-manufacturer {
 	width: 30%;
 }
+.column-supplier {
+	width: 30%;
+}
 .column-manufacturer-id {
 	width: 10%;
 }
