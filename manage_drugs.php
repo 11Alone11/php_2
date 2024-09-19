@@ -24,6 +24,9 @@ $order_dir_user = 'ASC';
 
 
 try{
+    if(isset($_SESSION['error_message']) && $_SESSION['error_message'] == "Неверный логин или пароль, попробуйте еще раз."):
+        $_SESSION['error_message'] = '';
+    endif;
     if($_SESSION['server_conn_error'] === true){
         throw new Exception("Ошибка соединения с сервером");
     }
@@ -432,6 +435,8 @@ try{
                 $_SESSION['error_message'] = 'Ошибка добавления лекарства: ' . $conn->error;
             }
             $insert_query->close();
+            header("Location: table.php");
+            exit();
         }
     }
     
@@ -499,6 +504,8 @@ try{
         $id = intval($_POST['delete_drug_user']);
         $delete_query = "DELETE FROM drugs WHERE id=$id";
         $conn->query($delete_query);
+        header("Location: table.php");
+        exit();
     }
 
     if (isset($_POST['add'])) {
@@ -523,14 +530,14 @@ try{
             $_SESSION['error_message'] = 'ID производителя должен быть положительным числом.';
         } elseif (!is_numeric($provider_id) || $provider_id <= 0) {
             $_SESSION['error_message'] = 'ID поставщика должен быть положительным числом.';
+        } elseif (!is_numeric($price) || floatval($price) <= 0) {
+            $_SESSION['error_message'] = 'Цена должна быть положительным числом.';
+        } elseif (!filter_var($quantity, FILTER_VALIDATE_INT) || $quantity <= 0) {
+            $_SESSION['error_message'] = 'Число продукции должно быть положительным целым числом.';
         } elseif (!$manufacturer) {
             $_SESSION['error_message'] = "Производитель с ID '$manufacturer_id' не найден.";    
         } elseif (!$provider) {
             $_SESSION['error_message'] = "Поставщик с ID '$provider_id' не найден.";    
-        } elseif (!is_numeric($price) || $price <= 0) {
-            $_SESSION['error_message'] = 'Цена должна быть положительным числом.';
-        } elseif (!filter_var($quantity, FILTER_VALIDATE_INT) || $quantity <= 0) {
-            $_SESSION['error_message'] = 'Число продукции должно быть положительным целым числом.';
         }
         else {
             $cost_pre_version = $price * $quantity;
@@ -572,7 +579,7 @@ try{
             } else {
                 $delete_query = "DELETE FROM users WHERE id=$id";
                 if ($conn->query($delete_query) === TRUE) {
-                    echo "Пользователь успешно удалён.";
+                  
                 } else {
                     echo "Ошибка при удалении: " . $conn->error;
                 }
@@ -580,6 +587,7 @@ try{
         } else {
             $_SESSION['error_message'] = 'Пользователь не найден.';
         }
+        
     }
 
     if (isset($_POST['delete_manufacturer'])) {
@@ -614,19 +622,19 @@ try{
 
 } catch(mysqli_sql_exception $e){
     ?>
-    <div class="error-message">
-				✖ <?php echo htmlspecialchars($_SESSION['sql_error_message']) . ' ' . htmlspecialchars($e->getMessage()); ?>
-    </div>
-    <?php
+<div class="error-message">
+	✖ <?php echo htmlspecialchars($_SESSION['sql_error_message']) . ' ' . htmlspecialchars($e->getMessage()); ?>
+</div>
+<?php
     exit();
 
 } catch(Exception $e){
     ?>
-    <div class="error-message">
-                ✖ <?php echo htmlspecialchars($_SESSION['server_error_message']) . ' ' . htmlspecialchars($e->getMessage()); ?>
-    </div>
-    
-    <?php
+<div class="error-message">
+	✖ <?php echo htmlspecialchars($_SESSION['server_error_message']) . ' ' . htmlspecialchars($e->getMessage()); ?>
+</div>
+
+<?php
     exit();
 }
 

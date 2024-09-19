@@ -36,6 +36,17 @@
 					<p class="auth__subtitle">Подтвердите пароль</p>
 					<input type="password" name="confirm_password" placeholder="Подтвердите пароль" class="input auth__input" required />
 				</div>
+				<div class="auth__radio">
+					<div>
+						<input id="role_buyer" type="radio" name="role" value="0" checked class="input auth__input">
+						<label for="role_buyer"> Покупатель</label>
+					</div>
+					<div>
+						<input id="role_supplier" type="radio" name="role" value="1" class="input auth__input">
+						<label for="role_supplier"> Поставщик</label>
+					</div>
+
+				</div>
 			</div>
 
 			<?php if (isset($_SESSION['form_submitted']) && isset($_SESSION['error_message'])): ?>

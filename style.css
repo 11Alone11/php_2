@@ -308,19 +308,6 @@ main {
 	border: 1.5px solid #000;
 }
 
-.error-message {
-	width: 100%;
-	padding: 8px 12px;
-	border-radius: 8px;
-	border: 1.5px solid #000;
-	position: fixed;
-	bottom: 20px;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 1000;
-	background-color: #fff;
-}
-
 .auth__inputs {
 	display: flex;
 	flex-direction: column;
@@ -337,6 +324,34 @@ main {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
+}
+
+.auth__radio {
+	display: flex;
+	gap: 20px;
+
+	div {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+	}
+
+	input {
+		width: 20px;
+	}
+}
+
+.error-message {
+	width: 100%;
+	padding: 8px 12px;
+	border-radius: 8px;
+	border: 1.5px solid #000;
+	position: fixed;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 1000;
+	background-color: #fff;
 }
 
 .form {
@@ -397,25 +412,24 @@ tr:hover {
 .column-manufacturer {
 	width: 30%;
 }
-.column-manufacturer-id{
+.column-manufacturer-id {
 	width: 10%;
 }
 .column-price {
 	width: 10%;
 	text-align: center;
 }
-.column-quantity{
+.column-quantity {
 	width: 10%;
 	text-align: center;
 }
-.colunt-cost{
+.colunt-cost {
 	width: 10%;
 	text-align: center;
 }
-.column-provider-id{
+.column-provider-id {
 	width: 10%;
 }
 .column-actions {
 	width: 20%;
 }
-

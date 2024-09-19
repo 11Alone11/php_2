@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($conn->query($insert_query) === TRUE) {
                     $_SESSION['user'] = $input_username;
+                    $_SESSION['user_type'] = 0;
                     $success_message = "Регистрация успешна. Добро пожаловать, $input_username!";
                     
                     // Перенаправление на index.php после успешной регистрации
