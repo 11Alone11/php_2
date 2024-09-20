@@ -774,7 +774,8 @@ try{
     users.name AS supplier,
     drugs.price AS price,
     orders.quantity AS quantity,
-    orders.cost AS cost
+    orders.cost AS cost,
+    orders.status as status
     FROM 
         orders
     JOIN 
@@ -805,7 +806,8 @@ try{
         users.name AS customer,
         drugs.price AS price,
         orders.quantity AS quantity,
-        orders.cost AS cost
+        orders.cost AS cost,
+        orders.status
     FROM 
         orders
     JOIN 

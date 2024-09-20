@@ -415,6 +415,9 @@ tr:hover {
 .column-supplier {
 	width: 30%;
 }
+.column-status {
+	width: 30%;
+}
 .column-manufacturer-id {
 	width: 10%;
 }
