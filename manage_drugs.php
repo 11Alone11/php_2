@@ -353,28 +353,41 @@ try{
             if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0) {
                 $_SESSION['error_message'] = "Количество должно быть положительным целым числом";
             } else {
-                // First, retrieve the price for the drug
-                $priceQuery = $conn->prepare("SELECT price FROM orders WHERE id = ?");
+                // Сначала получим price и drug_id из orders
+                $priceQuery = $conn->prepare("SELECT price, drug_id FROM orders WHERE id = ?");
                 $priceQuery->bind_param('i', $formId);
                 $priceQuery->execute();
-                $priceQuery->bind_result($price);
+                $priceQuery->bind_result($price, $drugId);
                 $priceQuery->fetch();
                 $priceQuery->close();
         
-                // Calculate the new cost
-                $cost = round((float)$price * $inputValue, 2);
+                // Теперь проверим количество на складе
+                $stockQuery = $conn->prepare("SELECT quantity FROM drugs WHERE id = ?");
+                $stockQuery->bind_param('i', $drugId);
+                $stockQuery->execute();
+                $stockQuery->bind_result($availableQuantity);
+                $stockQuery->fetch();
+                $stockQuery->close();
         
-                // Now update both quantity and cost
-                $stmt = $conn->prepare("UPDATE orders SET quantity = ?, cost = ? WHERE id = ?");
-                if ($stmt) {
-                    $stmt->bind_param('idi', $inputValue, $cost, $formId);
-                    $stmt->execute();
-                    $stmt->close();
+                // Проверяем наличие на складе
+                if ($inputValue > $availableQuantity) {
+                    $_SESSION['error_message'] = "Недостаточно товара на складе. Доступно: $availableQuantity";
                 } else {
-                    echo "Ошибка подготовки запроса: " . $conn->error;
+                    // Рассчитываем новую стоимость
+                    $cost = round((float)$price * $inputValue, 2);
+        
+                    // Обновляем количество и стоимость
+                    $stmt = $conn->prepare("UPDATE orders SET quantity = ?, cost = ? WHERE id = ?");
+                    if ($stmt) {
+                        $stmt->bind_param('idi', $inputValue, $cost, $formId);
+                        $stmt->execute();
+                        $stmt->close();
+                    } else {
+                        echo "Ошибка подготовки запроса: " . $conn->error;
+                    }
                 }
             }
-        }  
+        } 
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
         }
@@ -531,7 +544,7 @@ try{
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
         } else {
-            echo 'Недостаточно количества лекарства на складе.';
+            $_SESSION['error_message'] = 'Недостаточно количества лекарства на складе.';
         }
     }
 
