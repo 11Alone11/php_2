@@ -505,7 +505,7 @@ else:
 		</tbody>
 	</table>
 
-	<h1 class="title mb20 mt20">Мои заявки на покупку</h1>
+	<h1 class="title mb20 mt20">Заявки на поставку</h1>
 	
 	<table>
 		<thead>
@@ -516,7 +516,6 @@ else:
 				<th class="column-price"><a href="?order_by_supplier=price&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Цена</a></th>
 				<th class="column-quantity"><a href="?order_by_supplier=quantity&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Количество</a></th>
 				<th class="column-cost"><a href="?order_by_supplier=cost&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Стоимость</a></th>
-				<th class="column-status"><a href="?order_by_supplier=status&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Статус</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -532,7 +531,6 @@ else:
 						<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
 						<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
 						<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
 						<td>
 							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
 								<input type="hidden" name="delete_supplier_order" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
@@ -544,6 +542,7 @@ else:
 				}
 			} else {
 				echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
+				
 			}
 			?>
 		</tbody>
@@ -748,7 +747,6 @@ else:
 				<th class="column-price"><a href="?order_by_shopper_cart=price&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Цена</a></th>
 				<th class="column-quantity"><a href="?order_by_shopper_cart=quantity&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Количество</a></th>
 				<th class="column-cost"><a href="?order_by_shopper_cart=cost&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Стоимость</a></th>
-				<th class="column-status"><a href="?order_by_shopper_cart=status&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Статус</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -765,7 +763,6 @@ else:
 						<td style="cursor:pointer" data-type="quantity" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_shopper_cart" data-field="quantity"
 						class="openPopup" ><?php echo htmlspecialchars($row['quantity']); ?></td>
 						<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
 						<td>
 							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
 								<input type="hidden" name="delete_shopper_drug" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">

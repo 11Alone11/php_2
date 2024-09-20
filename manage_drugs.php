@@ -789,7 +789,7 @@ try{
     ";
     $search_query_shopper_cart = $search_query_shopper; 
     if (!empty($search_query_shopper_cart)) {
-        $query .= " AND drugs.name LIKE '%$search_query_shopper_cart%' "; // Используем .= для добавления
+        $query .= " AND drugs.name LIKE '%$search_query_shopper_cart%' ";
     }
 
     $query .= "
@@ -822,7 +822,7 @@ try{
     
     $search_query_user_supplier = $search_query_user;
     if (!empty($search_query_user_supplier)) {
-        $query .= " AND drugs.name LIKE '%$search_query_user_supplier%' "; // Используем для добавления
+        $query .= " AND drugs.name LIKE '%$search_query_user_supplier%' ";
     }
 
     // Добавляем сортировку
@@ -832,7 +832,7 @@ try{
 
     // Выполнение запроса
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('i', $User_Id); // Привязываем supplier_id
+    $stmt->bind_param('i', $User_Id); 
     $stmt->execute();
     $result_supplier_orders = $stmt->get_result();
 
