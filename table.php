@@ -27,7 +27,7 @@ if (!$result) {
 if($_SESSION["user_type"] == 1):
 
 ?>
-
+<!-- Админ интерфейс-->
 <!DOCTYPE html>
 <html lang="ru">
 
@@ -321,6 +321,7 @@ else:
 
     // echo "<p>У вас нет доступа к этой странице.</p>";
 ?>
+<!--Поставщик интерфейс -->
 <!DOCTYPE html>
 <html lang="ru">
 
@@ -480,6 +481,24 @@ else:
 		</form>
 	</div>
 
+	<div class="message message_open">
+		<p class="message__name">
+			<span>Имя: </span>Имя
+		</p>
+		<p class="message__date">
+			<span>Дата: </span>12.12.2012
+		</p>
+		<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur quis
+			laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
+			placeat.</div>
+		<div class="message__buttons">
+			<!-- <button class="button message__button">Удалить</button> -->
+			<button class="button message__button">Закрыть</button>
+		</div>
+	</div>
+
+
+
 </body>
 
 <script>
@@ -531,6 +550,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	document.querySelector('.popup__content').addEventListener('click', function(event) {
 		event.stopPropagation();
 	});
+
+	// Обработчик для кнопки "Удалить"
+	document.querySelector('.message__button').addEventListener('click', function() {
+		document.querySelector('.message').classList.remove('message_open');
+	});
 });
 </script>
 
@@ -540,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
 else:
 
 ?>
-
+<!-- Покупатель интерфейс -->
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -677,6 +701,22 @@ else:
 			<button type="submit" class="button popup__button">Сохранить</button>
 		</form>
 	</div>
+	
+	<div class="message message_open">
+		<p class="message__name">
+			<span>Имя: </span>Имя
+		</p>
+		<p class="message__date">
+			<span>Дата: </span>12.12.2012
+		</p>
+		<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur quis
+			laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
+			placeat.</div>
+		<div class="message__buttons">
+			<!-- <button class="button message__button">Удалить</button> -->
+			<button class="button message__button">Закрыть</button>
+		</div>
+	</div>
 
 </body>
 
@@ -746,6 +786,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Предотвращаем закрытие попапа при клике внутри формы
 	document.querySelector('.popup__content').addEventListener('click', function(event) {
 		event.stopPropagation();
+	});
+
+
+	// Обработчик для кнопки "Удалить"
+	document.querySelector('.message__button').addEventListener('click', function() {
+		document.querySelector('.message').classList.remove('message_open');
 	});
 });
 </script>
