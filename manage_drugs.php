@@ -349,6 +349,32 @@ try{
                 }
             }
         }  
+        if ($tableName === 'drugs_shopper_cart' && $fieldName === 'quantity') {
+            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0) {
+                $_SESSION['error_message'] = "Количество должно быть положительным целым числом";
+            } else {
+                // First, retrieve the price for the drug
+                $priceQuery = $conn->prepare("SELECT price FROM orders WHERE id = ?");
+                $priceQuery->bind_param('i', $formId);
+                $priceQuery->execute();
+                $priceQuery->bind_result($price);
+                $priceQuery->fetch();
+                $priceQuery->close();
+        
+                // Calculate the new cost
+                $cost = round((float)$price * $inputValue, 2);
+        
+                // Now update both quantity and cost
+                $stmt = $conn->prepare("UPDATE orders SET quantity = ?, cost = ? WHERE id = ?");
+                if ($stmt) {
+                    $stmt->bind_param('idi', $inputValue, $cost, $formId);
+                    $stmt->execute();
+                    $stmt->close();
+                } else {
+                    echo "Ошибка подготовки запроса: " . $conn->error;
+                }
+            }
+        }  
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
         }

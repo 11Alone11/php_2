@@ -759,7 +759,8 @@ else:
 						<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
 						<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
 						<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
+						<td style="cursor:pointer" data-type="quantity" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_shopper_cart" data-field="quantity"
+						class="openPopup" ><?php echo htmlspecialchars($row['quantity']); ?></td>
 						<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
 						<td>
 							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
