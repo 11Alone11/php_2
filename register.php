@@ -71,6 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($conn->query($insert_query) === TRUE) {
                     $_SESSION['user'] = $input_username;
                     $_SESSION['user_type'] = $roleUoD;
+                    $select_string = "SELECT id, type FROM users WHERE name LIKE '%$input_username%'";
+                    $user_info = $conn->query($select_string);
+                    $row = $user_info->fetch_assoc(); // Получаем ассоциативный массив
+                    $_SESSION['user_id'] = $row['id'];
                     $success_message = "Регистрация успешна. Добро пожаловать, $input_username!";
                     
                     // Перенаправление на index.php после успешной регистрации
