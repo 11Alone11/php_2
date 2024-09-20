@@ -166,6 +166,20 @@ a {
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
+body::-webkit-scrollbar,
+.message__text::-webkit-scrollbar,
+.message__inner::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+}
+
+body::-webkit-scrollbar-thumb,
+.message__text::-webkit-scrollbar-thumb,
+.message__inner::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background-color: #000;
+}
+
 html {
 	@media screen and (max-width: 768px) {
 		font-size: 14px;
@@ -440,7 +454,6 @@ tr:hover {
 	width: 20%;
 }
 
-
 .message {
 	text-align: justify;
 	max-width: 300px;
@@ -475,10 +488,30 @@ tr:hover {
 .message__buttons {
 	display: flex;
 	gap: 8px;
+	width: 100%;
 }
 
-.message__buttons {
+.message__button {
 	width: 100%;
+}
+
+.message__item {
+	padding-right: 8px;
+	display: flex;
+	gap: 6px;
+	flex-direction: column;
+	align-items: center;
+}
+
+.message__inner {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	overflow-y: auto;
+}
+
+.message__text {
+	overflow-y: auto;
 }
 
 .message_open {
@@ -499,7 +532,6 @@ tr:hover {
 
 .popup__button {
 	max-width: 120px;
-
 }
 
 .popup__content {

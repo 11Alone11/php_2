@@ -238,18 +238,39 @@ if($_SESSION["user_type"] == 1):
 	</div>
 
 	<div class="message message_open">
-		<p class="message__name">
-			<span>Имя: </span>Имя
-		</p>
-		<p class="message__date">
-			<span>Дата: </span>12.12.2012
-		</p>
-		<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur quis
-			laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
-			placeat.</div>
+		<div class="message__inner">
+			<div class="message__item">
+				<p class="message__name">
+					<span>Имя: </span>Имя
+				</p>
+				<p class="message__date">
+					<span>Дата: </span>12.12.2012
+				</p>
+				<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur
+					quis
+					laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
+					placeat. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos asperiores soluta quis dolorum animi labore eaque quibusdam,
+					molestias ipsam nemo recusandae aspernatur aliquam ipsum quod debitis illo iste similique neque.</div>
+				<button class="button message__button">Кнопка</button>
+			</div>
+			<div class="message__item">
+				<p class="message__name">
+					<span>Имя: </span>Имя
+				</p>
+				<p class="message__date">
+					<span>Дата: </span>12.12.2012
+				</p>
+				<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur
+					quis
+					laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
+					placeat. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos asperiores soluta quis dolorum animi labore eaque quibusdam,
+					molestias ipsam nemo recusandae aspernatur aliquam ipsum quod debitis illo iste similique neque.</div><button
+					class="button message__button">Кнопка</button>
+			</div>
+		</div>
 		<div class="message__buttons">
 			<!-- <button class="button message__button">Удалить</button> -->
-			<button class="button message__button">Закрыть</button>
+			<button id="message__button" class="button message__button">Закрыть</button>
 		</div>
 	</div>
 
@@ -307,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	// Обработчик для кнопки "Удалить"
-	document.querySelector('.message__button').addEventListener('click', function() {
+	document.querySelector('#message__button').addEventListener('click', function() {
 		document.querySelector('.message').classList.remove('message_open');
 	});
 });
@@ -428,16 +449,23 @@ else:
 	</table>
 
 	<h1 class="title mb20 mt20">Заявки на поставку</h1>
-	
+
 	<table>
 		<thead>
 			<tr>
-				<th class="column-name"><a href="?order_by_supplier=name&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Название</a></th>
-				<th class="column-supplier"><a href="?order_by_supplier=customer&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Заказчик</a></th>		
-				<th class="column-manufacturer"><a href="?order_by_supplier=manufacturer&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Производитель</a></th>
-				<th class="column-price"><a href="?order_by_supplier=price&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Цена</a></th>
-				<th class="column-quantity"><a href="?order_by_supplier=quantity&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Количество</a></th>
-				<th class="column-cost"><a href="?order_by_supplier=cost&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Стоимость</a></th>
+				<th class="column-name"><a
+						href="?order_by_supplier=name&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Название</a></th>
+				<th class="column-supplier"><a
+						href="?order_by_supplier=customer&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Заказчик</a></th>
+				<th class="column-manufacturer"><a
+						href="?order_by_supplier=manufacturer&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Производитель</a>
+				</th>
+				<th class="column-price"><a
+						href="?order_by_supplier=price&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Цена</a></th>
+				<th class="column-quantity"><a
+						href="?order_by_supplier=quantity&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Количество</a></th>
+				<th class="column-cost"><a
+						href="?order_by_supplier=cost&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Стоимость</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -446,21 +474,22 @@ else:
 			if (isset($result_supplier_orders)) {
 				while ($row = $result_supplier_orders->fetch_assoc()) {
 					?>
-					<tr>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['customer']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
-						<td>
-							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
-								<input type="hidden" name="delete_supplier_order" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
-								<button type="submit" class="button" onclick="return confirm('Вы уверены, что хотите отказать в предзаказе?');">Удалить</button>
-							</form>
-						</td>
-					</tr>
-					<?php
+			<tr>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['customer']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
+				<td>
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
+						<input type="hidden" name="delete_supplier_order" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
+						<button type="submit" class="button"
+							onclick="return confirm('Вы уверены, что хотите отказать в предзаказе?');">Удалить</button>
+					</form>
+				</td>
+			</tr>
+			<?php
 				}
 			} else {
 				echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
@@ -490,7 +519,8 @@ else:
 		</p>
 		<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur quis
 			laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
-			placeat.</div>
+			placeat. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae velit vel doloribus delectus at, harum omnis illo molestias
+			pariatur dolor? Laboriosam fugiat voluptatum nulla officia voluptate, laudantium repellendus est culpa.</div>
 		<div class="message__buttons">
 			<!-- <button class="button message__button">Удалить</button> -->
 			<button class="button message__button">Закрыть</button>
@@ -593,7 +623,8 @@ else:
 	<!-- Форма поиска лекарств-->
 	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
-		<input type="text" name="search_for_shopper" class="input" placeholder="Поиск..." value="<?php echo htmlspecialchars($search_query_shopper); ?>">
+		<input type="text" name="search_for_shopper" class="input" placeholder="Поиск..."
+			value="<?php echo htmlspecialchars($search_query_shopper); ?>">
 		<button type="submit" name="search" class="button">Поиск</button>
 		<?php if (isset($_SESSION['error_message'])): ?>
 		<div class="auth__message">
@@ -605,15 +636,21 @@ else:
 
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Все лекарства</h1>
-	
+
 	<table>
 		<thead>
 			<tr>
-				<th class="column-name"><a href="?order_by_shopper=name&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Название</a></th>
-				<th class="column-manufacturer"><a href="?order_by_shopper=manufacturer&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Производитель</a></th>
-				<th class="column-supplier"><a href="?order_by_shopper=supplier&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Поставщик</a></th>		
-				<th class="column-price"><a href="?order_by_shopper=price&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Цена</a></th>
-				<th class="column-quantity"><a href="?order_by_shopper=quantity&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Количество</a></th>
+				<th class="column-name"><a
+						href="?order_by_shopper=name&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Название</a></th>
+				<th class="column-manufacturer"><a
+						href="?order_by_shopper=manufacturer&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Производитель</a>
+				</th>
+				<th class="column-supplier"><a
+						href="?order_by_shopper=supplier&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Поставщик</a></th>
+				<th class="column-price"><a
+						href="?order_by_shopper=price&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Цена</a></th>
+				<th class="column-quantity"><a
+						href="?order_by_shopper=quantity&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Количество</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -622,21 +659,22 @@ else:
 			if (isset($result_shopper)) {
 				while ($row = $result_shopper->fetch_assoc()) {
 					?>
-					<tr>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
-						<td>
-							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;" data-drug-id="<?php echo htmlspecialchars($row['id']); ?>">
-								<input type="hidden" name="add_to_cart" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
-								<input type="hidden" name="desired_quantity" value="">
-								<button type="button" class="button" onclick="getQuantity(<?php echo htmlspecialchars($row['id']); ?>)">Добавить</button>
-							</form>
-						</td>
-					</tr>
-					<?php
+			<tr>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
+				<td>
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;"
+						data-drug-id="<?php echo htmlspecialchars($row['id']); ?>">
+						<input type="hidden" name="add_to_cart" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
+						<input type="hidden" name="desired_quantity" value="">
+						<button type="button" class="button" onclick="getQuantity(<?php echo htmlspecialchars($row['id']); ?>)">Добавить</button>
+					</form>
+				</td>
+			</tr>
+			<?php
 				}
 			} else {
 				echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
@@ -647,16 +685,28 @@ else:
 
 	<!-- Таблица с данными о лекарствах пользователя-->
 	<h1 class="title mb20 mt20">Моя корзина</h1>
-	
+
 	<table>
 		<thead>
 			<tr>
-				<th class="column-name"><a href="?order_by_shopper_cart=name&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Название</a></th>
-				<th class="column-manufacturer"><a href="?order_by_shopper_cart=manufacturer&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Производитель</a></th>
-				<th class="column-supplier"><a href="?order_by_shopper_cart=supplier&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Поставщик</a></th>		
-				<th class="column-price"><a href="?order_by_shopper_cart=price&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Цена</a></th>
-				<th class="column-quantity"><a href="?order_by_shopper_cart=quantity&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Количество</a></th>
-				<th class="column-cost"><a href="?order_by_shopper_cart=cost&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Стоимость</a></th>
+				<th class="column-name"><a
+						href="?order_by_shopper_cart=name&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Название</a>
+				</th>
+				<th class="column-manufacturer"><a
+						href="?order_by_shopper_cart=manufacturer&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Производитель</a>
+				</th>
+				<th class="column-supplier"><a
+						href="?order_by_shopper_cart=supplier&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Поставщик</a>
+				</th>
+				<th class="column-price"><a
+						href="?order_by_shopper_cart=price&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Цена</a>
+				</th>
+				<th class="column-quantity"><a
+						href="?order_by_shopper_cart=quantity&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Количество</a>
+				</th>
+				<th class="column-cost"><a
+						href="?order_by_shopper_cart=cost&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Стоимость</a>
+				</th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -665,22 +715,23 @@ else:
 			if (isset($result_cart_user)) {
 				while ($row = $result_cart_user->fetch_assoc()) {
 					?>
-					<tr>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
-						<td style="cursor:pointer" data-type="quantity" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_shopper_cart" data-field="quantity"
-						class="openPopup" ><?php echo htmlspecialchars($row['quantity']); ?></td>
-						<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
-						<td>
-							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
-								<input type="hidden" name="delete_shopper_drug" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
-								<button type="submit" class="button" onclick="return confirm('Вы уверены, что хотите отменить покупку этого лекарства?');">Удалить</button>
-							</form>
-						</td>
-					</tr>
-					<?php
+			<tr>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
+				<td style="cursor:pointer" data-type="quantity" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_shopper_cart"
+					data-field="quantity" class="openPopup"><?php echo htmlspecialchars($row['quantity']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
+				<td>
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
+						<input type="hidden" name="delete_shopper_drug" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
+						<button type="submit" class="button"
+							onclick="return confirm('Вы уверены, что хотите отменить покупку этого лекарства?');">Удалить</button>
+					</form>
+				</td>
+			</tr>
+			<?php
 				}
 			} else {
 				echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
@@ -696,12 +747,12 @@ else:
 			<input type="hidden" id="formType" name="formType">
 			<input type="hidden" id="formId" name="formId">
 			<input type="hidden" id="tableName" name="tableName">
-			<input type="hidden" id="fieldName" name="fieldName"> 
+			<input type="hidden" id="fieldName" name="fieldName">
 			<input type="text" id="popupInput" name="input" class="input" placeholder="Название" required>
 			<button type="submit" class="button popup__button">Сохранить</button>
 		</form>
 	</div>
-	
+
 	<div class="message message_open">
 		<p class="message__name">
 			<span>Имя: </span>Имя
@@ -711,7 +762,8 @@ else:
 		</p>
 		<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur quis
 			laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
-			placeat.</div>
+			placeat. Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, sint alias minus totam placeat commodi eligendi, dolorem
+			omnis ipsa, sed at iure architecto? Hic in, doloribus necessitatibus quaerat veritatis dolores.</div>
 		<div class="message__buttons">
 			<!-- <button class="button message__button">Удалить</button> -->
 			<button class="button message__button">Закрыть</button>
@@ -722,19 +774,19 @@ else:
 
 <script>
 function getQuantity(drugId) {
-    let quantity = prompt("Введите количество (целое число):");
-    
-    // Проверка на целое число
-    if (quantity !== null && Number.isInteger(+quantity) && +quantity > 0) {
-        // Устанавливаем значение в скрытое поле
-        let form = document.querySelector(`form[data-drug-id='${drugId}']`);
-        form.querySelector("input[name='desired_quantity']").value = quantity; 
-        
-        // Отправляем форму
-        form.submit();
-    } else {
-        alert("Пожалуйста, введите корректное целое число больше нуля.");
-    }
+	let quantity = prompt("Введите количество (целое число):");
+
+	// Проверка на целое число
+	if (quantity !== null && Number.isInteger(+quantity) && +quantity > 0) {
+		// Устанавливаем значение в скрытое поле
+		let form = document.querySelector(`form[data-drug-id='${drugId}']`);
+		form.querySelector("input[name='desired_quantity']").value = quantity;
+
+		// Отправляем форму
+		form.submit();
+	} else {
+		alert("Пожалуйста, введите корректное целое число больше нуля.");
+	}
 }
 </script>
 
