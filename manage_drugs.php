@@ -836,8 +836,53 @@ try{
     $stmt->execute();
     $result_supplier_orders = $stmt->get_result();
 
+    $query = "
+    SELECT 
+        orders.id AS id,
+        drugs.name AS drugName,
+        manufacturers.name AS manufacturerName,
+        users.name AS userName,
+        orders.quantity AS quantity,
+        orders.price AS price,
+        orders.cost AS cost,
+        orders.status AS status,
+        orders.last_updated AS update_date
+    FROM 
+        orders
+    JOIN 
+        drugs ON orders.drug_id = drugs.id
+    JOIN 
+        manufacturers ON orders.manufacturer_id = manufacturers.id
+    JOIN 
+        users ON orders.user_id = users.id
+    WHERE 
+        orders.provider_id = ? and status = 'В обработке'
+    ";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $orders_from_shoppers = $stmt->get_result();
 
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['order_from_shopper_apply'])) {
+            $orderId = intval($_POST['order_from_shopper_apply']);
+            $deleteQuery = $conn->prepare("UPDATE orders SET status = 'Собирается' WHERE id = ?");
+            $deleteQuery->bind_param('i', $orderId);
+            $deleteQuery->execute();
+            $deleteQuery->close();
+        }
+        if (isset($_POST['order_from_shopper_cancel'])) {
+            $orderId = intval($_POST['order_from_shopper_cancel']);
+            $deleteQuery = $conn->prepare("UPDATE orders SET status = 'Отклонен' WHERE id = ?");
+            $deleteQuery->bind_param('i', $orderId);
+            $deleteQuery->execute();
+            $deleteQuery->close();
+        }
+        header('Location: ' . $_SERVER['HTTP_REFERER']); // Перенаправление обратно на предыдущую страницу
+        exit();
+    }
 
 } catch(mysqli_sql_exception $e){
     ?>

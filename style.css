@@ -492,7 +492,8 @@ tr:hover {
 }
 
 .message__button {
-	width: 100%;
+	width: auto; 
+    padding: 10px 20px;
 }
 
 .message__item {
@@ -547,4 +548,10 @@ tr:hover {
 
 .popup_open {
 	display: flex;
+}
+
+
+.button-container {
+    display: flex; 
+    gap: 10px;
 }
