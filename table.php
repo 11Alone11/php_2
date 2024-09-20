@@ -224,7 +224,56 @@ if($_SESSION["user_type"] == 1):
 	</table>
 
 
+	<h1 class="title mb20 mt20">Заявки на поставку</h1>
 
+	<table>
+		<thead>
+			<tr>
+				<th class="column-name"><a
+						href="?order_by_supplier=name&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Название</a></th>
+				<th class="column-supplier"><a
+						href="?order_by_supplier=customer&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Заказчик</a></th>
+				<th class="column-manufacturer"><a
+						href="?order_by_supplier=manufacturer&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Производитель</a>
+				</th>
+				<th class="column-price"><a
+						href="?order_by_supplier=price&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Цена</a></th>
+				<th class="column-quantity"><a
+						href="?order_by_supplier=quantity&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Количество</a></th>
+				<th class="column-cost"><a
+						href="?order_by_supplier=cost&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Стоимость</a></th>
+				<th class="column-actions">Действия</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			if (isset($result_supplier_orders)) {
+				while ($row = $result_supplier_orders->fetch_assoc()) {
+					?>
+			<tr>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['customer']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
+				<td>
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
+						<input type="hidden" name="delete_supplier_order" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
+						<button type="submit" class="button"
+							onclick="return confirm('Вы уверены, что хотите отказать в предзаказе?');">Удалить</button>
+					</form>
+				</td>
+			</tr>
+			<?php
+				}
+			} else {
+				echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
+				
+			}
+			?>
+		</tbody>
+	</table>
 
 	<div id="popup" class="popup">
 		<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="popup__content">
