@@ -439,3 +439,80 @@ tr:hover {
 .column-actions {
 	width: 20%;
 }
+
+
+.message {
+	text-align: justify;
+	max-width: 300px;
+	max-height: 300px;
+	position: fixed;
+	top: 20px;
+	left: 65%;
+	z-index: 999;
+	display: none;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	border-radius: 20px;
+	gap: 12px;
+	border: 2px solid #000;
+	background-color: #fff;
+
+	p {
+		align-self: flex-start;
+		text-align: left;
+		font-size: 20px;
+		font-weight: 600;
+	}
+
+	span {
+		font-size: 20px;
+		font-weight: 400;
+	}
+}
+
+.message__buttons {
+	display: flex;
+	gap: 8px;
+}
+
+.message__buttons {
+	width: 100%;
+}
+
+.message_open {
+	display: flex;
+}
+
+.popup {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 999;
+	display: none;
+	justify-content: center;
+	align-items: center;
+}
+
+.popup__button {
+	max-width: 120px;
+
+}
+
+.popup__content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 24px;
+	background-color: #fff;
+	border-radius: 20px;
+	border: 2px solid #000;
+}
+
+.popup_open {
+	display: flex;
+}
