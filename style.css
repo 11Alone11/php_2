@@ -518,6 +518,11 @@ tr:hover {
 	display: flex;
 }
 
+.form__button {
+	width: 200px;
+	text-align: text;
+}
+
 .popup {
 	position: fixed;
 	top: 0;
