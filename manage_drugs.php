@@ -449,8 +449,14 @@ try{
         $price = trim($_POST['price']);
         $quantity = trim($_POST['quantity']);
     
-        if (empty($name) || empty($manufacturer) || empty($price) || empty($quantity)) {
-            $_SESSION['error_message'] = 'Пожалуйста, заполните все поля.';
+        if (trim($name) === '') {
+            $_SESSION['error_message'] = 'Пожалуйста, введите название.';
+        } elseif (trim($manufacturer) === '') {
+            $_SESSION['error_message'] = 'Пожалуйста, введите название производителя.';
+        } elseif (!isset($price) || $price === '') {
+            $_SESSION['error_message'] = 'Пожалуйста, введите цену.';
+        } elseif (!isset($quantity) || $quantity === '') {
+            $_SESSION['error_message'] = 'Пожалуйста, введите количество.';
         } elseif (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $name)) {
             $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
         } elseif (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $manufacturer)) {
@@ -629,9 +635,17 @@ try{
         $provider_query = "SELECT name FROM users WHERE id = $provider_id";
         $provider_result = $conn->query($provider_query);
         $provider = $provider_result->fetch_assoc();
-        if (empty($name) || empty($manufacturer_id) ||  empty($price) || empty($provider_id) || empty($quantity)){
-            $_SESSION['error_message'] = 'Пожалуйста, заполните все поля.';
-        } elseif (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $name)) {
+        if (empty($name)) {
+            $_SESSION['error_message'] = 'Пожалуйста, введите название.';
+        } elseif (empty($manufacturer_id)) {
+            $_SESSION['error_message'] = 'Пожалуйста, выберите производителя.';
+        } elseif (empty($price)) {
+            $_SESSION['error_message'] = 'Пожалуйста, введите цену.';
+        } elseif (empty($quantity)) {
+            $_SESSION['error_message'] = 'Пожалуйста, введите количество.';
+        } elseif (empty($provider_id)) {
+            $_SESSION['error_message'] = 'Пожалуйста, выберите поставщика.';
+        }  elseif (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $name)) {
             $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
         } elseif (!is_numeric($manufacturer_id) || $manufacturer_id <= 0) {
             $_SESSION['error_message'] = 'ID производителя должен быть положительным числом.';
@@ -836,7 +850,8 @@ try{
     $stmt->execute();
     $result_supplier_orders = $stmt->get_result();
 
-
+    $query = "SELECT name FROM manufacturers ORDER BY name";
+    $res_manuf = $conn->query($query);
 
 
 } catch(mysqli_sql_exception $e){

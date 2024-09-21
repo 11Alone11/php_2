@@ -286,7 +286,7 @@ if($_SESSION["user_type"] == 1):
 		</form>
 	</div>
 
-	<div class="message message_open">
+	<div class="message">
 		<div class="message__inner">
 			<div class="message__item">
 				<p class="message__name">
@@ -428,7 +428,25 @@ else:
 	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Добавление лекарств</p>
 		<input type="text" name="name" class="input" placeholder="Название" required>
-		<input type="text" name="manufacturer_name" class="input" placeholder="Производитель" required>
+		<!-- <input type="text" name="manufacturer_name" class="input" placeholder="Производитель" required> -->
+
+		<p class="title">Производитель</p>
+		<select name="manufacturer_name">
+			<?php if (isset($res_manuf)) {
+				// Loop through the result set
+				while ($row = $res_manuf->fetch_assoc()) {
+					// Check if the current option should be selected, e.g., based on a user input or a default value
+					$selected = ($row['name'] == $selected_manufacturer_name) ? 'selected="selected"' : '';
+					?>
+			<option value="<?php echo htmlspecialchars($row['name']); ?>" <?php echo $selected; ?>>
+				<?php echo htmlspecialchars($row['name']); ?>
+			</option>
+			<?php }
+			} else { ?>
+			<option value="" disabled selected>Select a manufacturer</option>
+			<?php } ?>
+		</select>
+
 		<input type="number" name="price" class="input" placeholder="Цена" step="0.01" required>
 		<input type="number" name="quantity" class="input" placeholder="Количество" step="1" required>
 		<button type="submit" name="add_drugs_user" class="button">Добавить</button>
@@ -559,7 +577,7 @@ else:
 		</form>
 	</div>
 
-	<div class="message message_open">
+	<div class="message">
 		<p class="message__name">
 			<span>Имя: </span>Имя
 		</p>
@@ -802,7 +820,7 @@ else:
 		</form>
 	</div>
 
-	<div class="message message_open">
+	<div class="message">
 		<p class="message__name">
 			<span>Имя: </span>Имя
 		</p>
