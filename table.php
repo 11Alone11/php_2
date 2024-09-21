@@ -718,6 +718,8 @@ else:
 						href="?order_by_shopper=price&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Цена</a></th>
 				<th class="column-quantity"><a
 						href="?order_by_shopper=quantity&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Количество</a></th>
+
+
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -754,11 +756,13 @@ else:
 	<h1 class="title mb20 mt20">Моя корзина</h1>
 
 	<form style="margin-bottom: 12px" class="form__checkbox" method="POST" id="checkboxForm">
+		<input type="hidden" name="action" value="delete"> <!-- Добавляем скрытое поле для действия удаления -->
 		<button class="button form__button" type="button" id="processButton">Удалить</button>
 	</form>
 
-	<form class="form__checkbox" method="POST" id="updateForm">
-		<button class="button form__button" type="submit" id="updateButton">Оформить</button>
+	<form style="margin-bottom: 12px" class="form__checkbox" method="POST" id="updateForm">
+		<input type="hidden" name="action" value="update"> <!-- Добавляем скрытое поле для действия обновления -->
+		<button class="button form__button" type="button" id="updateButton">Оформить</button>
 	</form>
 
 	<table class="table_cart">
@@ -781,6 +785,9 @@ else:
 				</th>
 				<th class="column-cost"><a
 						href="?order_by_shopper_cart=cost&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Стоимость</a>
+				</th>
+				<th class="column-status"><a
+						href="?order_by_shopper=status&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Статус</a>
 				</th>
 				<th class="column-actions">Действия</th>
 			</tr>
@@ -806,6 +813,8 @@ else:
 				<td style="cursor:pointer" data-type="quantity" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_shopper_cart"
 					data-field="quantity" class="openPopup"><?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
+
 				<td>
 					<!-- Внутренняя форма удаления -->
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;" class="deleteForm">
@@ -826,25 +835,86 @@ else:
 
 	<script>
 	document.addEventListener('DOMContentLoaded', function() {
+		console.log("Script loaded and DOM is ready");
+
+		// Получаем кнопку для удаления и форму
 		const processButton = document.getElementById('processButton');
 		const checkboxForm = document.getElementById('checkboxForm');
 
-		// Add event listener to process button
+		// Обработчик на кнопку "Удалить"
 		processButton.addEventListener('click', function() {
-			// Get all checked checkboxes
+			console.log("Delete button clicked");
+
+			// Удаляем только динамически добавленные скрытые инпуты для чекбоксов
+			const hiddenInputs = checkboxForm.querySelectorAll('input[name="check_all[]"]');
+			hiddenInputs.forEach(input => input.remove());
+
+			// Получаем все отмеченные чекбоксы
 			const checkedCheckboxes = document.querySelectorAll('input[name="check_all[]"]:checked');
 
+			// Если нет выбранных чекбоксов
 			if (checkedCheckboxes.length === 0) {
-				alert('Выберите хотя бы один элемент для обработки.');
+				alert('Пожалуйста, выберите хотя бы один элемент для удаления.');
 				return;
 			}
 
-			// Convert NodeList to array and log values for debugging
-			const selectedIds = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
-			console.log('Selected IDs:', selectedIds);
+			console.log("Checkboxes selected:", checkedCheckboxes);
 
-			// Programmatically submit the form
+			// Для каждого отмеченного чекбокса создаем скрытый инпут внутри формы
+			checkedCheckboxes.forEach(checkbox => {
+				console.log("Processing checkbox with value:", checkbox.value);
+				const hiddenInput = document.createElement('input');
+				hiddenInput.type = 'hidden';
+				hiddenInput.name = 'check_all[]';
+				hiddenInput.value = checkbox.value;
+				checkboxForm.appendChild(hiddenInput); // Добавляем скрытый инпут в форму
+			});
+
+			// Программно отправляем форму
 			checkboxForm.submit();
+		});
+	});
+	</script>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		console.log("Script loaded and DOM is ready");
+
+		// Получаем кнопку для удаления и форму
+		const processButton = document.getElementById('updateButton');
+		const updateForm = document.getElementById('updateForm');
+
+		// Обработчик на кнопку "Удалить"
+		processButton.addEventListener('click', function() {
+			console.log("Delete button clicked");
+
+			// Удаляем только динамически добавленные скрытые инпуты для чекбоксов
+			const hiddenInputs = updateForm.querySelectorAll('input[name="check_all[]"]');
+			hiddenInputs.forEach(input => input.remove());
+
+			// Получаем все отмеченные чекбоксы
+			const checkedCheckboxes = document.querySelectorAll('input[name="check_all[]"]:checked');
+
+			// Если нет выбранных чекбоксов
+			if (checkedCheckboxes.length === 0) {
+				alert('Пожалуйста, выберите хотя бы один элемент для оформления.');
+				return;
+			}
+
+			console.log("Checkboxes selected:", checkedCheckboxes);
+
+			// Для каждого отмеченного чекбокса создаем скрытый инпут внутри формы
+			checkedCheckboxes.forEach(checkbox => {
+				console.log("Processing checkbox with value:", checkbox.value);
+				const hiddenInput = document.createElement('input');
+				hiddenInput.type = 'hidden';
+				hiddenInput.name = 'check_all[]';
+				hiddenInput.value = checkbox.value;
+				updateForm.appendChild(hiddenInput); // Добавляем скрытый инпут в форму
+			});
+
+			// Программно отправляем форму
+			updateForm.submit();
 		});
 	});
 	</script>

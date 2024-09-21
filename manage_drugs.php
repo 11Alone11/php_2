@@ -729,6 +729,29 @@ try{
         $conn->query($delete_query);
     }
     
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['check_all']) && is_array($_POST['check_all'])) {
+            if (isset($_POST['action']) && $_POST['action'] === 'delete') {
+                echo 'Я русский';
+                $selectedItems = $_POST['check_all'];
+                foreach ($selectedItems as $itemId) {
+                    $delete_query = "DELETE FROM orders WHERE id=$itemId";
+                    $conn->query($delete_query);
+                }
+            } elseif (isset($_POST['action']) && $_POST['action'] === 'update') {
+                $selectedItems = $_POST['check_all'];
+                foreach ($selectedItems as $itemId) {
+                    $update_query = "UPDATE orders SET status = 'Оформлен' WHERE id=$itemId";
+                    $conn->query($update_query);
+                }
+            } 
+            header("Location: table.php");
+            exit();
+        } else {
+            echo "Ничего не выбрано для обработки.";
+        }
+    }
+
     $query = "SELECT * FROM drugs WHERE 1=1"; // Начинаем с базового условия
 
     if (!empty($search_query)) {
@@ -831,7 +854,7 @@ try{
     JOIN 
         users ON orders.user_id = users.id
     WHERE 
-        orders.provider_id = ?
+        orders.provider_id = ? and status <> 'В обработке'
     ";
     
     $search_query_user_supplier = $search_query_user;
