@@ -309,7 +309,7 @@ if($_SESSION["user_type"] == 1):
 					<span>Дата: </span>12.12.2012
 				</p>
 				<div class="message__text">Принято</div>
-				<button	class="button message__button">Кнопка</button>
+				<button class="button message__button">Кнопка</button>
 			</div>
 		</div>
 		<div class="message__buttons">
@@ -571,33 +571,33 @@ else:
 				$quantity =  htmlspecialchars($row['quantity']);
 				$orderId = htmlspecialchars($row['id']);
 				?>
-				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
-					<p class="message__name">
-						<span>Имя: </span><?php echo $name; ?>
-					</p>
-					<p class="message__date">
-						<span>Дата: </span><?php echo $date; ?>
-					</p>
-					<div class="message__text"><?php echo "$status. Покупатель заказал лекарство $drugName от производителя $manufacturerName в количестве $quantity штук на стоимость $cost у.е."; ?></div>
-					<div class="button-container">
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-							<input type="hidden" name="order_from_shopper_apply" value="<?php echo $orderId; ?>">
-							<button type="submit" class="button message__button">Одобрить</button>
-						</form>
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"> 
-							<input type="hidden" name="order_from_shopper_cancel" value="<?php echo $orderId; ?>">
-							<button type="submit" class="button message__button">Отклонить</button>
-						</form>
-					</div>
+			<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+				<p class="message__name">
+					<span>Имя: </span><?php echo $name; ?>
+				</p>
+				<p class="message__date">
+					<span>Дата: </span><?php echo $date; ?>
+				</p>
+				<div class="message__text">
+					<?php echo "$status. Покупатель заказал лекарство $drugName от производителя $manufacturerName в количестве $quantity штук на стоимость $cost у.е."; ?>
 				</div>
-				<?php
+				<div class="button-container">
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="order_from_shopper_apply" value="<?php echo $orderId; ?>">
+						<button type="submit" class="button message__button">Одобрить</button>
+					</form>
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="order_from_shopper_cancel" value="<?php echo $orderId; ?>">
+						<button type="submit" class="button message__button">Отклонить</button>
+					</form>
+				</div>
+			</div>
+			<?php
 			}
 			?>
 		</div>
 		<div class="message__buttons">
-			<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"> <!-- Укажите свой файл -->
-				<button type="submit" class="button message__button">Закрыть</button>
-			</form>
+			<button class="button message__button message__button_close">Закрыть</button>
 		</div>
 	</div>
 
@@ -656,7 +656,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	// Обработчик для кнопки "Удалить"
-	document.querySelector('.message__button').addEventListener('click', function() {
+	document.querySelector('.message__button_close').addEventListener('click', function() {
 		document.querySelector('.message').classList.remove('message_open');
 	});
 });
