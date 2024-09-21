@@ -753,73 +753,101 @@ else:
 	<!-- Таблица с данными о лекарствах пользователя-->
 	<h1 class="title mb20 mt20">Моя корзина</h1>
 
-	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" id="checkboxForm">
-
-		<table>
-			<thead>
-				<tr>
-					<th class="column-name"><a
-							href="?order_by_shopper_cart=name&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Название</a>
-					</th>
-					<th class="column-manufacturer"><a
-							href="?order_by_shopper_cart=manufacturer&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Производитель</a>
-					</th>
-					<th class="column-supplier"><a
-							href="?order_by_shopper_cart=supplier&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Поставщик</a>
-					</th>
-					<th class="column-price"><a
-							href="?order_by_shopper_cart=price&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Цена</a>
-					</th>
-					<th class="column-quantity"><a
-							href="?order_by_shopper_cart=quantity&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Количество</a>
-					</th>
-					<th class="column-cost"><a
-							href="?order_by_shopper_cart=cost&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Стоимость</a>
-					</th>
-					<th class="column-actions">Действия</th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php
-			if (isset($result_cart_user)) {
-				while ($row = $result_cart_user->fetch_assoc()) {
-					?>
-				<tr>
-					<td style="cursor:pointer">
-						<?php
-        $checkbox_id = 'check_' . $row['id']; // Генерация уникального id для каждого чекбокса
-    ?>
-						<input type="checkbox" value="<?php echo htmlspecialchars($row['id']); ?>" id="<?php echo $checkbox_id; ?>"
-							name="check_all[]">
-						<label for="<?php echo $checkbox_id; ?>"><?php echo htmlspecialchars($row['name']); ?></label>
-					</td>
-
-					<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
-					<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
-					<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
-					<td style="cursor:pointer" data-type="quantity" data-id="<?php echo htmlspecialchars($row['id']); ?>"
-						data-table="drugs_shopper_cart" data-field="quantity" class="openPopup"><?php echo htmlspecialchars($row['quantity']); ?></td>
-					<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
-					<td>
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
-							<input type="hidden" name="delete_shopper_drug" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
-							<button type="submit" class="button"
-								onclick="return confirm('Вы уверены, что хотите отменить покупку этого лекарства?');">Удалить</button>
-						</form>
-					</td>
-				</tr>
-				<?php
-				}
-			} else {
-				echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
-			}
-			?>
-			</tbody>
-		</table>
-
-		<button   class="button form__button" type="button" type="submit">Обработать выбранные чекбоксы</button>
+	<form style="margin-bottom: 12px" class="form__checkbox" method="POST" id="checkboxForm">
+		<button class="button form__button" type="button" id="processButton">Удалить</button>
 	</form>
 
+	<form class="form__checkbox" method="POST" id="updateForm">
+		<button class="button form__button" type="submit" id="updateButton">Оформить</button>
+	</form>
+
+	<table class="table_cart">
+		<thead>
+			<tr>
+				<th class="column-name"><a
+						href="?order_by_shopper_cart=name&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Название</a>
+				</th>
+				<th class="column-manufacturer"><a
+						href="?order_by_shopper_cart=manufacturer&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Производитель</a>
+				</th>
+				<th class="column-supplier"><a
+						href="?order_by_shopper_cart=supplier&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Поставщик</a>
+				</th>
+				<th class="column-price"><a
+						href="?order_by_shopper_cart=price&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Цена</a>
+				</th>
+				<th class="column-quantity"><a
+						href="?order_by_shopper_cart=quantity&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Количество</a>
+				</th>
+				<th class="column-cost"><a
+						href="?order_by_shopper_cart=cost&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Стоимость</a>
+				</th>
+				<th class="column-actions">Действия</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<?php
+            if (isset($result_cart_user)) {
+                while ($row = $result_cart_user->fetch_assoc()) {
+                    ?>
+			<tr>
+				<td style="cursor:pointer">
+					<?php
+                            $checkbox_id = 'check_' . $row['id']; // Генерация уникального id для каждого чекбокса
+                            ?>
+					<input type="checkbox" value="<?php echo htmlspecialchars($row['id']); ?>" id="<?php echo $checkbox_id; ?>" name="check_all[]">
+					<label for="<?php echo $checkbox_id; ?>"><?php echo htmlspecialchars($row['name']); ?></label>
+				</td>
+
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
+				<td style="cursor:pointer" data-type="quantity" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_shopper_cart"
+					data-field="quantity" class="openPopup"><?php echo htmlspecialchars($row['quantity']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
+				<td>
+					<!-- Внутренняя форма удаления -->
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;" class="deleteForm">
+						<input type="hidden" name="delete_shopper_drug" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
+						<button type="submit" class="button deleteButton"
+							onclick="return confirm('Вы уверены, что хотите отменить покупку этого лекарства?');">Удалить</button>
+					</form>
+				</td>
+			</tr>
+			<?php
+                }
+            } else {
+                echo '<tr><td colspan="6">Нет данных для отображения</td></tr>';
+            }
+            ?>
+		</tbody>
+	</table>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const processButton = document.getElementById('processButton');
+		const checkboxForm = document.getElementById('checkboxForm');
+
+		// Add event listener to process button
+		processButton.addEventListener('click', function() {
+			// Get all checked checkboxes
+			const checkedCheckboxes = document.querySelectorAll('input[name="check_all[]"]:checked');
+
+			if (checkedCheckboxes.length === 0) {
+				alert('Выберите хотя бы один элемент для обработки.');
+				return;
+			}
+
+			// Convert NodeList to array and log values for debugging
+			const selectedIds = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
+			console.log('Selected IDs:', selectedIds);
+
+			// Programmatically submit the form
+			checkboxForm.submit();
+		});
+	});
+	</script>
 
 
 	<div id="popup" class="popup">

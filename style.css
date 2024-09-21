@@ -519,8 +519,20 @@ tr:hover {
 }
 
 .form__button {
+	margin-left: auto;
+	margin-right: auto;
 	width: 200px;
 	text-align: text;
+}
+
+.form__checkbox {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.table_cart {
+	position: relative;
 }
 
 .popup {
