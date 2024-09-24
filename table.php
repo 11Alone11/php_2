@@ -430,7 +430,7 @@ else:
 		<input type="text" name="name" class="input" placeholder="Название" required>
 		<!-- <input type="text" name="manufacturer_name" class="input" placeholder="Производитель" required> -->
 
-		<p class="title">Производитель</p>
+		<p class="subtitle">Производитель</p>
 		<select name="manufacturer_name">
 			<?php if (isset($res_manuf)) {
 				// Loop through the result set
