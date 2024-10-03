@@ -286,7 +286,7 @@ if($_SESSION["user_type"] == 1):
 		</form>
 	</div>
 
-	<div class="message">
+	<div class="message message_open">
 		<div class="message__inner">
 			<div class="message__item">
 				<p class="message__name">
@@ -295,11 +295,7 @@ if($_SESSION["user_type"] == 1):
 				<p class="message__date">
 					<span>Дата: </span>12.12.2012
 				</p>
-				<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur
-					quis
-					laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
-					placeat. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos asperiores soluta quis dolorum animi labore eaque quibusdam,
-					molestias ipsam nemo recusandae aspernatur aliquam ipsum quod debitis illo iste similique neque.</div>
+				<div class="message__text">Отказ</div>
 				<button class="button message__button">Кнопка</button>
 			</div>
 			<div class="message__item">
@@ -309,12 +305,8 @@ if($_SESSION["user_type"] == 1):
 				<p class="message__date">
 					<span>Дата: </span>12.12.2012
 				</p>
-				<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur
-					quis
-					laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
-					placeat. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos asperiores soluta quis dolorum animi labore eaque quibusdam,
-					molestias ipsam nemo recusandae aspernatur aliquam ipsum quod debitis illo iste similique neque.</div><button
-					class="button message__button">Кнопка</button>
+				<div class="message__text">Принято</div>
+				<button	class="button message__button">Кнопка</button>
 			</div>
 		</div>
 		<div class="message__buttons">
@@ -577,20 +569,45 @@ else:
 		</form>
 	</div>
 
-	<div class="message">
-		<p class="message__name">
-			<span>Имя: </span>Имя
-		</p>
-		<p class="message__date">
-			<span>Дата: </span>12.12.2012
-		</p>
-		<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur quis
-			laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
-			placeat. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae velit vel doloribus delectus at, harum omnis illo molestias
-			pariatur dolor? Laboriosam fugiat voluptatum nulla officia voluptate, laudantium repellendus est culpa.</div>
+	<div class="message message_open">
+		<div class="message__inner">
+			<?php
+			while ($row = $orders_from_shoppers->fetch_assoc()) {
+				$name = htmlspecialchars($row['userName']);
+				$date = htmlspecialchars($row['update_date']);
+				$status = htmlspecialchars($row['status']);
+				$drugName =  htmlspecialchars($row['drugName']);
+				$manufacturerName =  htmlspecialchars($row['manufacturerName']);
+				$cost = htmlspecialchars($row['cost']);
+				$quantity =  htmlspecialchars($row['quantity']);
+				$orderId = htmlspecialchars($row['id']);
+				?>
+				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+					<p class="message__name">
+						<span>Имя: </span><?php echo $name; ?>
+					</p>
+					<p class="message__date">
+						<span>Дата: </span><?php echo $date; ?>
+					</p>
+					<div class="message__text"><?php echo "$status. Покупатель заказал лекарство '$drugName' от производителя '$manufacturerName' в количестве $quantity штук на стоимость $cost у.е."; ?></div>
+					<div class="button-container">
+						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+							<input type="hidden" name="order_from_shopper_apply" value="<?php echo $orderId; ?>">
+							<button type="submit" class="button message__button">Одобрить</button>
+						</form>
+						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"> 
+							<input type="hidden" name="order_from_shopper_cancel" value="<?php echo $orderId; ?>">
+							<button type="submit" class="button message__button">Отклонить</button>
+						</form>
+					</div>
+				</div>
+				<?php
+			}
+			?>
+		</div>
 		<div class="message__buttons">
 			<!-- <button class="button message__button">Удалить</button> -->
-			<button class="button message__button">Закрыть</button>
+			<button id="message__button" class="button message__button">Закрыть</button>
 		</div>
 	</div>
 
@@ -931,20 +948,41 @@ else:
 		</form>
 	</div>
 
-	<div class="message">
-		<p class="message__name">
-			<span>Имя: </span>Имя
-		</p>
-		<p class="message__date">
-			<span>Дата: </span>12.12.2012
-		</p>
-		<div class="message__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam nesciunt temporibus consequuntur pariatur quis
-			laborum adipisci a aperiam vitae laboriosam? Officiis, perspiciatis. Labore quis quos temporibus voluptatibus recusandae veritatis
-			placeat. Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, sint alias minus totam placeat commodi eligendi, dolorem
-			omnis ipsa, sed at iure architecto? Hic in, doloribus necessitatibus quaerat veritatis dolores.</div>
+	<div class="message message_open">
+		<div class="message__inner">
+			<?php
+			while ($row = $orders_shopper_feedback->fetch_assoc()) {
+				$name = htmlspecialchars($row['providerName']);
+				$date = htmlspecialchars($row['update_date']);
+				$status = htmlspecialchars($row['status']);
+				$drugName =  htmlspecialchars($row['drugName']);
+				$manufacturerName =  htmlspecialchars($row['manufacturerName']);
+				$cost = htmlspecialchars($row['cost']);
+				$quantity =  htmlspecialchars($row['quantity']);
+				$orderId = htmlspecialchars($row['id']);
+				?>
+				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+					<p class="message__name">
+						<span>Имя: </span><?php echo $name; ?>
+					</p>
+					<p class="message__date">
+						<span>Дата: </span><?php echo $date; ?>
+					</p>
+					<div class="message__text"><?php echo "Доступен результат по заказу лекарства '$drugName' от производителя '$manufacturerName' на сумму $cost у.е. Результат: $status"; ?></div>
+					<div class="button-container">
+						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+							<input type="hidden" name="order_shopper_viewed" value="<?php echo $orderId; ?>">
+							<button type="submit" class="button message__button">Понятно </button>
+						</form>
+					</div>
+				</div>
+				<?php
+			}
+			?>
+		</div>
 		<div class="message__buttons">
 			<!-- <button class="button message__button">Удалить</button> -->
-			<button class="button message__button">Закрыть</button>
+			<button id="message__button" class="button message__button">Закрыть</button>
 		</div>
 	</div>
 

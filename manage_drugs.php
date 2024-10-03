@@ -752,6 +752,71 @@ try{
         }
     }
 
+    //уведомления поставщик
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['order_from_shopper_apply'])) {
+            $orderId = intval($_POST['order_from_shopper_apply']);
+            $query = $conn->prepare("SELECT quantity, drug_id FROM orders WHERE id = ?");
+            $query->bind_param('i', $orderId);
+            $query->execute();
+            $result = $query->get_result();
+            if ($result->num_rows > 0) {
+                $order = $result->fetch_assoc();
+                $orderQuantity = $order['quantity'];
+                $drugId = $order['drug_id'];
+                $drugQuery = $conn->prepare("SELECT quantity FROM drugs WHERE id = ?");
+                $drugQuery->bind_param('i', $drugId);
+                $drugQuery->execute();
+                $drugResult = $drugQuery->get_result();
+                if ($drugResult->num_rows > 0) {
+                    $drug = $drugResult->fetch_assoc();
+                    $availableQuantity = $drug['quantity'];
+                    if ($availableQuantity >= $orderQuantity) {
+                        $updateOrderQuery = $conn->prepare("UPDATE orders SET status = 'Собирается', last_updated = CURRENT_TIMESTAMP WHERE id = ?");
+                        $updateOrderQuery->bind_param('i', $orderId);
+                        $updateOrderQuery->execute();
+                        $updateOrderQuery->close();
+                        $newQuantity = $availableQuantity - $orderQuantity;
+                        $updateDrugQuery = $conn->prepare("UPDATE drugs SET quantity = ? WHERE id = ?");
+                        $updateDrugQuery->bind_param('ii', $newQuantity, $drugId);
+                        $updateDrugQuery->execute();
+                        $updateDrugQuery->close();
+                    } else {
+                        $_SESSION['error_message'] = "Недостаточно товара на складе.";
+                    }
+                } else {
+                    $_SESSION['error_message'] = "Лекарство не найдено.";
+                }
+                $query->close();
+            } else {
+                $_SESSION['error_message'] = "Заказ не найден.";
+            }
+        }
+        if (isset($_POST['order_from_shopper_cancel'])) {
+            $orderId = intval($_POST['order_from_shopper_cancel']);
+            $deleteQuery = $conn->prepare("UPDATE orders SET status = 'Отклонен', last_updated = current_timestamp() WHERE id = ?");
+            $deleteQuery->bind_param('i', $orderId);
+            $deleteQuery->execute();
+            $deleteQuery->close();
+        }
+        header('Location: ' . $_SERVER['HTTP_REFERER']); 
+        exit();
+    }
+
+    //Уведомления покупатель
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['order_shopper_viewed'])) {
+            $orderId = intval($_POST['order_shopper_viewed']);
+            $updateOrderQuery = $conn->prepare("UPDATE orders SET checked_by_user = 1 WHERE id = ?");
+            $updateOrderQuery->bind_param('i', $orderId);
+            $updateOrderQuery->execute();
+            $updateOrderQuery->close();
+        }
+        header('Location: ' . $_SERVER['HTTP_REFERER']); 
+        exit();
+    }
+
     $query = "SELECT * FROM drugs WHERE 1=1"; // Начинаем с базового условия
 
     if (!empty($search_query)) {
