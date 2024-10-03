@@ -91,6 +91,7 @@ if($_SESSION["user_type"] == 1):
 				<th class="column-price"><a href="?order_by=price&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Цена</a></th>
 				<th class="column-quatity"><a href="?order_by=quantity&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Количество</a></th>
 				<th class="column-cost"><a href="?order_by=cost&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Стоимость</a></th>
+				<th class="column-status"><a href="?order_by=is_allowed&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Статус</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -119,6 +120,9 @@ if($_SESSION["user_type"] == 1):
 				<td data-type="cost" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs" data-field="cost"
 					style="cursor:pointer">
 					<?php echo htmlspecialchars($row['cost']); ?></td>
+				<td data-type="is_allowed" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs" data-field="is_allowed"
+					style="cursor:pointer">
+					<?php echo htmlspecialchars($row['is_allowed']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
 						<input type="hidden" name="delete" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
@@ -286,34 +290,111 @@ if($_SESSION["user_type"] == 1):
 		</form>
 	</div>
 
-	<div class="message message_open">
+	<?php if ($orders_from_shoppers->num_rows > 0 ||  $drugs_add_requests->num_rows > 0 || $drugs_add_requests_feedback->num_rows): ?>
+		<div class="message message_open">
 		<div class="message__inner">
-			<div class="message__item">
-				<p class="message__name">
-					<span>Имя: </span>Имя
-				</p>
-				<p class="message__date">
-					<span>Дата: </span>12.12.2012
-				</p>
-				<div class="message__text">Отказ</div>
-				<button class="button message__button">Кнопка</button>
-			</div>
-			<div class="message__item">
-				<p class="message__name">
-					<span>Имя: </span>Имя
-				</p>
-				<p class="message__date">
-					<span>Дата: </span>12.12.2012
-				</p>
-				<div class="message__text">Принято</div>
-				<button	class="button message__button">Кнопка</button>
-			</div>
+			<?php
+			while ($row = $orders_from_shoppers->fetch_assoc()) {
+				$name = htmlspecialchars($row['userName']);
+				$date = htmlspecialchars($row['update_date']);
+				$status = htmlspecialchars($row['status']);
+				$drugName =  htmlspecialchars($row['drugName']);
+				$manufacturerName =  htmlspecialchars($row['manufacturerName']);
+				$cost = htmlspecialchars($row['cost']);
+				$quantity =  htmlspecialchars($row['quantity']);
+				$orderId = htmlspecialchars($row['id']);
+				?>
+				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+					<p class="message__name">
+						<span>Имя: </span><?php echo $name;?>
+					</p>
+					<p class="message__date">
+						<span>Дата: </span><?php echo $date; ?>
+					</p>
+					<div class="message__text"><?php echo "$status. Покупатель заказал лекарство '$drugName' от производителя '$manufacturerName' в количестве $quantity штук на стоимость $cost у.е."; ?></div>
+					<div class="button-container">
+						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+							<input type="hidden" name="order_from_shopper_apply" value="<?php echo $orderId; ?>">
+							<button type="submit" class="button message__button">Одобрить</button>
+						</form>
+						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"> 
+							<input type="hidden" name="order_from_shopper_cancel" value="<?php echo $orderId; ?>">
+							<button type="submit" class="button message__button">Отклонить</button>
+						</form>
+					</div>
+				</div>
+				<?php
+			}
+			?>
+			<?php
+			while ($row = $drugs_add_requests->fetch_assoc()) {
+				$name = htmlspecialchars($row['supplier']);
+				$status = htmlspecialchars($row['status']);
+				$drugName =  htmlspecialchars($row['name']);
+				$date = htmlspecialchars($row['update_date']);
+				$manufacturerName =  htmlspecialchars($row['manufacturer']);
+				$cost = htmlspecialchars($row['price']);
+				$quantity =  htmlspecialchars($row['quantity']);
+				$drugId = htmlspecialchars($row['id']);
+				?>
+				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+					<p class="message__name">
+						<span>Имя поставщика: </span><?php echo $name;?>
+					</p>
+					<p class="message__date">
+						<span>Дата: </span><?php echo $date; ?>
+					</p>
+					<div class="message__text"><?php echo "$status. Поставщик '$name' поставляет лекарство '$drugName' от производителя '$manufacturerName' в количестве $quantity штук по цене $cost у.е. за штуку. Одобрить поставку?"; ?></div>
+					<div class="button-container">
+						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+							<input type="hidden" name="drug_supply_apply" value="<?php echo $drugId; ?>">
+							<button type="submit" class="button message__button">Одобрить</button>
+						</form>
+						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"> 
+							<input type="hidden" name="drug_supply_cancel" value="<?php echo $drugId; ?>">
+							<button type="submit" class="button message__button">Отклонить</button>
+						</form>
+					</div>
+				</div>
+				<?php
+			}
+			?>
+			<?php
+			while ($row = $drugs_add_requests_feedback->fetch_assoc()) {
+				$name = htmlspecialchars($row['admin_name']);
+				$date = htmlspecialchars($row['update_date']);
+				$status = htmlspecialchars($row['status']);
+				$drugName =  htmlspecialchars($row['name']);
+				$manufacturerName =  htmlspecialchars($row['manufacturer']);
+				$cost = htmlspecialchars($row['price']);
+				$quantity =  htmlspecialchars($row['quantity']);
+				$orderId = htmlspecialchars($row['id']);
+				?>
+				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+					<p class="message__name">
+						<span>Имя: </span><?php echo $name; ?>
+					</p>
+					<p class="message__date">
+						<span>Дата: </span><?php echo $date; ?>
+					</p>
+					<div class="message__text"><?php $money = $cost*$quantity; echo "Доступен результат по обработке поставки лекарства '$drugName' со стороны админитсрации от производителя '$manufacturerName' на сумму $money у.е. Результат: $status"; ?></div>
+						<div class="button-container">
+							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+								<input type="hidden" name="drug_request_status_viewed" value="<?php echo $orderId; ?>">
+								<button type="submit" class="button message__button">Понятно</button>
+							</form>
+						</div>
+					</div>
+				<?php
+			}
+			?>
 		</div>
 		<div class="message__buttons">
 			<!-- <button class="button message__button">Удалить</button> -->
-			<button id="message__button" class="button message__button">Закрыть</button>
+			<button id="message__button" class="button message__button__close">Закрыть</button>
 		</div>
 	</div>
+	<?php  endif;?>	
 
 
 </body>
@@ -369,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	// Обработчик для кнопки "Удалить"
-	document.querySelector('#message__button').addEventListener('click', function() {
+	document.querySelector('message__button__close').addEventListener('click', function() {
 		document.querySelector('.message').classList.remove('message_open');
 	});
 });
@@ -466,6 +547,8 @@ else:
 						href="?order_by_user=quantity&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">Количество</a></th>
 				<th class="column-cost"><a href="?order_by_user=cost&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">Стоимость</a>
 				</th>
+				<th class="column-status"><a href="?order_by_user=is_allowed&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">Статус</a>
+				</th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -491,6 +574,9 @@ else:
 				<td data-type="cost" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="cost"
 					style="cursor:pointer">
 					<?php echo htmlspecialchars($row['cost']); ?></td>
+				<td data-type="is_allowed" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="is_allowed"
+					style="cursor:pointer">
+					<?php echo htmlspecialchars($row['is_allowed']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
 						<input type="hidden" name="delete_drug_user" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
@@ -569,7 +655,9 @@ else:
 		</form>
 	</div>
 
-	<div class="message message_open">
+	
+	<?php if ($orders_from_shoppers->num_rows > 0 || $drugs_add_requests_feedback->num_rows > 0): ?>
+		<div class="message message_open">
 		<div class="message__inner">
 			<?php
 			while ($row = $orders_from_shoppers->fetch_assoc()) {
@@ -584,7 +672,7 @@ else:
 				?>
 				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
 					<p class="message__name">
-						<span>Имя: </span><?php echo $name; ?>
+						<span>Имя: </span><?php echo $name;?>
 					</p>
 					<p class="message__date">
 						<span>Дата: </span><?php echo $date; ?>
@@ -604,13 +692,42 @@ else:
 				<?php
 			}
 			?>
+			<?php
+			while ($row = $drugs_add_requests_feedback->fetch_assoc()) {
+				$name = htmlspecialchars($row['admin_name']);
+				$date = htmlspecialchars($row['update_date']);
+				$status = htmlspecialchars($row['status']);
+				$drugName =  htmlspecialchars($row['name']);
+				$manufacturerName =  htmlspecialchars($row['manufacturer']);
+				$cost = htmlspecialchars($row['price']);
+				$quantity =  htmlspecialchars($row['quantity']);
+				$orderId = htmlspecialchars($row['id']);
+				?>
+				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+					<p class="message__name">
+						<span>Имя: </span><?php echo $name; ?>
+					</p>
+					<p class="message__date">
+						<span>Дата: </span><?php echo $date; ?>
+					</p>
+					<div class="message__text"><?php $money = $cost*$quantity; echo "Доступен результат по обработке поставки лекарства '$drugName' со стороны админитсрации от производителя '$manufacturerName' на сумму $money у.е. Результат: $status"; ?></div>
+						<div class="button-container">
+							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+								<input type="hidden" name="drug_request_status_viewed" value="<?php echo $orderId; ?>">
+								<button type="submit" class="button message__button">Понятно</button>
+							</form>
+						</div>
+					</div>
+				<?php
+			}
+			?>
 		</div>
 		<div class="message__buttons">
 			<!-- <button class="button message__button">Удалить</button> -->
-			<button id="message__button" class="button message__button">Закрыть</button>
+			<button id="message__button" class="button message__button__close">Закрыть</button>
 		</div>
 	</div>
-
+	<?php  endif;?>	
 
 
 </body>
@@ -666,7 +783,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	// Обработчик для кнопки "Удалить"
-	document.querySelector('.message__button').addEventListener('click', function() {
+	document.querySelector('.message__button__close').addEventListener('click', function() {
 		document.querySelector('.message').classList.remove('message_open');
 	});
 });
@@ -947,7 +1064,7 @@ else:
 			<button type="submit" class="button popup__button">Сохранить</button>
 		</form>
 	</div>
-
+	<?php if ($orders_shopper_feedback->num_rows > 0): ?>
 	<div class="message message_open">
 		<div class="message__inner">
 			<?php
@@ -969,22 +1086,22 @@ else:
 						<span>Дата: </span><?php echo $date; ?>
 					</p>
 					<div class="message__text"><?php echo "Доступен результат по заказу лекарства '$drugName' от производителя '$manufacturerName' на сумму $cost у.е. Результат: $status"; ?></div>
-					<div class="button-container">
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-							<input type="hidden" name="order_shopper_viewed" value="<?php echo $orderId; ?>">
-							<button type="submit" class="button message__button">Понятно </button>
-						</form>
+						<div class="button-container">
+							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+								<input type="hidden" name="order_shopper_viewed" value="<?php echo $orderId; ?>">
+								<button type="submit" class="button message__button">Понятно </button>
+							</form>
+						</div>
 					</div>
-				</div>
 				<?php
 			}
 			?>
-		</div>
-		<div class="message__buttons">
-			<!-- <button class="button message__button">Удалить</button> -->
-			<button id="message__button" class="button message__button">Закрыть</button>
-		</div>
+				</div>
+				<div class="message__buttons">
+					<button class="button message__button__close">Закрыть</button>
+				</div>
 	</div>
+	<?php  endif;?>
 
 </body>
 
@@ -1057,8 +1174,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 
-	// Обработчик для кнопки "Удалить"
-	document.querySelector('.message__button').addEventListener('click', function() {
+	// Обработчик для кнопки "Закрыть"
+	document.querySelector('.message__button__close').addEventListener('click', function() {
 		document.querySelector('.message').classList.remove('message_open');
 	});
 });

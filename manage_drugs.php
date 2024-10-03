@@ -178,6 +178,20 @@ try{
                 }
             }
         }
+        if ($tableName === 'drugs' && $fieldName === 'is_allowed') {
+            if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
+                $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
+            }else{
+                $stmt = $conn->prepare("UPDATE drugs SET is_allowed = ? WHERE id = ?");
+                if ($stmt) {
+                    $stmt->bind_param('si', $inputValue, $formId);
+                    $stmt->execute();
+                    $stmt->close();
+                } else {
+                    echo "Ошибка подготовки запроса: " . $conn->error;
+                }
+            }
+        }
         if ($tableName === 'manufacturers' && $fieldName === 'name') {
             if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
                 $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
@@ -561,7 +575,8 @@ try{
         drugs.name AS name, 
         drugs.price AS price, 
         drugs.quantity AS quantity, 
-        drugs.cost AS cost 
+        drugs.cost AS cost,
+        drugs.is_allowed
     FROM 
         drugs 
     JOIN 
@@ -752,8 +767,18 @@ try{
         }
     }
 
-    //уведомления поставщик
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        
+        //Уведомления покупатель
+        if (isset($_POST['order_shopper_viewed'])) {
+            $orderId = intval($_POST['order_shopper_viewed']);
+            $updateOrderQuery = $conn->prepare("UPDATE orders SET checked_by_user = 1 WHERE id = ?");
+            $updateOrderQuery->bind_param('i', $orderId);
+            $updateOrderQuery->execute();
+            $updateOrderQuery->close();
+        }
+        //уведомления поставщик
         if (isset($_POST['order_from_shopper_apply'])) {
             $orderId = intval($_POST['order_from_shopper_apply']);
             $query = $conn->prepare("SELECT quantity, drug_id FROM orders WHERE id = ?");
@@ -799,23 +824,33 @@ try{
             $deleteQuery->execute();
             $deleteQuery->close();
         }
-        header('Location: ' . $_SERVER['HTTP_REFERER']); 
-        exit();
-    }
-
-    //Уведомления покупатель
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['order_shopper_viewed'])) {
-            $orderId = intval($_POST['order_shopper_viewed']);
-            $updateOrderQuery = $conn->prepare("UPDATE orders SET checked_by_user = 1 WHERE id = ?");
-            $updateOrderQuery->bind_param('i', $orderId);
-            $updateOrderQuery->execute();
-            $updateOrderQuery->close();
+        if (isset($_POST['drug_request_status_viewed'])) {
+            $orderId = intval($_POST['drug_request_status_viewed']);
+            $deleteQuery = $conn->prepare("UPDATE drugs SET checked_by_user = 1 WHERE id = ?");
+            $deleteQuery->bind_param('i', $orderId);
+            $deleteQuery->execute();
+            $deleteQuery->close();
+        }
+        //Уведомления администратор
+        if (isset($_POST['drug_supply_apply'])) {
+            $orderId = intval($_POST['drug_supply_apply']);
+            $deleteQuery = $conn->prepare("UPDATE drugs SET is_allowed = 'Одобрено', last_updated = current_timestamp(), who_checked = ? WHERE id = ?");
+            $deleteQuery->bind_param('ii', $_SESSION['user_id'], $orderId);
+            $deleteQuery->execute();
+            $deleteQuery->close();
+        }
+        if (isset($_POST['drug_supply_cancel'])) {
+            $orderId = intval($_POST['drug_supply_cancel']);
+            $deleteQuery = $conn->prepare("UPDATE drugs SET is_allowed = 'Отклонено', last_updated = current_timestamp(), who_checked = ? WHERE id = ?");
+            $deleteQuery->bind_param('ii', $_SESSION['user_id'], $orderId);
+            $deleteQuery->execute();
+            $deleteQuery->close();
         }
         header('Location: ' . $_SERVER['HTTP_REFERER']); 
         exit();
     }
+
+    
 
     $query = "SELECT * FROM drugs WHERE 1=1"; // Начинаем с базового условия
 
@@ -848,14 +883,15 @@ try{
         manufacturers.name AS manufacturer, 
         users.name AS supplier, 
         drugs.price AS price, 
-        drugs.quantity AS quantity 
+        drugs.quantity AS quantity,
+        drugs.is_allowed
     FROM 
         drugs 
     JOIN 
         manufacturers ON drugs.manufacturer_id = manufacturers.id 
     JOIN 
         users ON drugs.provider_id = users.id 
-    WHERE 1=1 
+    WHERE 1=1 and is_allowed = 'Одобрено'
     ";
 
     if (!empty($search_query_shopper)) {
@@ -998,6 +1034,60 @@ try{
     $stmt->execute();
     $orders_shopper_feedback = $stmt->get_result();
 
+    $query = "
+    SELECT DISTINCT
+        drugs.id AS id,
+        drugs.name AS name, 
+        manufacturers.name AS manufacturer, 
+        users.name AS supplier, 
+        drugs.price AS price, 
+        drugs.quantity AS quantity,
+        drugs.is_allowed as status,
+        drugs.last_updated as update_date        
+    FROM 
+        drugs 
+    JOIN 
+        manufacturers ON drugs.manufacturer_id = manufacturers.id 
+    JOIN 
+        users ON drugs.provider_id = users.id 
+    WHERE is_allowed = 'На рассмотрении'
+    ";
+
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
+    $drugs_add_requests =  $stmt->get_result();
+
+
+    $query = "
+    SELECT DISTINCT
+        drugs.id AS id,
+        drugs.name AS name, 
+        manufacturers.name AS manufacturer, 
+        users.name AS supplier, 
+        drugs.price AS price, 
+        drugs.quantity AS quantity,
+        drugs.is_allowed AS status,
+        drugs.last_updated AS update_date,
+        drugs.checked_by_user,
+        admin.name AS admin_name 
+    FROM 
+        drugs 
+    JOIN 
+        manufacturers ON drugs.manufacturer_id = manufacturers.id 
+    JOIN 
+        users ON drugs.provider_id = users.id
+    LEFT JOIN 
+        users AS admin ON drugs.who_checked = admin.id 
+    WHERE 
+        is_allowed <> 'На рассмотрении' 
+        AND checked_by_user = 0 
+        AND drugs.provider_id = ?
+    ";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $drugs_add_requests_feedback =  $stmt->get_result();
 
 } catch(mysqli_sql_exception $e){
     ?>
