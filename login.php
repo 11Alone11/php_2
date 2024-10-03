@@ -14,9 +14,6 @@ $error_message = '';
 $success_message = '';
 $input_username = '';
 try{
-
-    
-
 // Проверка отправки формы
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if($_SESSION['server_conn_error'] === true){
@@ -59,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     } else {
                         // Обработка случая, когда пользователь не найден
                         $_SESSION['user_id'] = null; // Или любое другое значение по умолчанию
-                        $_SESSION['user_type'] = 0; // По умолчанию - поставщик
+                        $_SESSION['user_type'] = 2; // По умолчанию - поставщик
                     }
                     header("Location: table.php");
                     unset( $_SESSION['error_message']);
