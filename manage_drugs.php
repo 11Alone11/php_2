@@ -941,6 +941,63 @@ try{
     $query = "SELECT name FROM manufacturers ORDER BY name";
     $res_manuf = $conn->query($query);
 
+    $query = "
+    SELECT 
+        orders.id AS id,
+        drugs.name AS drugName,
+        manufacturers.name AS manufacturerName,
+        users.name AS userName,
+        orders.quantity AS quantity,
+        orders.price AS price,
+        orders.cost AS cost,
+        orders.status AS status,
+        orders.last_updated AS update_date
+    FROM 
+        orders
+    JOIN 
+        drugs ON orders.drug_id = drugs.id
+    JOIN 
+        manufacturers ON orders.manufacturer_id = manufacturers.id
+    JOIN 
+        users ON orders.user_id = users.id
+    WHERE 
+        orders.provider_id = ? and status = 'В обработке'
+    ";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $orders_from_shoppers = $stmt->get_result();
+
+
+    $query = "
+    SELECT 
+        orders.id AS id,
+        drugs.name AS drugName,
+        manufacturers.name AS manufacturerName,
+        users.name AS providerName,
+        orders.quantity AS quantity,
+        orders.price AS price,
+        orders.cost AS cost,
+        orders.status AS status,
+        orders.last_updated AS update_date
+    FROM 
+        orders
+    JOIN 
+        drugs ON orders.drug_id = drugs.id
+    JOIN 
+        manufacturers ON orders.manufacturer_id = manufacturers.id
+    JOIN 
+        users ON orders.provider_id = users.id
+    WHERE 
+        orders.user_id = ? AND status <> 'В обработке' AND orders.checked_by_user = 0
+    ";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $orders_shopper_feedback = $stmt->get_result();
+
 
 } catch(mysqli_sql_exception $e){
     ?>
