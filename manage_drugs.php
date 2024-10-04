@@ -182,7 +182,21 @@ try{
             if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
                 $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
             }else{
-                $stmt = $conn->prepare("UPDATE drugs SET is_allowed = ? WHERE id = ?");
+                $stmt = $conn->prepare("UPDATE drugs SET is_allowed = ?, checked_by_user = 0, last_updated= CURRENT_TIMESTAMP, who_checked = ? WHERE id = ?");
+                if ($stmt) {
+                    $stmt->bind_param('sii', $inputValue, $_SESSION['user_id'], $formId);
+                    $stmt->execute();
+                    $stmt->close();
+                } else {
+                    echo "Ошибка подготовки запроса: " . $conn->error;
+                }
+            }
+        }
+        if ($tableName === 'my_orders_requests' && $fieldName === 'status') {
+            if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
+                $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
+            }else{
+                $stmt = $conn->prepare("UPDATE orders SET status = ?, checked_by_user = 0, last_updated= CURRENT_TIMESTAMP WHERE id = ?");
                 if ($stmt) {
                     $stmt->bind_param('si', $inputValue, $formId);
                     $stmt->execute();
@@ -286,25 +300,32 @@ try{
         if ($tableName === 'drugs_user' && $fieldName === 'manufacturer') {
             if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
                 $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
-            }else{
-                $manufacturerId;    
-                $checkManufacturerQuery = $conn->prepare("SELECT manufacturer_id FROM drugs WHERE id = ?");
-                $checkManufacturerQuery->bind_param('i', $formId);
+            } else {
+                $checkManufacturerQuery = $conn->prepare("SELECT id FROM manufacturers WHERE name = ?");
+                $checkManufacturerQuery->bind_param('s', $inputValue);
                 $checkManufacturerQuery->execute();
                 $checkManufacturerQuery->bind_result($manufacturerId);
                 $checkManufacturerQuery->fetch();
                 $checkManufacturerQuery->close();
                 if ($manufacturerId) {
-                    $stmt = $conn->prepare("UPDATE manufacturers SET name = ? WHERE id = ?");
+                    $stmt = $conn->prepare("UPDATE drugs SET manufacturer_id = ? WHERE id = ?");
                     if ($stmt) {
-                        $stmt->bind_param('si', $inputValue, $manufacturerId);
+                        $stmt->bind_param('ii', $manufacturerId, $formId);
+                        $stmt->execute();
+                        $stmt->close();
+                    } else {
+                        echo "Ошибка подготовки запроса: " . $conn->error;
+                    }
+                    $stmt = $conn->prepare("UPDATE orders SET manufacturer_id = ? WHERE drug_id = ?");
+                    if ($stmt) {
+                        $stmt->bind_param('ii', $manufacturerId, $formId);
                         $stmt->execute();
                         $stmt->close();
                     } else {
                         echo "Ошибка подготовки запроса: " . $conn->error;
                     }
                 } else {
-                    $_SESSION['error_message'] = "Производитель с указанным ID не найден.";
+                    $_SESSION['error_message'] = "Производитель не найден.";
                 }
             }
         }

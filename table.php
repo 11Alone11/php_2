@@ -121,7 +121,7 @@ if($_SESSION["user_type"] == 1):
 					style="cursor:pointer">
 					<?php echo htmlspecialchars($row['cost']); ?></td>
 				<td data-type="is_allowed" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs" data-field="is_allowed"
-					style="cursor:pointer">
+					style="cursor:pointer" class="openPopup">
 					<?php echo htmlspecialchars($row['is_allowed']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
@@ -246,6 +246,8 @@ if($_SESSION["user_type"] == 1):
 						href="?order_by_supplier=quantity&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Количество</a></th>
 				<th class="column-cost"><a
 						href="?order_by_supplier=cost&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Стоимость</a></th>
+				<th class="column-status"><a
+						href="?order_by_supplier=status&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Статус</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -261,6 +263,7 @@ if($_SESSION["user_type"] == 1):
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
 						<input type="hidden" name="delete_supplier_order" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
@@ -611,6 +614,8 @@ else:
 						href="?order_by_supplier=quantity&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Количество</a></th>
 				<th class="column-cost"><a
 						href="?order_by_supplier=cost&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Стоимость</a></th>
+				<th class="column-status"><a
+						href="?order_by_supplier=status&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Статус</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -626,6 +631,8 @@ else:
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
+				<td data-type="status" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="my_orders_requests" data-field="status"
+				style="cursor:pointer" class="openPopup"><?php echo htmlspecialchars($row['status']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
 						<input type="hidden" name="delete_supplier_order" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
@@ -888,17 +895,17 @@ else:
 
 	<!-- Таблица с данными о лекарствах пользователя-->
 	<h1 class="title mb20 mt20">Моя корзина</h1>
+    <div class="button-container" style="margin: 0 auto;">
+		<form style="margin-bottom: 12px" class="form__checkbox" method="POST" id="checkboxForm">
+			<input type="hidden" name="action" value="delete"> <!-- Добавляем скрытое поле для действия удаления -->
+			<button class="button form__button" type="button" id="processButton">Удалить</button>
+		</form>
 
-	<form style="margin-bottom: 12px" class="form__checkbox" method="POST" id="checkboxForm">
-		<input type="hidden" name="action" value="delete"> <!-- Добавляем скрытое поле для действия удаления -->
-		<button class="button form__button" type="button" id="processButton">Удалить</button>
-	</form>
-
-	<form style="margin-bottom: 12px" class="form__checkbox" method="POST" id="updateForm">
-		<input type="hidden" name="action" value="update"> <!-- Добавляем скрытое поле для действия обновления -->
-		<button class="button form__button" type="button" id="updateButton">Оформить</button>
-	</form>
-
+		<form style="display: none;" style="margin-bottom: 12px" class="form__checkbox" method="POST" id="updateForm">
+			<input type="hidden" name="action" value="update"> <!-- Добавляем скрытое поле для действия обновления -->
+			<button class="button form__button" type="button" id="updateButton">Оформить</button>
+		</form>
+	</div>
 	<table class="table_cart">
 		<thead>
 			<tr>
