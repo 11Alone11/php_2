@@ -6,6 +6,8 @@
 // endif;
 session_start();
 include 'db.php';
+include 'db_executor.php';
+
 $_SESSION['sql_error_message'] = 'Ошибка базы данных:';
 $_SESSION['server_error_message'] = 'Ошибка сервера';
 $_SESSION['server_conn_error'] = false;
@@ -14,6 +16,7 @@ $error_message = '';
 $success_message = '';
 $input_username = '';
 try{
+    $dbExecutor = new ActionLogger();
 // Проверка отправки формы
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if($_SESSION['server_conn_error'] === true){
@@ -56,8 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     } else {
                         // Обработка случая, когда пользователь не найден
                         $_SESSION['user_id'] = null; // Или любое другое значение по умолчанию
-                        $_SESSION['user_type'] = 2; // По умолчанию - поставщик
+                        $_SESSION['user_type'] = 2; // По умолчанию - покупатель
                     }
+                    $user_type = isset($_SESSION['user_id']) 
+                    ? ($_SESSION['user_type'] == 1 ? 'админ' : ($_SESSION['user_type'] == 0 ? 'поставщик' : ($_SESSION['user_type'] == 2 ? 'покупатель' : 'неизвестный тип')))
+                    : 'неизвестный тип';
+                    $Actstr = "Пользователь $input_username типа '$user_type' зашел в систему.";
+                    $dbExecutor->insertAction($_SESSION['user_id'], $Actstr);
                     header("Location: table.php");
                     unset( $_SESSION['error_message']);
                     exit(); // Прекращаем выполнение скрипта после перенаправления

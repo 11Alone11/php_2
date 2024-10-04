@@ -291,18 +291,26 @@ main {
 }
 
 .button__fixed {
-	width: 120px;
+	width: 100px;
 	position: fixed;
 	top: 20px;
 	left: 20px;
 }
 
 .button__fixed_right {
-	width: 120px;
+	width: 100px;
 	position: fixed;
 	right: 20px;
 	top: 20px;
 	left: unset;
+}
+
+.button__fixed_colhoz {
+	width: 100px;
+	position: fixed;
+	right: 20px;
+	top: 100px;
+	left: 20px;
 }
 
 .input {
@@ -458,6 +466,15 @@ tr:hover {
 .column-actions {
 	width: 20%;
 }
+.column-action-descr {
+	width: 80%;
+}
+.column-action-dt {
+	width: 20%;
+}
+.column-action-login {
+	width: 15%;
+}
 
 .message {
 	text-align: justify;
@@ -576,15 +593,10 @@ tr:hover {
 }
 
 
-
-
 .button-container {
     display: flex; 
     gap: 10px;
 }
-
-
-
 
 .notification-left {
     position: fixed;
@@ -612,4 +624,33 @@ tr:hover {
 .notification-left span {
     font-size: 16px; /* Размер шрифта для спанов */
     font-weight: 400; /* Обычный текст */
+}
+
+.filter-container {
+	left: 20px;
+	right: 20px;
+    display: flex;
+    gap: 10px; 
+    margin-bottom: 20px; 
+}
+
+.filter-container input {
+    padding: 8px;
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+    flex: 1;
+}
+
+.filter-container button {
+    padding: 8px 16px; 
+    background-color: #000; 
+    color: #fff; 
+    border: none;
+    border-radius: 4px; 
+    cursor: pointer;
+}
+
+.filter-container button:hover {
+    background-color: #fff; 
+    color: #000;
 }

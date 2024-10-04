@@ -52,6 +52,9 @@ if($_SESSION["user_type"] == 1):
 	<a href="index.php" class="button button__fixed">
 		На главную
 	</a>
+	<a href="activity_log.php" class="button button__fixed button__fixed_colhoz">
+		Лог событий
+	</a>
 	<!-- Форма поиска лекарств-->
 	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
@@ -248,6 +251,8 @@ if($_SESSION["user_type"] == 1):
 						href="?order_by_supplier=cost&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Стоимость</a></th>
 				<th class="column-status"><a
 						href="?order_by_supplier=status&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Статус</a></th>
+				<th class="column-status"><a
+						href="?order_by_supplier=last_updated&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Время обновления</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -263,7 +268,9 @@ if($_SESSION["user_type"] == 1):
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
-				<td style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
+				<td data-type="status" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="my_orders_requests" data-field="status"
+				style="cursor:pointer" class="openPopup"><?php echo htmlspecialchars($row['status']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['last_updated']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
 						<input type="hidden" name="delete_supplier_order" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
@@ -616,6 +623,8 @@ else:
 						href="?order_by_supplier=cost&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Стоимость</a></th>
 				<th class="column-status"><a
 						href="?order_by_supplier=status&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Статус</a></th>
+				<th class="column-status"><a
+						href="?order_by_supplier=last_updated&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Время обновления</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -633,6 +642,7 @@ else:
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
 				<td data-type="status" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="my_orders_requests" data-field="status"
 				style="cursor:pointer" class="openPopup"><?php echo htmlspecialchars($row['status']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['last_updated']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
 						<input type="hidden" name="delete_supplier_order" class="input" value="<?php echo htmlspecialchars($row['id']); ?>">
@@ -928,7 +938,10 @@ else:
 						href="?order_by_shopper_cart=cost&order_dir_shopper_cart=<?php echo htmlspecialchars($order_dir_shopper_cart); ?>">Стоимость</a>
 				</th>
 				<th class="column-status"><a
-						href="?order_by_shopper=status&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Статус</a>
+						href="?order_by_shopper_cart=status&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Статус</a>
+				</th>
+				<th class="column-status"><a
+						href="?order_by_shopper_cart=last_updated&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Время обновления</a>
 				</th>
 				<th class="column-actions">Действия</th>
 			</tr>
@@ -955,7 +968,7 @@ else:
 					data-field="quantity" class="openPopup"><?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
-
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['last_updated']); ?></td>
 				<td>
 					<!-- Внутренняя форма удаления -->
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;" class="deleteForm">

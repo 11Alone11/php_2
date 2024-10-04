@@ -2,7 +2,7 @@
 
 include 'db.php'; 
 include 'sessionConf.php';
-
+include 'db_executor.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 // Лекарства
 $search_query = '';
@@ -47,7 +47,7 @@ try{
     if(!isset($conn)){
         throw new Exception("Ошибка соединения с сервером");
     }
-
+    $dbExecuter = new ActionLogger();
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //var_dump($_POST); // Выводим все переменные POST для отладки
@@ -57,7 +57,7 @@ try{
             $tableName = $_POST['tableName'];
             $fieldName = $_POST['fieldName'];
             $inputValue = $_POST['input'];
-            echo "Table: " . $tableName . " Field: " . $fieldName; // Для проверки
+            //echo "Table: " . $tableName . " Field: " . $fieldName; // Для проверки
         if ($tableName === 'drugs' && $fieldName === 'name') {
             if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
                 $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
@@ -70,6 +70,8 @@ try{
             } else {
                 echo "Ошибка подготовки запроса: " . $conn->error;
             }
+            $Actstr = "Обновление поля названия лекарства c идентификатором '$formId' на '$inputValue'";
+            $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
         }
         }
         if ($tableName === 'drugs' && $fieldName === 'manufacturer_id') {
@@ -91,6 +93,8 @@ try{
                         $stmt->bind_param('ii', $inputValue, $formId);
                         $stmt->execute();
                         $stmt->close();
+                        $Actstr = "Обновление поля идентификатора производителя лекарства c идентификатором '$formId' на '$inputValue'";
+                        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                     } else {
                         echo "Ошибка подготовки запроса: " . $conn->error;
                     }
@@ -120,6 +124,8 @@ try{
                     $stmt->bind_param('ddi', $inputValue, $cost, $formId);
                     $stmt->execute();
                     $stmt->close();
+                    $Actstr = "Обновление поля цены и итоговой стоимости лекарства c идентификатором '$formId'.\nНовые значения: Цена: '$inputValue', Итоговая стоимость: '$cost'";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                 } else {
                     echo "Ошибка подготовки запроса: " . $conn->error;
                 }
@@ -146,6 +152,8 @@ try{
                     $stmt->bind_param('idi', $inputValue, $cost, $formId);
                     $stmt->execute();
                     $stmt->close();
+                    $Actstr = "Обновление поля количества и итоговой стоимости лекарства c идентификатором '$formId'.\nНовые значения: Количество: '$inputValue', Итоговая стоимость: '$cost'";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                 } else {
                     echo "Ошибка подготовки запроса: " . $conn->error;
                 }
@@ -170,6 +178,8 @@ try{
                         $stmt->bind_param('ii', $inputValue, $formId);
                         $stmt->execute();
                         $stmt->close();
+                        $Actstr = "Обновление поля идентификатора поставщика лекарства с идентификатором '$formId'.\nНовое значение: '$inputValue'";
+                        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                     } else {
                         echo "Ошибка подготовки запроса: " . $conn->error;
                     }
@@ -187,6 +197,8 @@ try{
                     $stmt->bind_param('sii', $inputValue, $_SESSION['user_id'], $formId);
                     $stmt->execute();
                     $stmt->close();
+                    $Actstr = "Обновление поля доступа к внесению лекарства с идентификатором '$formId'.\nНовое значение: '$inputValue'";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                 } else {
                     echo "Ошибка подготовки запроса: " . $conn->error;
                 }
@@ -201,6 +213,8 @@ try{
                     $stmt->bind_param('si', $inputValue, $formId);
                     $stmt->execute();
                     $stmt->close();
+                    $Actstr = "Пользователь прочитал уведомление о заказе '$formId'.\nРезультат заказа: '$inputValue'";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                 } else {
                     echo "Ошибка подготовки запроса: " . $conn->error;
                 }
@@ -215,6 +229,8 @@ try{
                     $stmt->bind_param('si', $inputValue, $formId);
                     $stmt->execute();
                     $stmt->close();
+                    $Actstr = "Обновление названия производителя с идентификатором '$formId'.\nНовое значение: '$inputValue'";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                 } else {
                     echo "Ошибка подготовки запроса: " . $conn->error;
                 }
@@ -260,6 +276,8 @@ try{
                         $stmt->bind_param('si', $inputValue, $formId);
                         $stmt->execute();
                         $stmt->close();
+                        $Actstr = "Обновление логина пользователя с идентификатором '$formId'.\nНовое значение: '$inputValue'";
+                        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                     } else {
                         echo "Ошибка подготовки запроса: " . $conn->error;
                     }
@@ -275,6 +293,11 @@ try{
                     $stmt->bind_param('ii', $inputValue, $formId);
                     $stmt->execute();
                     $stmt->close();
+                    $user_type = true
+                    ? ($inputValue == 1 ? 'админ' : ($inputValue == 0 ? 'поставщик' : ($inputValue == 2 ? 'покупатель' : 'неизвестный тип')))
+                    : 'неизвестный тип';
+                    $Actstr = "Обновление типа пользователя с идентификатором '$formId'.\nНовое значение: '$user_type'";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                 } else {
                     echo "Ошибка подготовки запроса: " . $conn->error;
                 }
@@ -291,7 +314,9 @@ try{
                     $stmt->bind_param('si', $inputValue, $formId);
                     $stmt->execute();
                     $stmt->close();
-                    echo "drugs_user name";
+                    $Actstr = "Обновление поля наименования лекарства поставщика с идентификатором '$formId'.\nНовое значение: '$inputValue'";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
+                    // echo "drugs_user name";
                 } else {
                     echo "Ошибка подготовки запроса: " . $conn->error;
                 }
@@ -313,6 +338,8 @@ try{
                         $stmt->bind_param('ii', $manufacturerId, $formId);
                         $stmt->execute();
                         $stmt->close();
+                        $Actstr = "Обновление поля идентификатора производителя лекарства с идентификатором '$formId'.\nНовое значение: '$manufacturerId' или же '$inputValue'";
+                        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                     } else {
                         echo "Ошибка подготовки запроса: " . $conn->error;
                     }
@@ -321,6 +348,8 @@ try{
                         $stmt->bind_param('ii', $manufacturerId, $formId);
                         $stmt->execute();
                         $stmt->close();
+                        $Actstr = "Обновление поля идентификатора производителя лекарства в таблице заказов с идентификатором '$formId'.\nНовое значение: '$manufacturerId' или же '$inputValue'";
+                        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                     } else {
                         echo "Ошибка подготовки запроса: " . $conn->error;
                     }
@@ -351,7 +380,9 @@ try{
                     $stmt->bind_param('ddi', $inputValue, $cost, $formId);
                     $stmt->execute();
                     $stmt->close();
-                    echo "drugs_user price";
+                    $Actstr = "Обновление поля цены и общей стоимости лекарства с идентификатором '$formId'.\nНовые значения: Цена - '$inputValue', итоговая стоимость - '$cost' ";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
+                    // echo "drugs_user price";
                 } else {
                     echo "Ошибка подготовки запроса: " . $conn->error;
                 }
@@ -378,7 +409,9 @@ try{
                     $stmt->bind_param('idi', $inputValue, $cost, $formId);
                     $stmt->execute();
                     $stmt->close();
-                    echo "drugs_user quantity";
+                    $Actstr = "Обновление поля количества и общей стоимости лекарства с идентификатором '$formId'.\nНовые значения: Количество - '$inputValue', итоговая стоимость - '$cost' ";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
+                    // echo "drugs_user quantity";
                 } else {
                     echo "Ошибка подготовки запроса: " . $conn->error;
                 }
@@ -417,6 +450,8 @@ try{
                         $stmt->bind_param('idi', $inputValue, $cost, $formId);
                         $stmt->execute();
                         $stmt->close();
+                        $Actstr = "Обновление поля количества и общей стоимости лекарства с идентификатором заказа '$formId'.\nНовые значения: Количество - '$inputValue', итоговая стоимость - '$cost' ";
+                        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                     } else {
                         echo "Ошибка подготовки запроса: " . $conn->error;
                     }
@@ -430,52 +465,72 @@ try{
 
     if (isset($_POST['search'])) {
         $search_query = isset($_POST['search_query']) ? $_POST['search_query'] : '';
+        $Actstr = "Поставщик установил строку поиска '$search_query' для таблицы лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
     if (isset($_POST['search_for_user'])) {
         $search_query_user = $conn->real_escape_string($_POST['search_for_user']);
+        $Actstr = "Поставщик установил строку поиска '$search_query_user' для таблицы его лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
     if (isset($_GET['order_by_user']) && isset($_GET['order_dir_user'])) {
         $order_by_user = $_GET['order_by_user'];
         $order_dir_user = $_GET['order_dir_user'] === 'ASC' ? 'DESC' : 'ASC';
+        $Actstr = "Поставщик установил порядок сортировки '$order_dir_user' и сортировку по полю '$order_by_user' для таблицы его лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
 
     if (isset($_GET['order_by']) && isset($_GET['order_dir'])) {
         $order_by = $_GET['order_by'];
         $order_dir = $_GET['order_dir'] === 'ASC' ? 'DESC' : 'ASC';
+        $Actstr = "Администратор установил порядок сортировки '$order_dir' и сортировку по полю '$order_by' для таблицы лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
     if (isset($_GET['users_order_by']) && isset($_GET['users_order_dir'])) {
         $users_order_by = $_GET['users_order_by'];
         $users_order_dir = $_GET['users_order_dir'] === 'ASC' ? 'DESC' : 'ASC';
+        $Actstr = "Администратор установил порядок сортировки '$users_order_dir' и сортировку по полю '$users_order_by' для таблицы поставщиков.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
     if (isset($_GET['manufacturers_order_by']) && isset($_GET['manufacturers_order_dir'])) {
         $manufacturers_order_by = $_GET['manufacturers_order_by'];
         $manufacturers_order_dir = $_GET['manufacturers_order_dir'] === 'ASC' ? 'DESC' : 'ASC';
+        $Actstr = "Администратор установил порядок сортировки '$manufacturers_order_dir' и сортировку по полю '$manufacturers_order_by' для таблицы производителей.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
     if (isset($_GET['order_by_shopper']) && isset($_GET['order_dir_shopper'])) {
         $order_by_shopper = $_GET['order_by_shopper'];
         $order_dir_shopper = $_GET['order_dir_shopper'] === 'ASC' ? 'DESC' : 'ASC';
+        $Actstr = "Покупатель установил порядок сортировки '$order_dir_shopper' и сортировку по полю '$order_by_shopper' для таблицы лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
     if (isset($_GET['order_by_shopper_cart']) && isset($_GET['order_dir_shopper_cart'])) {
         $order_by_shopper_cart = $_GET['order_by_shopper_cart'];
         $order_dir_shopper_cart = $_GET['order_dir_shopper_cart'] === 'ASC' ? 'DESC' : 'ASC';
+        $Actstr = "Покупатель установил порядок сортировки '$order_dir_shopper_cart' и сортировку по полю '$order_by_shopper_cart' в его корзине лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }  
 
     if (isset($_GET['order_by_supplier']) && isset($_GET['order_dir_supplier'])) {
         $order_by_supplier = $_GET['order_by_supplier'];
         $order_dir_supplier = $_GET['order_dir_supplier'] === 'ASC' ? 'DESC' : 'ASC';
+        $Actstr = "Администратор установил порядок сортировки '$order_dir_supplier' и сортировку по полю '$order_by_supplier' в его таблице заказов лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     } 
 
     //Add for user
 
     if (isset($_POST['search_for_shopper'])) {
         $search_query_shopper = htmlspecialchars($_POST['search_for_shopper']);
+        $Actstr = "Покупатель установил строку поиска '$search_query_shopper' для лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
     if (isset($_POST['add_drugs_user'])) {
@@ -549,6 +604,8 @@ try{
                 $_SESSION['error_message'] = 'Ошибка добавления лекарства: ' . $conn->error;
             }
             $insert_query->close();
+            $Actstr = "Поставщик внес новое лекарство на рассмотрение '$name'. Общая стоимость и количество: '$cost' '$quantity'";
+            $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
             header("Location: table.php");
             exit();
         }
@@ -582,6 +639,8 @@ try{
             $insertQuery->bind_param('iiiiidsd', $userId, $providerId, $manufacturerId, $drugId, $desiredQuantity, $price, $status, $cost);
             $insertQuery->execute();
             $insertQuery->close();
+            $Actstr = "Покупатель добавил лекарство '$drugId' в корзину. Общая стоимость и количество: '$cost' '$desiredQuantity'";
+            $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
         } else {
@@ -642,6 +701,8 @@ try{
                 $insert_query = "INSERT INTO manufacturers (name) VALUES ('$name')";
                 if ($conn->query($insert_query) === TRUE) {
                     $_SESSION['success_message'] = 'Производитель успешно добавлен.';
+                    $Actstr = "Администратор добавил нового производителя '$name'";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                 } else {
                     $_SESSION['error_message'] = 'Ошибка добавления производителя: ' . $conn->error;
                 }
@@ -653,6 +714,8 @@ try{
         $id = intval($_POST['delete_drug_user']);
         $delete_query = "DELETE FROM drugs WHERE id=$id";
         $conn->query($delete_query);
+        $Actstr = "Поставщик удалил свое лекарство с идентификатором '$id'";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);        
         header("Location: table.php");
         exit();
     }
@@ -706,6 +769,8 @@ try{
             $cost =  $conn->real_escape_string(htmlspecialchars($cost_pre_version, ENT_QUOTES, 'UTF-8'));
             $insert_query = "INSERT INTO drugs (name, manufacturer_id, provider_id, price, quantity, cost) VALUES ('$name', '$manufacturer_id', '$provider_id', '$price', '$quantity', '$cost_pre_version')";
             $conn->query($insert_query);
+            $Actstr = "Администратор добавил новое лекарство '$name'. Общая стоимость и количество - '$cost', '$quantity'";
+            $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);  
             header("Location: table.php");
             exit();
         }
@@ -715,9 +780,14 @@ try{
         $id = intval($_POST['delete']);
         $delete_query = "DELETE FROM drugs WHERE id=$id";
         $conn->query($delete_query);
+        $Actstr = "Администратор удалил лекарство '$id'.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);  
     }
 
     if (isset($_POST['logout'])) {
+        $name = $_SESSION['user'];
+        $Actstr = "Пользователь '$name' вышел из системы.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);  
         session_unset();
         session_destroy();
         header("Location: index.php");
@@ -736,7 +806,8 @@ try{
             } else {
                 $delete_query = "DELETE FROM users WHERE id=$id";
                 if ($conn->query($delete_query) === TRUE) {
-                  
+                    $Actstr = "Администратор удалил пользователя '$id'.";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr); 
                 } else {
                     echo "Ошибка при удалении: " . $conn->error;
                 }
@@ -751,18 +822,24 @@ try{
         $id = intval($_POST['delete_manufacturer']);
         $delete_query = "DELETE FROM manufacturers WHERE id=$id";
         $conn->query($delete_query);
+        $Actstr = "Администратор удалил производителя '$id'.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr); 
     }
 
     if (isset($_POST['delete_shopper_drug'])) {
         $id = intval($_POST['delete_shopper_drug']);
         $delete_query = "DELETE FROM orders WHERE id=$id";
         $conn->query($delete_query);
+        $Actstr = "Покупатель удалил из корзины лекарство '$id'.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
     if (isset($_POST['delete_supplier_order'])) {
         $id = intval($_POST['delete_supplier_order']);
         $delete_query = "DELETE FROM orders WHERE id=$id";
         $conn->query($delete_query);
+        $Actstr = "Администратор удалил один из своих заказов '$id'.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -773,12 +850,16 @@ try{
                 foreach ($selectedItems as $itemId) {
                     $delete_query = "DELETE FROM orders WHERE id=$itemId";
                     $conn->query($delete_query);
+                    $Actstr = "Покупатель удалил из корзины лекарство '$itemId'.";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                 }
             } elseif (isset($_POST['action']) && $_POST['action'] === 'update') {
                 $selectedItems = $_POST['check_all'];
                 foreach ($selectedItems as $itemId) {
                     $update_query = "UPDATE orders SET status = 'Оформлен' WHERE id=$itemId";
                     $conn->query($update_query);
+                    $Actstr = "Покупатель оформил заказ на лекарство '$itemId'.";
+                    $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                 }
             } 
             header("Location: table.php");
@@ -798,6 +879,8 @@ try{
             $updateOrderQuery->bind_param('i', $orderId);
             $updateOrderQuery->execute();
             $updateOrderQuery->close();
+            $Actstr = "Покупатель прочитал уведомление по заказу '$orderId'.";
+            $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
         }
         //уведомления поставщик
         if (isset($_POST['order_from_shopper_apply'])) {
@@ -822,11 +905,15 @@ try{
                         $updateOrderQuery->bind_param('i', $orderId);
                         $updateOrderQuery->execute();
                         $updateOrderQuery->close();
+                        $Actstr = "Поставщик собирает заказ '$orderId'.";
+                        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                         $newQuantity = $availableQuantity - $orderQuantity;
                         $updateDrugQuery = $conn->prepare("UPDATE drugs SET quantity = ? WHERE id = ?");
                         $updateDrugQuery->bind_param('ii', $newQuantity, $drugId);
                         $updateDrugQuery->execute();
                         $updateDrugQuery->close();
+                        $Actstr = "Запас лекарства '$drugId' уменьшен на '$orderQuantity' штук.";
+                        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
                     } else {
                         $_SESSION['error_message'] = "Недостаточно товара на складе.";
                     }
@@ -844,6 +931,8 @@ try{
             $deleteQuery->bind_param('i', $orderId);
             $deleteQuery->execute();
             $deleteQuery->close();
+            $Actstr = "Администратор отклонил заказ '$orderId'";
+            $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
         }
         if (isset($_POST['drug_request_status_viewed'])) {
             $orderId = intval($_POST['drug_request_status_viewed']);
@@ -851,6 +940,8 @@ try{
             $deleteQuery->bind_param('i', $orderId);
             $deleteQuery->execute();
             $deleteQuery->close();
+            $Actstr = "Администратор просмотрел результат заявки на поставку лекарства '$orderId'";
+            $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
         }
         //Уведомления администратор
         if (isset($_POST['drug_supply_apply'])) {
@@ -859,6 +950,8 @@ try{
             $deleteQuery->bind_param('ii', $_SESSION['user_id'], $orderId);
             $deleteQuery->execute();
             $deleteQuery->close();
+            $Actstr = "Администратор одобрил заявку на поставку лекарства '$orderId'";
+            $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
         }
         if (isset($_POST['drug_supply_cancel'])) {
             $orderId = intval($_POST['drug_supply_cancel']);
@@ -866,6 +959,8 @@ try{
             $deleteQuery->bind_param('ii', $_SESSION['user_id'], $orderId);
             $deleteQuery->execute();
             $deleteQuery->close();
+            $Actstr = "Администратор отклонил заявку на поставку лекарства '$orderId'";
+            $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
         }
         header('Location: ' . $_SERVER['HTTP_REFERER']); 
         exit();
@@ -934,7 +1029,8 @@ try{
     drugs.price AS price,
     orders.quantity AS quantity,
     orders.cost AS cost,
-    orders.status as status
+    orders.status as status,
+    orders.last_updated
     FROM 
         orders
     JOIN 
@@ -966,7 +1062,8 @@ try{
         drugs.price AS price,
         orders.quantity AS quantity,
         orders.cost AS cost,
-        orders.status
+        orders.status,
+        orders.last_updated
     FROM 
         orders
     JOIN 
@@ -976,9 +1073,9 @@ try{
     JOIN 
         users ON orders.user_id = users.id
     WHERE 
-        orders.provider_id = ? and status <> 'В обработке'
+        orders.provider_id = ?
     ";
-    
+    // and status <> 'В обработке'
     $search_query_user_supplier = $search_query_user;
     if (!empty($search_query_user_supplier)) {
         $query .= " AND drugs.name LIKE '%$search_query_user_supplier%' ";
