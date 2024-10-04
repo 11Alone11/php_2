@@ -732,7 +732,7 @@ try{
         $manufacturer_result = $conn->query($manufacturer_query);
         $manufacturer = $manufacturer_result->fetch_assoc();
         // Получаем данные поставщика
-        $provider_query = "SELECT name FROM users WHERE id = $provider_id";
+        $provider_query = "SELECT name FROM users WHERE id = $provider_id and type <> 2";
         $provider_result = $conn->query($provider_query);
         $provider = $provider_result->fetch_assoc();
         if (empty($name)) {
