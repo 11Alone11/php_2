@@ -465,7 +465,7 @@ try{
 
     if (isset($_POST['search'])) {
         $search_query = isset($_POST['search_query']) ? $_POST['search_query'] : '';
-        $Actstr = "Поставщик установил строку поиска '$search_query' для таблицы лекарств.";
+        $Actstr = "Администратор установил строку поиска '$search_query' для таблицы лекарств.";
         $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
 
@@ -969,7 +969,6 @@ try{
     
 
     $query = "SELECT * FROM drugs WHERE 1=1"; // Начинаем с базового условия
-
     if (!empty($search_query)) {
         if (is_numeric($search_query)) {
             $query .= " AND (manufacturer_id = $search_query 
