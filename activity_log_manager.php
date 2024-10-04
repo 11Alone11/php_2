@@ -10,7 +10,7 @@ include 'sessionConf.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $search_query = '';
 $order_by = 'action_datetime';
-$order_dir = 'ASC';
+$order_dir = 'DESC';
 
 
 $event_id = '';

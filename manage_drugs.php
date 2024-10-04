@@ -285,8 +285,8 @@ try{
             }
         }
         if ($tableName === 'users' && $fieldName === 'type') {
-            if(!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0){
-                $_SESSION['error_message'] = "Тип поставщика должен быть положительным целым числом";
+            if (!is_numeric($inputValue) || intval($inputValue) != $inputValue || $inputValue < 0) {
+                $_SESSION['error_message'] = "Тип поставщика должен быть целым неотрицательным числом";
             }else{
                 $stmt = $conn->prepare("UPDATE users SET type = ? WHERE id = ?");
                 if ($stmt) {
@@ -468,6 +468,7 @@ try{
         $Actstr = "Администратор установил строку поиска '$search_query' для таблицы лекарств.";
         $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
     }
+    
 
     if (isset($_POST['search_for_user'])) {
         $search_query_user = $conn->real_escape_string($_POST['search_for_user']);
@@ -966,8 +967,6 @@ try{
         exit();
     }
 
-    
-
     $query = "SELECT * FROM drugs WHERE 1=1"; // Начинаем с базового условия
     if (!empty($search_query)) {
         if (is_numeric($search_query)) {
@@ -984,6 +983,7 @@ try{
     // Добавляем условия сортировки
     $query .= " ORDER BY $order_by $order_dir";
     $result = $conn->query($query);
+    
 
     $query = "SELECT * FROM users ORDER BY $users_order_by $users_order_dir";
     $res = $conn->query($query);
