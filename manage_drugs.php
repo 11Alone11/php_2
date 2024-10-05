@@ -164,7 +164,7 @@ try{
                 $_SESSION['error_message'] = "ID поставщика должен быть положительным целым числом";
             } else {
                 // Check if the provider_id exists in the users table
-                $checkProviderQuery = $conn->prepare("SELECT COUNT(*) FROM users WHERE id = ?");
+                $checkProviderQuery = $conn->prepare("SELECT COUNT(*) FROM users WHERE id = ? and type <> 2");
                 $checkProviderQuery->bind_param('i', $inputValue);
                 $checkProviderQuery->execute();
                 $checkProviderQuery->bind_result($count);
