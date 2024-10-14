@@ -56,7 +56,7 @@ if($_SESSION["user_type"] == 1):
 		Лог событий
 	</a>
 	<!-- Форма поиска лекарств-->
-	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
 		<input type="text" name="search_query" class="input" placeholder="Поиск..." value="<?php echo htmlspecialchars($search_query); ?>">
 		<button type="submit" name="search" class="button">Поиск</button>
@@ -156,9 +156,7 @@ if($_SESSION["user_type"] == 1):
 	</form>
 
 	<h1 class="title mb20 mt20">Производители</h1>
-
 	<!-- Таблица с данными о производителях!-->
-
 	<table>
 		<thead>
 			<tr>
@@ -500,7 +498,7 @@ else:
 		На главную
 	</a>
 	<!-- Форма поиска лекарств-->
-	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
 		<input type="text" name="search_for_user" class="input" placeholder="Поиск..." value="<?php 
 		echo htmlspecialchars($search_query_user); ?>">
@@ -825,11 +823,7 @@ else:
 
 <body>
 	<h1 class="title mb20 mt20">Закупка лекарствами</h1>
-	<form method="POST" action="
-    <?php   
-        // session_unset();
-        // session_destroy(); 
-    ?>">
+	<form method="POST">
 		<button type="submit" name="logout" class="button button__fixed button__fixed_right">
 			Выйти
 		</button>
@@ -838,12 +832,18 @@ else:
 	<a href="index.php" class="button button__fixed">
 		На главную
 	</a>
-	<!-- Форма поиска лекарств-->
-	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+
+	<form method="POST" style="display:none;">
+		<button type="submit" name="drop_res" class="button button_not_fixed button__fixed_colhoz">
+		Убрать рекомендации
+		</button>
+	</form>
+	<!-- Форма поиска лекарств style="display:none;" -->
+	<form  method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
 		<input type="text" name="search_for_shopper" class="input" placeholder="Поиск..."
 			value="<?php echo htmlspecialchars($search_query_shopper); ?>">
-		<button type="submit" name="search" class="button">Поиск</button>
+		<button type="submit" name="search_us_btn" class="button">Поиск</button>
 		<?php if (isset($_SESSION['error_message'])): ?>
 		<div class="auth__message">
 			✖ <?php echo htmlspecialchars($_SESSION['error_message']); ?>
@@ -855,7 +855,7 @@ else:
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Все лекарства</h1>
 
-	<table>
+	<table class="tbody_drugs_shopper">
 		<thead>
 			<tr>
 				<th class="column-name"><a
@@ -874,7 +874,7 @@ else:
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody class="tbody_drugs_shopper">
 			<?php
 			if (isset($result_shopper)) {
 				while ($row = $result_shopper->fetch_assoc()) {
@@ -905,6 +905,10 @@ else:
 
 	<!-- Таблица с данными о лекарствах пользователя-->
 	<h1 class="title mb20 mt20">Моя корзина</h1>
+	<?php $rowSum = $user_analytics_sum_drugs->fetch_assoc();
+	 $rowMedDrug = $user_analytics_med_drugs->fetch_assoc();?>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарные затраты: <?php echo htmlspecialchars($rowSum['sumCost'])?></h1>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средние затраты на единицу товара: <?php echo htmlspecialchars($rowMedDrug['medCost'])?></h1>
     <div class="button-container" style="margin: 0 auto;">
 		<form style="margin-bottom: 12px" class="form__checkbox" method="POST" id="checkboxForm">
 			<input type="hidden" name="action" value="delete"> <!-- Добавляем скрытое поле для действия удаления -->

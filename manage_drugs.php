@@ -48,7 +48,38 @@ try{
         throw new Exception("Ошибка соединения с сервером");
     }
     $dbExecuter = new ActionLogger();
-    
+    // if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['name'] == "drop_res"){
+    //     $search_query_shopper = '';
+    //     $order_by_shopper = 'name';
+    //     $order_dir_shopper = 'ASC';
+    //     $query = "
+    //     SELECT DISTINCT
+    //         drugs.id AS id,
+    //         drugs.name AS name, 
+    //         manufacturers.name AS manufacturer, 
+    //         users.name AS supplier, 
+    //         drugs.price AS price, 
+    //         drugs.quantity AS quantity,
+    //         drugs.is_allowed
+    //     FROM 
+    //         drugs 
+    //     JOIN 
+    //         manufacturers ON drugs.manufacturer_id = manufacturers.id 
+    //     JOIN 
+    //         users ON drugs.provider_id = users.id 
+    //     WHERE 1=1 and is_allowed = 'Одобрено' and is_hiden <> 1
+    //     ";
+
+    //     if (!empty($search_query_shopper)) {
+    //         $query .= " AND drugs.name LIKE '%$search_query_shopper%' "; // Используем .= для добавления
+    //     }
+
+    //     $query .= "
+    //         ORDER BY $order_by_shopper $order_dir_shopper
+    //     ";
+
+    //     $result_shopper = $conn->query($query);    
+    // }
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //var_dump($_POST); // Выводим все переменные POST для отладки
         if (isset($_POST['formType'], $_POST['formId'], $_POST['tableName'], $_POST['fieldName'])) {
@@ -528,12 +559,105 @@ try{
 
     //Add for user
 
-    if (isset($_POST['search_for_shopper'])) {
+    if (isset($_POST['search_us_btn'])) {
         $search_query_shopper = htmlspecialchars($_POST['search_for_shopper']);
         $Actstr = "Покупатель установил строку поиска '$search_query_shopper' для лекарств.";
         $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
+        $_SESSION['yummy'] = $search_query_shopper;
     }
+    $search_query_shopper = $_SESSION['yummy'];
+    $uid = $_SESSION['user_id'];
+        $query = "
+            SELECT DISTINCT
+                drugs.id AS id,
+                drugs.name AS name,
+                manufacturers.name AS manufacturer,
+                users.name AS supplier,
+                drugs.price AS price,
+                drugs.quantity AS quantity,
+                drugs.is_allowed,
+                COALESCE(order_counts.total_quantity, 0) AS total_quantity
+            FROM 
+                drugs 
+            JOIN 
+                manufacturers ON drugs.manufacturer_id = manufacturers.id 
+            JOIN 
+                users ON drugs.provider_id = users.id 
+            LEFT JOIN (
+                SELECT 
+                    drug_id,
+                    SUM(quantity) AS total_quantity,
+                    user_id
+                FROM 
+                    orders
+                WHERE user_id = $uid
+                GROUP BY 
+                    drug_id
+            ) AS order_counts ON drugs.id = order_counts.drug_id
+            WHERE 
+                drugs.is_allowed = 'Одобрено' 
+                AND drugs.is_hiden <> 1
+        ";
+        
+        if (!empty($search_query_shopper)) {
+            $query .= " AND drugs.name LIKE '%$search_query_shopper%' ";
+        }
 
+        $query .= "
+            ORDER BY 
+                total_quantity DESC, 
+                $order_by_shopper $order_dir_shopper
+        ";
+        $result_shopper = $conn->query($query);
+    
+
+    $user_analytics_querry = "Select sum(cost) as sumCost from orders where user_id = $uid and is_hiden_byShopper <> 1";
+    $user_analytics_sum_drugs  = $conn->query($user_analytics_querry);
+    $user_analytics_querry = "Select sum(cost)/sum(quantity) as medCost from orders where user_id = $uid and is_hiden_byShopper <> 1";
+    $user_analytics_med_drugs  = $conn->query($user_analytics_querry);
+    // $uid = $_SESSION['user_id'];
+    // $query = "
+    //     SELECT DISTINCT
+    //         drugs.id AS id,
+    //         drugs.name AS name,
+    //         manufacturers.name AS manufacturer,
+    //         users.name AS supplier,
+    //         drugs.price AS price,
+    //         drugs.quantity AS quantity,
+    //         drugs.is_allowed,
+    //         COALESCE(order_counts.total_quantity, 0) AS total_quantity
+    //     FROM 
+    //         drugs 
+    //     JOIN 
+    //         manufacturers ON drugs.manufacturer_id = manufacturers.id 
+    //     JOIN 
+    //         users ON drugs.provider_id = users.id 
+    //     LEFT JOIN (
+    //         SELECT 
+    //             drug_id,
+    //             SUM(quantity) AS total_quantity,
+    //             user_id
+    //         FROM 
+    //             orders
+    //         WHERE user_id = $uid
+    //         GROUP BY 
+    //             drug_id
+    //     ) AS order_counts ON drugs.id = order_counts.drug_id
+    //     WHERE 
+    //         drugs.is_allowed = 'Одобрено' 
+    //         AND drugs.is_hiden <> 1
+    // ";
+    
+    // if (!empty($search_query_shopper)) {
+    //     $query .= " AND drugs.name LIKE '%$search_query_shopper%' ";
+    // }
+
+    // $query .= "
+    //     ORDER BY 
+    //         total_quantity DESC, 
+    //         $order_by_shopper $order_dir_shopper
+    // ";
+    // $result_shopper = $conn->query($query);
     if (isset($_POST['add_drugs_user'])) {
         $name = trim($_POST['name']);
         $manufacturer = trim($_POST['manufacturer_name']);
@@ -657,7 +781,8 @@ try{
         drugs.price AS price, 
         drugs.quantity AS quantity, 
         drugs.cost AS cost,
-        drugs.is_allowed
+        drugs.is_allowed,
+        drugs.is_hiden
     FROM 
         drugs 
     JOIN 
@@ -665,7 +790,7 @@ try{
     WHERE 
         provider_id IN (
             SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
-        )
+        ) AND is_hiden <> 1
     ";
     if (!empty($search_query_user)) {
         if (is_numeric($search_query_user)) {
@@ -713,7 +838,7 @@ try{
 
     if (isset($_POST['delete_drug_user'])) {
         $id = intval($_POST['delete_drug_user']);
-        $delete_query = "DELETE FROM drugs WHERE id=$id";
+        $delete_query = "UPDATE drugs SET is_hiden = 1 WHERE id=$id";
         $conn->query($delete_query);
         $Actstr = "Поставщик удалил свое лекарство с идентификатором '$id'";
         $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);        
@@ -779,7 +904,7 @@ try{
 
     if (isset($_POST['delete'])) {
         $id = intval($_POST['delete']);
-        $delete_query = "DELETE FROM drugs WHERE id=$id";
+        $delete_query = "UPDATE drugs SET is_hiden = 1 WHERE id=$id";
         $conn->query($delete_query);
         $Actstr = "Администратор удалил лекарство '$id'.";
         $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);  
@@ -829,7 +954,7 @@ try{
 
     if (isset($_POST['delete_shopper_drug'])) {
         $id = intval($_POST['delete_shopper_drug']);
-        $delete_query = "DELETE FROM orders WHERE id=$id";
+        $delete_query = "UPDATE orders SET is_hiden_byShopper = 1 WHERE id=$id";
         $conn->query($delete_query);
         $Actstr = "Покупатель удалил из корзины лекарство '$id'.";
         $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
@@ -837,7 +962,7 @@ try{
 
     if (isset($_POST['delete_supplier_order'])) {
         $id = intval($_POST['delete_supplier_order']);
-        $delete_query = "DELETE FROM orders WHERE id=$id";
+        $delete_query = "UPDATE orders SET is_hiden_byProvider = 1 WHERE id=$id";
         $conn->query($delete_query);
         $Actstr = "Администратор удалил один из своих заказов '$id'.";
         $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
@@ -967,7 +1092,7 @@ try{
         exit();
     }
 
-    $query = "SELECT * FROM drugs WHERE 1=1"; // Начинаем с базового условия
+    $query = "SELECT * FROM drugs WHERE 1=1 AND is_hiden <> 1"; // Начинаем с базового условия
     if (!empty($search_query)) {
         if (is_numeric($search_query)) {
             $query .= " AND (manufacturer_id = $search_query 
@@ -991,33 +1116,7 @@ try{
     $query = "SELECT * FROM manufacturers ORDER BY $manufacturers_order_by $manufacturers_order_dir";
     $res_manufacturers = $conn->query($query);
 
-    $query = "
-    SELECT DISTINCT
-        drugs.id AS id,
-        drugs.name AS name, 
-        manufacturers.name AS manufacturer, 
-        users.name AS supplier, 
-        drugs.price AS price, 
-        drugs.quantity AS quantity,
-        drugs.is_allowed
-    FROM 
-        drugs 
-    JOIN 
-        manufacturers ON drugs.manufacturer_id = manufacturers.id 
-    JOIN 
-        users ON drugs.provider_id = users.id 
-    WHERE 1=1 and is_allowed = 'Одобрено'
-    ";
-
-    if (!empty($search_query_shopper)) {
-        $query .= " AND drugs.name LIKE '%$search_query_shopper%' "; // Используем .= для добавления
-    }
-
-    $query .= "
-        ORDER BY $order_by_shopper $order_dir_shopper
-    ";
-
-    $result_shopper = $conn->query($query);
+    
     $User_Id = $_SESSION['user_id'];
     $query = "
     SELECT 
@@ -1029,7 +1128,8 @@ try{
     orders.quantity AS quantity,
     orders.cost AS cost,
     orders.status as status,
-    orders.last_updated
+    orders.last_updated,
+    orders.is_hiden_byShopper
     FROM 
         orders
     JOIN 
@@ -1039,7 +1139,7 @@ try{
     JOIN 
         users ON drugs.provider_id = users.id
     WHERE 
-        orders.user_id = $User_Id
+        orders.user_id = $User_Id AND is_hiden_byShopper <> 1
     ";
     $search_query_shopper_cart = $search_query_shopper; 
     if (!empty($search_query_shopper_cart)) {
@@ -1062,7 +1162,8 @@ try{
         orders.quantity AS quantity,
         orders.cost AS cost,
         orders.status,
-        orders.last_updated
+        orders.last_updated,
+        orders.is_hiden_byProvider
     FROM 
         orders
     JOIN 
@@ -1072,7 +1173,7 @@ try{
     JOIN 
         users ON orders.user_id = users.id
     WHERE 
-        orders.provider_id = ?
+        orders.provider_id = ? AND is_hiden_byProvider <> 1
     ";
     // and status <> 'В обработке'
     $search_query_user_supplier = $search_query_user;
@@ -1205,6 +1306,9 @@ try{
     $stmt->bind_param('i', $_SESSION['user_id']);
     $stmt->execute();
     $drugs_add_requests_feedback =  $stmt->get_result();
+
+    
+    
 
 } catch(mysqli_sql_exception $e){
     ?>

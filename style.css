@@ -250,6 +250,18 @@ main {
 	font-size: 24px;
 	font-weight: 600;
 }
+.extrasubtitle {
+	text-align: center;
+	font-size: 14px;
+	font-weight: 600;
+}
+.mt20-extrasubtitle {
+	margin-top: 6px;
+}
+
+.mb20-extrasubtitle {
+	margin-bottom: 6px;
+}
 .subtitle {
 	text-align: center;
 	font-size: 20px;
@@ -655,4 +667,17 @@ tr:hover {
 .filter-container button:hover {
     background-color: #fff; 
     color: #000;
+}
+
+.tbody_drugs_shopper{
+	overflow-y: auto;
+	height: 50px;
+}
+
+
+.button_not_fixed {
+	width: 150px;
+	position: fixed;
+	top: 100px;
+	left: 20px;
 }
