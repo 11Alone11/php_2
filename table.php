@@ -230,7 +230,11 @@ if($_SESSION["user_type"] == 1):
 
 
 	<h1 class="title mb20 mt20">Заявки на поставку</h1>
-
+	<?php $rowSum = $supplier_analytics_sum_drugs->fetch_assoc();
+	 $rowMedDrug = $supplier_analytics_med_drugs->fetch_assoc();?>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарная стоимость заказов: <?php echo htmlspecialchars(number_format($rowSum['sumCost'], 2, '.', ''))?></h1>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средний доход с продажи единицы: <?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
+    	
 	<table>
 		<thead>
 			<tr>
@@ -577,7 +581,7 @@ else:
 					class="openPopup" style="cursor:pointer">
 					<?php echo htmlspecialchars($row['price']); ?></td>
 				<td data-type="quantity" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="quantity"
-					class="openPopup" style="cursor:pointer">
+					 style="cursor:pointer">
 					<?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td data-type="cost" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="cost"
 					style="cursor:pointer">
@@ -602,7 +606,11 @@ else:
 	</table>
 
 	<h1 class="title mb20 mt20">Заявки на поставку</h1>
-
+	<?php $rowSum = $supplier_analytics_sum_drugs->fetch_assoc();
+	 $rowMedDrug = $supplier_analytics_med_drugs->fetch_assoc();?>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарная стоимость заказов: <?php echo htmlspecialchars(number_format($rowSum['sumCost'], 2, '.', ''))?></h1>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средний доход с продажи единицы: <?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
+    
 	<table>
 		<thead>
 			<tr>
@@ -907,8 +915,8 @@ else:
 	<h1 class="title mb20 mt20">Моя корзина</h1>
 	<?php $rowSum = $user_analytics_sum_drugs->fetch_assoc();
 	 $rowMedDrug = $user_analytics_med_drugs->fetch_assoc();?>
-	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарные затраты: <?php echo htmlspecialchars($rowSum['sumCost'])?></h1>
-	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средние затраты на единицу товара: <?php echo htmlspecialchars($rowMedDrug['medCost'])?></h1>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарные затраты: <?php echo htmlspecialchars(number_format($rowSum['sumCost'], 2, '.', ''))?></h1>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средние затраты на единицу товара: <?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
     <div class="button-container" style="margin: 0 auto;">
 		<form style="margin-bottom: 12px" class="form__checkbox" method="POST" id="checkboxForm">
 			<input type="hidden" name="action" value="delete"> <!-- Добавляем скрытое поле для действия удаления -->
