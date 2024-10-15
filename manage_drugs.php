@@ -601,6 +601,8 @@ try{
             $order_by_shopper $order_dir_shopper
     ";
     $result_shopper = $conn->query($query);
+
+    //search_btn_post
     if (isset($_POST['search_us_btn'])) {
         $search_query_shopper = htmlspecialchars($_POST['search_for_shopper']);
         $Actstr = "Покупатель установил строку поиска '$search_query_shopper' для лекарств.";
@@ -825,6 +827,65 @@ try{
     $query .= " ORDER BY total_quantity DESC, 
                 $order_by_user $order_dir_user";
     $result_user = $conn->query($query);
+
+    if (isset($_POST['search_btn_post'])) {
+        $search_query_user = htmlspecialchars($_POST['search_for_user']);
+        $Actstr = "Поставщик установил строку поиска '$search_query_user' для лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
+        $_SESSION['yummy_1'] = $search_query_user;
+    }
+    $uid = $_SESSION['user_id'];
+    if (isset($_SESSION['yummy_1'])){
+        $search_query_user = $_SESSION['yummy_1'];
+        $query = "
+        SELECT 
+            drugs.id AS id, 
+            manufacturers.name AS manufacturer, 
+            drugs.name AS name, 
+            drugs.price AS price, 
+            drugs.quantity AS quantity, 
+            drugs.cost AS cost,
+            drugs.is_allowed,
+            drugs.is_hiden,
+            COALESCE(order_counts.total_quantity, 0) AS total_quantity
+        FROM 
+            drugs 
+        JOIN 
+            manufacturers ON drugs.manufacturer_id = manufacturers.id 
+        LEFT JOIN (
+            SELECT 
+                drug_id,
+                SUM(quantity) AS total_quantity,
+                user_id
+            FROM 
+                orders
+            WHERE user_id IN (
+                SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
+            )
+            GROUP BY 
+                drug_id
+        ) AS order_counts ON drugs.id = order_counts.drug_id    
+        WHERE 
+            provider_id IN (
+                SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
+            ) AND is_hiden <> 1
+        ";
+        if (!empty($search_query_user)) {
+            if (is_numeric($search_query_user)) {
+                $query .= " AND (
+                    drugs.cost = $search_query_user 
+                    OR  drugs.price = $search_query_user 
+                    OR  drugs.quantity = $search_query_user)";
+            } else {
+                $query .= " AND drugs.name LIKE '%$search_query_user%' OR manufacturers.name LIKE '%$search_query_user%'";
+            }
+        }
+        
+        // Добавляем условия сортировки
+        $query .= " ORDER BY total_quantity DESC, 
+                    $order_by_user $order_dir_user";
+        $result_user = $conn->query($query);
+    }
 
 
     $supplier_analytics_querry = "Select sum(cost) as sumCost from orders where provider_id = $uid and is_hiden_byProvider <> 1";

@@ -501,12 +501,12 @@ else:
 	<a href="index.php" class="button button__fixed">
 		На главную
 	</a>
-	<!-- Форма поиска лекарств-->
-	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+	<!-- style="display:none;" Форма поиска лекарств-->
+	<form  method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
 		<input type="text" name="search_for_user" class="input" placeholder="Поиск..." value="<?php 
 		echo htmlspecialchars($search_query_user); ?>">
-		<button type="submit" name="search" class="button">Поиск</button>
+		<button type="submit" name="search_btn_post" class="button">Поиск</button>
 	</form>
 
 	<!-- Форма добавления новой записи -->
