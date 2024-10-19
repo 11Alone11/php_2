@@ -55,6 +55,9 @@ if($_SESSION["user_type"] == 1):
 	<a href="activity_log.php" class="button button__fixed button__fixed_colhoz">
 		Лог событий
 	</a>
+	<!-- <a href="tables_settings.php" class="button button__fixed button__fixed_table_settings">
+		Веса таблиц
+	</a> -->
 	<!-- Форма поиска лекарств-->
 	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
@@ -295,9 +298,11 @@ if($_SESSION["user_type"] == 1):
 		<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="popup__content">
 			<input type="hidden" id="formType" name="formType">
 			<input type="hidden" id="formId" name="formId">
-			<input type="hidden" id="tableName" name="tableName"> <!-- Новое поле для таблицы -->
-			<input type="hidden" id="fieldName" name="fieldName"> <!-- Новое поле для поля -->
-			<input type="text" id="popupInput" name="input" class="input" placeholder="Название" required>
+			<input type="hidden" id="tableName" name="tableName">
+			<input type="hidden" id="fieldName" name="fieldName">
+			<input type="text" id="popupInput" name="input" class="input" placeholder="Название" required style="display: block;">
+			<select id="statusSelect" name="input" class="input" required style="display: none;">
+			</select>
 			<button type="submit" class="button popup__button">Сохранить</button>
 		</form>
 	</div>
@@ -402,10 +407,9 @@ if($_SESSION["user_type"] == 1):
 			?>
 		</div>
 		<div class="message__buttons">
-			<!-- <button class="button message__button">Удалить</button> -->
 			<button id="message__button" class="button message__button__close">Закрыть</button>
+			<button id="expand__button" class="button message__button__expand" style="display:none;">Развернуть сообщения</button>
 		</div>
-	</div>
 	<?php  endif;?>	
 
 
@@ -413,6 +417,10 @@ if($_SESSION["user_type"] == 1):
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+	const messageContainer = document.querySelector('.message__inner');
+	const closeButton = document.getElementById('message__button');
+	const expandButton = document.getElementById('expand__button');
+
 	// Открываем попап при клике на кнопку
 	document.querySelectorAll('.openPopup').forEach((element) => {
 		element.addEventListener('click', function(event) {
@@ -428,18 +436,42 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	})
 
-
 	// Функция для открытия попапа
 	function openPopup(type, id, table, field) {
 		const formType = document.querySelector('#formType');
 		const formId = document.querySelector('#formId');
 		const tableName = document.querySelector('#tableName');
 		const fieldName = document.querySelector('#fieldName');
+		const popupInput = document.getElementById('popupInput');
+		const statusSelect = document.getElementById('statusSelect');
 
-		formType.value = type; // Измени на .value
-		formId.value = id; // Измени на .value
-		tableName.value = table; // Измени на .value
-		fieldName.value = field; // Измени на .value
+		formType.value = type;
+		formId.value = id;
+		tableName.value = table;
+		fieldName.value = field;
+
+		if (table === 'my_orders_requests' && field === 'status') {
+			statusSelect.innerHTML = `
+				<option value="" disabled selected>Выберите статус</option>
+				<option value="Собирается">Собирается</option>
+				<option value="Отклонено">Отклонено</option>
+				<option value="В обработке">В обработке</option>
+			`;
+			popupInput.style.display = 'none'; // Скрыть текстовое поле
+			statusSelect.style.display = 'block'; // Показать селект
+		} else if (table === 'drugs' && field === 'is_allowed') {
+			statusSelect.innerHTML = `
+				<option value="" disabled selected>Выберите статус</option>
+				<option value="Одобрено">Одобрено</option>
+				<option value="Отклонено">Отклонено</option>
+				<option value="В обработке">В обработке</option>
+			`;
+			popupInput.style.display = 'none'; // Скрыть текстовое поле
+			statusSelect.style.display = 'block'; // Показать селект
+		} else {
+			popupInput.style.display = 'block'; // Показать текстовое поле
+			statusSelect.style.display = 'none'; // Скрыть селект
+		}
 
 		const popup = document.getElementById("popup");
 		popup.classList.add("popup_open");
@@ -450,7 +482,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		const popup = document.getElementById("popup");
 		const popupContent = document.querySelector(".popup__content");
 
-		// Проверяем, был ли клик не по форме (вне .popup__content)
 		if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
 			popup.classList.remove("popup_open"); // Закрываем попап
 		}
@@ -462,8 +493,19 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	// Обработчик для кнопки "Удалить"
-	document.querySelector('message__button__close').addEventListener('click', function() {
-		document.querySelector('.message').classList.remove('message_open');
+	// document.querySelector('.message__button__close').addEventListener('click', function() {
+	// 	document.querySelector('.message').classList.remove('message_open');
+	// });
+
+	closeButton.addEventListener('click', function() {
+				messageContainer.style.display = 'none'; // Скрыть сообщения
+				closeButton.style.display = 'none'; // Скрыть кнопку закрытия
+				expandButton.style.display = 'block'; // Показать кнопку развернуть
+	});
+	expandButton.addEventListener('click', function() {
+				messageContainer.style.display = 'block'; // Показать сообщения
+				closeButton.style.display = 'block'; // Показать кнопку закрытия
+				expandButton.style.display = 'none'; // Скрыть кнопку развернуть
 	});
 });
 </script>
@@ -571,8 +613,8 @@ else:
                     ?>
 			<tr>
 				<td><?php echo htmlspecialchars($row['id']); ?></td>
-				<td data-type="name" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="name" class="openPopup"
-					style="cursor:pointer">
+				<td data-type="name" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="name"
+					class="openPopup" style="cursor:pointer">
 					<?php echo htmlspecialchars($row['name']); ?></td>
 				<td data-type="manufacturer" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="manufacturer"
 					class="openPopup" style="cursor:pointer">
@@ -646,8 +688,7 @@ else:
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
-				<td data-type="status" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="my_orders_requests" data-field="status"
-				style="cursor:pointer" class="openPopup"><?php echo htmlspecialchars($row['status']); ?></td>
+				<td data-id="<?php echo htmlspecialchars($row['id']); ?>" data-type="status" data-table="my_orders_requests" data-field="status" class="openPopup" style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['last_updated']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
@@ -674,11 +715,30 @@ else:
 			<input type="hidden" id="tableName" name="tableName"> <!-- Новое поле для таблицы -->
 			<input type="hidden" id="fieldName" name="fieldName"> <!-- Новое поле для поля -->
 			<input type="text" id="popupInput" name="input" class="input" placeholder="Название" required>
+			<select id="statusSelect" name="input" class="input" required>
+				<option value="" disabled selected>Выберите статус</option>
+				<option value="Собирается">Собирается</option>
+				<option value="Отклонено">Отклонено</option>
+				<option value="В обработке">В обработке</option>
+			</select>
 			<button type="submit" class="button popup__button">Сохранить</button>
 		</form>
 	</div>
 
-	
+	<!-- <div id="statusPopup" class="popup">
+		<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="popup__content">
+			<input type="hidden" id="statusFormId" name="formId">
+			<select id="statusSelect" name="input" class="input" required>
+				<option value="" disabled selected>Выберите статус</option>
+				<option value="approved">Собирается</option>
+				<option value="rejected">Отклонено</option>
+				<option value="pending">В обработке</option>
+			</select>
+			<button type="submit" class="button popup__button">Сохранить</button>
+		</form>
+	</div> -->
+
+
 	<?php if ($orders_from_shoppers->num_rows > 0 || $drugs_add_requests_feedback->num_rows > 0): ?>
 		<div class="message message_open">
 		<div class="message__inner">
@@ -748,6 +808,7 @@ else:
 		<div class="message__buttons">
 			<!-- <button class="button message__button">Удалить</button> -->
 			<button id="message__button" class="button message__button__close">Закрыть</button>
+			<button id="expand__button" class="button message__button__expand" style="display:none;">Развернуть сообщения</button>
 		</div>
 	</div>
 	<?php  endif;?>	
@@ -757,6 +818,11 @@ else:
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+	const messageContainer = document.querySelector('.message__inner');
+	const closeButton = document.getElementById('message__button');
+	const expandButton = document.getElementById('expand__button');
+
+
 	// Открываем попап при клике на кнопку
 	document.querySelectorAll('.openPopup').forEach((element) => {
 		element.addEventListener('click', function(event) {
@@ -772,18 +838,27 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	})
 
-
 	// Функция для открытия попапа
 	function openPopup(type, id, table, field) {
 		const formType = document.querySelector('#formType');
 		const formId = document.querySelector('#formId');
 		const tableName = document.querySelector('#tableName');
 		const fieldName = document.querySelector('#fieldName');
+		const popupInput = document.getElementById('popupInput');
+		const statusSelect = document.getElementById('statusSelect');
 
-		formType.value = type; // Измени на .value
-		formId.value = id; // Измени на .value
-		tableName.value = table; // Измени на .value
-		fieldName.value = field; // Измени на .value
+		formType.value = type;
+		formId.value = id;
+		tableName.value = table;
+		fieldName.value = field;
+
+		if (field === 'status') {
+			popupInput.style.display = 'none'; // Скрыть текстовое поле
+			statusSelect.style.display = 'block'; // Показать селект
+		} else {
+			popupInput.style.display = 'block'; // Показать текстовое поле
+			statusSelect.style.display = 'none'; // Скрыть селект
+		}
 
 		const popup = document.getElementById("popup");
 		popup.classList.add("popup_open");
@@ -794,7 +869,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		const popup = document.getElementById("popup");
 		const popupContent = document.querySelector(".popup__content");
 
-		// Проверяем, был ли клик не по форме (вне .popup__content)
 		if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
 			popup.classList.remove("popup_open"); // Закрываем попап
 		}
@@ -806,8 +880,22 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	// Обработчик для кнопки "Удалить"
-	document.querySelector('.message__button__close').addEventListener('click', function() {
-		document.querySelector('.message').classList.remove('message_open');
+	// document.querySelector('.message__button__close').addEventListener('click', function() {
+	// 	document.querySelector('.message').classList.remove('message_open');
+	// });
+
+	
+
+	closeButton.addEventListener('click', function() {
+		messageContainer.style.display = 'none'; // Скрыть сообщения
+		closeButton.style.display = 'none'; // Скрыть кнопку закрытия
+		expandButton.style.display = 'block'; // Показать кнопку развернуть
+	});
+
+	expandButton.addEventListener('click', function() {
+		messageContainer.style.display = 'block'; // Показать сообщения
+		closeButton.style.display = 'block'; // Показать кнопку закрытия
+		expandButton.style.display = 'none'; // Скрыть кнопку развернуть
 	});
 });
 </script>
@@ -877,8 +965,8 @@ else:
 						href="?order_by_shopper=price&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Цена</a></th>
 				<th class="column-quantity"><a
 						href="?order_by_shopper=quantity&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Количество</a></th>
-
-
+				<th class="column-quantity"><a
+						href="?order_by_shopper=percent&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Процент</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -893,6 +981,7 @@ else:
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['percent']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;"
 						data-drug-id="<?php echo htmlspecialchars($row['id']); ?>">
@@ -955,6 +1044,8 @@ else:
 				<th class="column-status"><a
 						href="?order_by_shopper_cart=last_updated&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Время обновления</a>
 				</th>
+				<th class="column-quantity"><a
+						href="?order_by_shopper=percent&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Процент</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -981,6 +1072,7 @@ else:
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['last_updated']); ?></td>
+				<td style="cursor:pointer"><?php echo htmlspecialchars($row['percent']); ?></td>
 				<td>
 					<!-- Внутренняя форма удаления -->
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;" class="deleteForm">
@@ -1130,7 +1222,8 @@ else:
 			?>
 				</div>
 				<div class="message__buttons">
-					<button class="button message__button__close">Закрыть</button>
+					<button id="message__button" class="button message__button__close">Закрыть</button>
+					<button id="expand__button" class="button message__button__expand" style="display:none;">Развернуть сообщения</button>
 				</div>
 	</div>
 	<?php  endif;?>
@@ -1157,6 +1250,21 @@ function getQuantity(drugId) {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+	const messageContainer = document.querySelector('.message__inner');
+	const closeButton = document.getElementById('message__button');
+	const expandButton = document.getElementById('expand__button');
+
+	closeButton.addEventListener('click', function() {
+		messageContainer.style.display = 'none'; // Скрыть сообщения
+		closeButton.style.display = 'none'; // Скрыть кнопку закрытия
+		expandButton.style.display = 'block'; // Показать кнопку развернуть
+	});
+
+	expandButton.addEventListener('click', function() {
+		messageContainer.style.display = 'block'; // Показать сообщения
+		closeButton.style.display = 'block'; // Показать кнопку закрытия
+		expandButton.style.display = 'none'; // Скрыть кнопку развернуть
+	});
 	// Открываем попап при клике на кнопку
 	document.querySelectorAll('.openPopup').forEach((element) => {
 		element.addEventListener('click', function(event) {
@@ -1206,10 +1314,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 
-	// Обработчик для кнопки "Закрыть"
-	document.querySelector('.message__button__close').addEventListener('click', function() {
-		document.querySelector('.message').classList.remove('message_open');
-	});
+	// // Обработчик для кнопки "Закрыть"
+	// document.querySelector('.message__button__close').addEventListener('click', function() {
+	// 	document.querySelector('.message').classList.remove('message_open');
+	// });
 });
 </script>
 

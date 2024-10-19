@@ -48,38 +48,7 @@ try{
         throw new Exception("Ошибка соединения с сервером");
     }
     $dbExecuter = new ActionLogger();
-    // if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['name'] == "drop_res"){
-    //     $search_query_shopper = '';
-    //     $order_by_shopper = 'name';
-    //     $order_dir_shopper = 'ASC';
-    //     $query = "
-    //     SELECT DISTINCT
-    //         drugs.id AS id,
-    //         drugs.name AS name, 
-    //         manufacturers.name AS manufacturer, 
-    //         users.name AS supplier, 
-    //         drugs.price AS price, 
-    //         drugs.quantity AS quantity,
-    //         drugs.is_allowed
-    //     FROM 
-    //         drugs 
-    //     JOIN 
-    //         manufacturers ON drugs.manufacturer_id = manufacturers.id 
-    //     JOIN 
-    //         users ON drugs.provider_id = users.id 
-    //     WHERE 1=1 and is_allowed = 'Одобрено' and is_hiden <> 1
-    //     ";
-
-    //     if (!empty($search_query_shopper)) {
-    //         $query .= " AND drugs.name LIKE '%$search_query_shopper%' "; // Используем .= для добавления
-    //     }
-
-    //     $query .= "
-    //         ORDER BY $order_by_shopper $order_dir_shopper
-    //     ";
-
-    //     $result_shopper = $conn->query($query);    
-    // }
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //var_dump($_POST); // Выводим все переменные POST для отладки
         if (isset($_POST['formType'], $_POST['formId'], $_POST['tableName'], $_POST['fieldName'])) {
@@ -106,8 +75,8 @@ try{
         }
         }
         if ($tableName === 'drugs' && $fieldName === 'manufacturer_id') {
-            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0) {
-                $_SESSION['error_message'] = "ID производителя должен быть положительным целым числом";
+            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
+                $_SESSION['error_message'] = "ID производителя должен быть положительным целым числом и не превышать допустимый диапазон.";
             } else {
                 // Check if the manufacturer_id exists in the manufacturers table
                 $checkManufacturerQuery = $conn->prepare("SELECT COUNT(*) FROM manufacturers WHERE id = ?");
@@ -135,8 +104,8 @@ try{
             }
         }
         if ($tableName === 'drugs' && $fieldName === 'price') {
-            if (!filter_var($inputValue, FILTER_VALIDATE_FLOAT) || $inputValue <= 0) {
-                $_SESSION['error_message'] = "Цена должна быть положительным числом";
+            if (!filter_var($inputValue, FILTER_VALIDATE_FLOAT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
+                $_SESSION['error_message'] = "Цена должна быть положительным числом и не превышать допустимый диапазон.";
             } else {
                 // First, retrieve the current quantity of the drug
                 $quantityQuery = $conn->prepare("SELECT quantity FROM drugs WHERE id = ?");
@@ -163,8 +132,8 @@ try{
             }
         }
         if ($tableName === 'drugs' && $fieldName === 'quantity') {
-            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0) {
-                $_SESSION['error_message'] = "Количество должно быть положительным целым числом";
+            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
+                $_SESSION['error_message'] = "Количество должно быть положительным целым числом и не превышать допустимый диапазон.";
             } else {
                 // First, retrieve the price for the drug
                 $priceQuery = $conn->prepare("SELECT price FROM drugs WHERE id = ?");
@@ -191,8 +160,8 @@ try{
             }
         }
         if ($tableName === 'drugs' && $fieldName === 'provider_id') {
-            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0) {
-                $_SESSION['error_message'] = "ID поставщика должен быть положительным целым числом";
+            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
+                $_SESSION['error_message'] = "ID поставщика должен быть положительным целым числом и не превышать допустимый диапазон.";
             } else {
                 // Check if the provider_id exists in the users table
                 $checkProviderQuery = $conn->prepare("SELECT COUNT(*) FROM users WHERE id = ? and type <> 2");
@@ -316,8 +285,8 @@ try{
             }
         }
         if ($tableName === 'users' && $fieldName === 'type') {
-            if (!is_numeric($inputValue) || intval($inputValue) != $inputValue || $inputValue < 0) {
-                $_SESSION['error_message'] = "Тип поставщика должен быть целым неотрицательным числом";
+            if (!is_numeric($inputValue) || intval($inputValue) != $inputValue || $inputValue < 0 || $inputValue > PHP_INT_MAX) {
+                $_SESSION['error_message'] = "Тип поставщика должен быть целым неотрицательным числом и не превышать допустимый диапазон.";
             }else{
                 $stmt = $conn->prepare("UPDATE users SET type = ? WHERE id = ?");
                 if ($stmt) {
@@ -390,8 +359,8 @@ try{
             }
         }
         if ($tableName === 'drugs_user' && $fieldName === 'price') {
-            if (!filter_var($inputValue, FILTER_VALIDATE_FLOAT) || $inputValue <= 0) {
-                $_SESSION['error_message'] = "Цена должна быть положительным числом";
+            if (!filter_var($inputValue, FILTER_VALIDATE_FLOAT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
+                $_SESSION['error_message'] = "Цена должна быть положительным числом и не превышать допустимый диапазон.";
             } else {
                 // First, retrieve the current quantity of the drug
                 $quantityQuery = $conn->prepare("SELECT quantity FROM drugs WHERE id = ?");
@@ -420,8 +389,8 @@ try{
             }
         }
         if ($tableName === 'drugs_user' && $fieldName === 'quantity') {
-            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0) {
-                $_SESSION['error_message'] = "Количество должно быть положительным целым числом";
+            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
+                $_SESSION['error_message'] = "Количество должно быть положительным целым числом и не превышать допустимый диапазон.";
             } else {
                 // First, retrieve the price for the drug
                 $priceQuery = $conn->prepare("SELECT price FROM drugs WHERE id = ?");
@@ -449,8 +418,8 @@ try{
             }
         }  
         if ($tableName === 'drugs_shopper_cart' && $fieldName === 'quantity') {
-            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0) {
-                $_SESSION['error_message'] = "Количество должно быть положительным целым числом";
+            if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
+                $_SESSION['error_message'] = "Количество должно быть положительным целым числом и не превышать допустимый диапазон.";
             } else {
                 // Сначала получим price и drug_id из orders
                 $priceQuery = $conn->prepare("SELECT price, drug_id FROM orders WHERE id = ?");
@@ -558,6 +527,16 @@ try{
     } 
 
     //Add for user
+    $total_query = "
+        SELECT SUM(quantity) AS total_quantity
+        FROM drugs
+        WHERE is_hiden <> 1
+    ";
+
+    $total_result = $conn->query($total_query);
+    $total_row = $total_result->fetch_assoc();
+    $total_quantity = $total_row['total_quantity'] ?: 1;
+
     $uid = $_SESSION['user_id'];
     $query = "
         SELECT DISTINCT
@@ -568,7 +547,9 @@ try{
             drugs.price AS price,
             drugs.quantity AS quantity,
             drugs.is_allowed,
-            COALESCE(order_counts.total_quantity, 0) AS total_quantity
+            COALESCE(order_counts.total_quantity, 0) AS total_quantity,
+            (drugs.quantity /$total_quantity * 100) as percent
+            
         FROM 
             drugs 
         JOIN 
@@ -622,7 +603,8 @@ try{
                     drugs.price AS price,
                     drugs.quantity AS quantity,
                     drugs.is_allowed,
-                    COALESCE(order_counts.total_quantity, 0) AS total_quantity
+                    COALESCE(order_counts.total_quantity, 0) AS total_quantity,
+                    (drugs.quantity / $total_quantity* 100) as percent
                 FROM 
                     drugs 
                 JOIN 
@@ -682,10 +664,10 @@ try{
             $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
         } elseif (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $manufacturer)) {
             $_SESSION['error_message'] = 'Название производителя должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
-        } elseif (!is_numeric($price) || $price <= 0) {
-            $_SESSION['error_message'] = 'Цена должна быть положительным числом.';
-        } elseif (!filter_var($quantity, FILTER_VALIDATE_INT) || $quantity <= 0) {
-            $_SESSION['error_message'] = 'Число продукции должно быть положительным целым числом.';
+        } elseif (!is_numeric($price) || $price <= 0 || $price > PHP_INT_MAX ) {
+            $_SESSION['error_message'] = 'Цена должна быть положительным числом и не должна превышать допустимый диапазон.';
+        } elseif (!filter_var($quantity, FILTER_VALIDATE_INT) || $quantity <= 0 || $quantity > PHP_INT_MAX) {
+            $_SESSION['error_message'] = 'Число продукции должно быть положительным целым числом и не должна превышать допустимый диапазон.';
         } else {
             $manufacturer_query = $conn->prepare("SELECT id FROM manufacturers WHERE name = ?");
             $manufacturer_query->bind_param('s', $manufacturer);
@@ -848,6 +830,7 @@ try{
             drugs.is_allowed,
             drugs.is_hiden,
             COALESCE(order_counts.total_quantity, 0) AS total_quantity
+
         FROM 
             drugs 
         JOIN 
@@ -892,49 +875,7 @@ try{
     $supplier_analytics_sum_drugs  = $conn->query($supplier_analytics_querry);
     $supplier_analytics_querry = "Select sum(cost)/sum(quantity) as medCost from orders where provider_id = $uid and is_hiden_byProvider <> 1";
     $supplier_analytics_med_drugs  = $conn->query($supplier_analytics_querry);    
-    // $query = "
-    //             SELECT DISTINCT
-    //                 drugs.id AS id,
-    //                 drugs.name AS name,
-    //                 manufacturers.name AS manufacturer,
-    //                 users.name AS supplier,
-    //                 drugs.price AS price,
-    //                 drugs.quantity AS quantity,
-    //                 drugs.is_allowed,
-    //                 COALESCE(order_counts.total_quantity, 0) AS total_quantity
-    //             FROM 
-    //                 drugs 
-    //             JOIN 
-    //                 manufacturers ON drugs.manufacturer_id = manufacturers.id 
-    //             JOIN 
-    //                 users ON drugs.provider_id = users.id 
-    //             LEFT JOIN (
-    //                 SELECT 
-    //                     drug_id,
-    //                     SUM(quantity) AS total_quantity,
-    //                     user_id
-    //                 FROM 
-    //                     orders
-    //                 WHERE user_id = $uid
-    //                 GROUP BY 
-    //                     drug_id
-    //             ) AS order_counts ON drugs.id = order_counts.drug_id
-    //             WHERE 
-    //                 drugs.is_allowed = 'Одобрено' 
-    //                 AND drugs.is_hiden <> 1
-    //         ";
-            
-    //         if (!empty($search_query_shopper)) {
-    //             $query .= " AND drugs.name LIKE '%$search_query_shopper%' ";
-    //         }
     
-    //         $query .= "
-    //             ORDER BY 
-    //                 total_quantity DESC, 
-    //                 $order_by_shopper $order_dir_shopper
-    //         ";
-    //         $result_shopper = $conn->query($query);
-
     if (isset($_POST['add_manufacturer'])) {
         $name = trim($_POST['name']);
         if (empty($name)) {
@@ -1000,14 +941,14 @@ try{
             $_SESSION['error_message'] = 'Пожалуйста, выберите поставщика.';
         }  elseif (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $name)) {
             $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
-        } elseif (!is_numeric($manufacturer_id) || $manufacturer_id <= 0) {
-            $_SESSION['error_message'] = 'ID производителя должен быть положительным числом.';
-        } elseif (!is_numeric($provider_id) || $provider_id <= 0) {
-            $_SESSION['error_message'] = 'ID поставщика должен быть положительным числом.';
-        } elseif (!is_numeric($price) || floatval($price) <= 0) {
-            $_SESSION['error_message'] = 'Цена должна быть положительным числом.';
-        } elseif (!filter_var($quantity, FILTER_VALIDATE_INT) || $quantity <= 0) {
-            $_SESSION['error_message'] = 'Число продукции должно быть положительным целым числом.';
+        } elseif (!is_numeric($manufacturer_id) || $manufacturer_id <= 0 || $manufacturer_id > PHP_INT_MAX) {
+            $_SESSION['error_message'] = 'ID производителя должен быть положительным числом и не превышать допустимый диапазон.';
+        } elseif (!is_numeric($provider_id) || $provider_id <= 0 || $provider_id > PHP_INT_MAX) {
+            $_SESSION['error_message'] = 'ID поставщика должен быть положительным числом и не превышать допустимый диапазон.';
+        } elseif (!is_numeric($price) || floatval($price) <= 0 || $price > PHP_INT_MAX) {
+            $_SESSION['error_message'] = 'Цена должна быть положительным числом и не превышать допустимый диапазон.';
+        } elseif (!filter_var($quantity, FILTER_VALIDATE_INT) || $quantity <= 0 || $quantity > PHP_INT_MAX) {
+            $_SESSION['error_message'] = 'Число продукции должно быть положительным целым числом и не превышать допустимый диапазон.';
         } elseif (!$manufacturer) {
             $_SESSION['error_message'] = "Производитель с ID '$manufacturer_id' не найден.";    
         } elseif (!$provider) {
@@ -1266,6 +1207,17 @@ try{
 
     
     $User_Id = $_SESSION['user_id'];
+
+    $total_query = "
+    SELECT SUM(quantity) as total_quantity
+    FROM orders
+    WHERE user_id = $User_Id AND is_hiden_byShopper <> 1
+    ";
+
+    $total_result = $conn->query($total_query);
+    $total_row = $total_result->fetch_assoc();
+    $total_quantity = $total_row['total_quantity'] ?: 1;
+
     $query = "
     SELECT 
     orders.id AS id,
@@ -1277,7 +1229,8 @@ try{
     orders.cost AS cost,
     orders.status as status,
     orders.last_updated,
-    orders.is_hiden_byShopper
+    orders.is_hiden_byShopper,
+    (orders.quantity /  $total_quantity * 100) as percent
     FROM 
         orders
     JOIN 

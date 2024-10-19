@@ -50,7 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (password_verify($input_password, $user['password'])) {
                     $_SESSION['user'] = $input_username;
                     $success_message = "Вход успешен. Добро пожаловать, $input_username!";
-                    $select_string = "SELECT id, type FROM users WHERE name LIKE '%$input_username%'";
+                    $name_user = trim($input_username);
+                    $select_string = "SELECT id, type FROM users WHERE name = '$name_user'";
                     $user_info = $conn->query($select_string);
                     if ($user_info && $user_info->num_rows > 0) {
                         $row = $user_info->fetch_assoc(); // Получаем ассоциативный массив

@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['error_message'] = 'Ошибка при регистрации. Попробуйте снова.';
                 }
             }
-        }
+        } 
     } elseif (isset($_POST['logout'])) {
         // Обработка выхода пользователя
         session_unset();

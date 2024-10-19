@@ -325,6 +325,14 @@ main {
 	left: 20px;
 }
 
+.button__fixed_table_settings{
+	width: 100px;
+	position: fixed;
+	right: 20px;
+	top: 180px;
+	left: 20px;
+}
+
 .input {
 	width: 100%;
 	padding: 10px;
