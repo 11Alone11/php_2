@@ -55,9 +55,9 @@ if($_SESSION["user_type"] == 1):
 	<a href="activity_log.php" class="button button__fixed button__fixed_colhoz">
 		Лог событий
 	</a>
-	<!-- <a href="tables_settings.php" class="button button__fixed button__fixed_table_settings">
+	<a href="tables_settings.php" class="button button__fixed button__fixed_table_settings">
 		Веса таблиц
-	</a> -->
+	</a>
 	<!-- Форма поиска лекарств-->
 	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
@@ -965,8 +965,6 @@ else:
 						href="?order_by_shopper=price&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Цена</a></th>
 				<th class="column-quantity"><a
 						href="?order_by_shopper=quantity&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Количество</a></th>
-				<th class="column-quantity"><a
-						href="?order_by_shopper=percent&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Процент</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -981,7 +979,6 @@ else:
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
-				<td style="cursor:pointer"><?php echo htmlspecialchars($row['percent']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;"
 						data-drug-id="<?php echo htmlspecialchars($row['id']); ?>">
