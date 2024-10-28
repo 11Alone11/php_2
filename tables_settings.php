@@ -73,12 +73,12 @@ include "tables_settings_management.php"
 		<div class="menu__item menu__item_right">
 			<p class="menu__title">Старые значения</p>
 			<ul class="menu__list">
-				<li>Количество в корзине: <span class="old-value" name="Old_C_quantity_in_orders">0.40</span></li>
-				<li>Частота покупок (частная): <span class="old-value" name="Old_C_frequency_of_use">0.60</span></li>
-				<li>Доступность лекарства: <span class="old-value" name="Old_C_availability_in_stock">0.55</span></li>
-				<li>Относительная цена: <span class="old-value" name="Old_C_comparative_price">0.70</span></li>
-				<li>Частота покупок (общая): <span class="old-value" name="Old_C_demand_for_medicine">0.80</span></li>
-				<li>Вовлеченность производителей: <span class="old-value" name="Old_C_manufacturer">0.90</span></li>
+				<li>Количество в корзине: <span class="old-value" name="Old_C_quantity_in_orders">0.50</span></li>
+				<li>Частота покупок (частная): <span class="old-value" name="Old_C_frequency_of_use">0.50</span></li>
+				<li>Доступность лекарства: <span class="old-value" name="Old_C_availability_in_stock">0.50</span></li>
+				<li>Относительная цена: <span class="old-value" name="Old_C_comparative_price">0.50</span></li>
+				<li>Частота покупок (общая): <span class="old-value" name="Old_C_demand_for_medicine">0.50</span></li>
+				<li>Вовлеченность производителей: <span class="old-value" name="Old_C_manufacturer">0.50</span></li>
 			</ul>
 		</div>
 	</div>
