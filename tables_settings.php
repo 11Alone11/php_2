@@ -125,12 +125,12 @@ include "tables_settings_management.php"
 			.then(response => response.json())
 			.then(data => {
 				if (data) {
-					oldValues[0].textContent = data.old_C_quantity_in_orders || '0.00';
-					oldValues[1].textContent = data.old_C_frequency_of_use || '0.00';
-					oldValues[2].textContent = data.old_C_availability_in_stock || '0.00';
-					oldValues[3].textContent = data.old_C_comparative_price || '0.00';
-					oldValues[4].textContent = data.old_C_demand_for_medicine || '0.00';
-					oldValues[5].textContent = data.old_C_manufacturer || '0.00';
+					oldValues[0].textContent = data.old_C_quantity_in_orders || '0.50';
+					oldValues[1].textContent = data.old_C_frequency_of_use || '0.50';
+					oldValues[2].textContent = data.old_C_availability_in_stock || '0.50';
+					oldValues[3].textContent = data.old_C_comparative_price || '0.50';
+					oldValues[4].textContent = data.old_C_demand_for_medicine || '0.50';
+					oldValues[5].textContent = data.old_C_manufacturer || '0.50';
 
 					sliders[0].value = data.C_quantity_in_orders || 0.5;
 					sliders[1].value = data.C_frequency_of_use || 0.5;

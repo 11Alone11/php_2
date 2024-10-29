@@ -221,12 +221,12 @@ class BuyerQueryFactory extends QueryFactory {
             return $priorities; 
         } else {
             return [
-                'availability' => 6,
-                'comparative_price' => 5,
-                'gen_demand' => 4,
-                'supl_frequency' => 3,
-                'frequency' => 2,
-                'total_quantity' => 1
+                'availability' => 0.5,
+                'comparative_price' => 0.5,
+                'gen_demand' => 0.5,
+                'supl_frequency' => 0.5,
+                'frequency' => 0.5,
+                'total_quantity' => 0.5
             ];
         }
     }
@@ -420,12 +420,12 @@ class SupplierQueryFactory extends QueryFactory {
             return $priorities; 
         } else {
             return [
-                'availability' => 6,
-                'comparative_price' => 5,
-                'gen_demand' => 4,
-                'supl_frequency' => 3,
-                'frequency' => 2,
-                'total_quantity' => 1
+                'availability' => 0.5,
+                'comparative_price' => 0.5,
+                'gen_demand' => 0.5,
+                'supl_frequency' => 0.5,
+                'frequency' => 0.5,
+                'total_quantity' => 0.5
             ];
         }
     }
@@ -612,12 +612,12 @@ class AdminQueryFactory extends QueryFactory {
             return $priorities; 
         } else {
             return [
-                'availability' => 6,
-                'comparative_price' => 5,
-                'gen_demand' => 4,
-                'supl_frequency' => 3,
-                'frequency' => 2,
-                'total_quantity' => 1
+                'availability' => 0.5,
+                'comparative_price' => 0.5,
+                'gen_demand' => 0.5,
+                'supl_frequency' => 0.5,
+                'frequency' => 0.5,
+                'total_quantity' => 0.5
             ];
         }
     }
@@ -803,12 +803,12 @@ class BuyerQueryFactoryPointSystem extends QueryFactory {
             return $priorities; 
         } else {
             return [
-                'availability' => 6,
-                'comparative_price' => 5,
-                'gen_demand' => 4,
-                'supl_frequency' => 3,
-                'frequency' => 2,
-                'total_quantity' => 1
+                'availability' => 0.5,
+                'comparative_price' => 0.5,
+                'gen_demand' => 0.5,
+                'supl_frequency' => 0.5,
+                'frequency' => 0.5,
+                'total_quantity' => 0.5
             ];
         }
     }
@@ -944,12 +944,12 @@ class BuyerQueryFactoryPointSystem extends QueryFactory {
             return $priorities; 
         } else {
             return [
-                'MAX_total_quantity' => 6,
-                'MAX_frequency' => 5,
-                'MAX_supl_frequency' => 4,
-                'MAX_gen_demand' => 3,
-                'MAX_comparative_price' => 2,
-                'MAX_availability' => 1
+                'MAX_total_quantity' => 0.5,
+                'MAX_frequency' => 0.5,
+                'MAX_supl_frequency' => 0.5,
+                'MAX_gen_demand' => 0.5,
+                'MAX_comparative_price' => 0.5,
+                'MAX_availability' => 0.5
             ];
         }
     }
@@ -1136,12 +1136,12 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
             return $priorities; 
         } else {
             return [
-                'availability' => 6,
-                'comparative_price' => 5,
-                'gen_demand' => 4,
-                'supl_frequency' => 3,
-                'frequency' => 2,
-                'total_quantity' => 1
+                'availability' => 0.5,
+                'comparative_price' => 0.5,
+                'gen_demand' => 0.5,
+                'supl_frequency' => 0.5,
+                'frequency' => 0.5,
+                'total_quantity' => 0.5
             ];
         }
     }
@@ -1277,12 +1277,12 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
             return $priorities; 
         } else {
             return [
-                'MAX_total_quantity' => 6,
-                'MAX_frequency' => 5,
-                'MAX_supl_frequency' => 4,
-                'MAX_gen_demand' => 3,
-                'MAX_comparative_price' => 2,
-                'MAX_availability' => 1
+                'MAX_total_quantity' => 0.5,
+                'MAX_frequency' => 0.5,
+                'MAX_supl_frequency' => 0.5,
+                'MAX_gen_demand' => 0.5,
+                'MAX_comparative_price' => 0.5,
+                'MAX_availability' => 0.5
             ];
         }
     }
@@ -1462,12 +1462,12 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
             return $priorities; 
         } else {
             return [
-                'availability' => 6,
-                'comparative_price' => 5,
-                'gen_demand' => 4,
-                'supl_frequency' => 3,
-                'frequency' => 2,
-                'total_quantity' => 1
+                'availability' => 0.5,
+                'comparative_price' => 0.5,
+                'gen_demand' => 0.5,
+                'supl_frequency' => 0.5,
+                'frequency' => 0.5,
+                'total_quantity' => 0.5
             ];
         }
     }
@@ -1603,12 +1603,12 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
             return $priorities; 
         } else {
             return [
-                'MAX_total_quantity' => 6,
-                'MAX_frequency' => 5,
-                'MAX_supl_frequency' => 4,
-                'MAX_gen_demand' => 3,
-                'MAX_comparative_price' => 2,
-                'MAX_availability' => 1
+                'MAX_total_quantity' => 0.5,
+                'MAX_frequency' => 0.5,
+                'MAX_supl_frequency' => 0.5,
+                'MAX_gen_demand' => 0.5,
+                'MAX_comparative_price' => 0.5,
+                'MAX_availability' => 0.5
             ];
         }
     }
