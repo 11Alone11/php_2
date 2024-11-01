@@ -1308,7 +1308,7 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
         $MAX_comparative_price = $maxPointsPreNormalized['MAX_comparative_price'];
         $MAX_availability = $maxPointsPreNormalized['MAX_availability'];
         // file_put_contents('debug.txt', "$MAX_total_quantity $MAX_frequency $MAX_supl_frequency $MAX_gen_demand $MAX_comparative_price $MAX_availability");
-        file_put_contents('debug.txt', "$total_quantity $frequency $gen_demand $comparative_price $availability $supl_frequency");
+        // file_put_contents('debug.txt', "$total_quantity $frequency $gen_demand $comparative_price $availability $supl_frequency");
         
         $totalPoints = "
             COALESCE(order_counts.total_quantity, 0)/$MAX_total_quantity*100*$total_quantity+
