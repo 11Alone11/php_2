@@ -972,6 +972,8 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
         $MAX_gen_demand = $maxPointsPreNormalized['MAX_gen_demand'];
         $MAX_comparative_price = $maxPointsPreNormalized['MAX_comparative_price'];
         $MAX_availability = $maxPointsPreNormalized['MAX_availability'];
+        //file_put_contents('debug.txt', "$MAX_total_quantity $MAX_frequency $MAX_supl_frequency $MAX_gen_demand $MAX_comparative_price $MAX_availability");
+        //file_put_contents('debug.txt', "$total_quantity $frequency $gen_demand $comparative_price $availability $supl_frequency");
         $totalPoints = "
             COALESCE(order_counts.total_quantity, 0)/$MAX_total_quantity*100*$total_quantity+
             COALESCE(order_frequency.frequency, 0)/$MAX_frequency*100*$frequency+
@@ -1175,9 +1177,9 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
                     user_id
                 FROM 
                     orders
-                WHERE user_id = ? AND is_hiden_byShopper <> 1
+                WHERE is_hiden_byShopper <> 1
                 GROUP BY 
-                    drug_id
+                    user_id, drug_id
             ) AS order_counts ON drugs.id = order_counts.drug_id
             LEFT JOIN (
                 SELECT 
@@ -1186,9 +1188,9 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
                     user_id
                 FROM 
                     orders
-                WHERE user_id = ? AND is_hiden_byShopper <> 1
+                WHERE  is_hiden_byShopper <> 1
                 GROUP BY 
-                    drug_id
+                    user_id, drug_id
             ) AS order_frequency ON drugs.id = order_frequency.drug_id
             LEFT JOIN(
                 SELECT 
@@ -1259,7 +1261,7 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
         ";
 
         $statement = $this->conn->prepare($query);
-        $statement->bind_param("ii", $this->userId, $this->userId);
+        //$statement->bind_param("ii", $this->userId, $this->userId);
         $statement->execute();
         $result = $statement->get_result();
         if ($result && $result->num_rows > 0) {
@@ -1305,6 +1307,9 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
         $MAX_gen_demand = $maxPointsPreNormalized['MAX_gen_demand'];
         $MAX_comparative_price = $maxPointsPreNormalized['MAX_comparative_price'];
         $MAX_availability = $maxPointsPreNormalized['MAX_availability'];
+        // file_put_contents('debug.txt', "$MAX_total_quantity $MAX_frequency $MAX_supl_frequency $MAX_gen_demand $MAX_comparative_price $MAX_availability");
+        file_put_contents('debug.txt', "$total_quantity $frequency $gen_demand $comparative_price $availability $supl_frequency");
+        
         $totalPoints = "
             COALESCE(order_counts.total_quantity, 0)/$MAX_total_quantity*100*$total_quantity+
             COALESCE(order_frequency.frequency, 0)/$MAX_frequency*100*$frequency+
@@ -1501,9 +1506,9 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
                     user_id
                 FROM 
                     orders
-                WHERE user_id = ? AND is_hiden_byShopper <> 1
+                WHERE is_hiden_byShopper <> 1
                 GROUP BY 
-                    drug_id
+                    user_id, drug_id
             ) AS order_counts ON drugs.id = order_counts.drug_id
             LEFT JOIN (
                 SELECT 
@@ -1512,9 +1517,9 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
                     user_id
                 FROM 
                     orders
-                WHERE user_id = ? AND is_hiden_byShopper <> 1
+                WHERE is_hiden_byShopper <> 1
                 GROUP BY 
-                    drug_id
+                   user_id, drug_id
             ) AS order_frequency ON drugs.id = order_frequency.drug_id
             LEFT JOIN(
                 SELECT 
@@ -1585,7 +1590,7 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
         ";
 
         $statement = $this->conn->prepare($query);
-        $statement->bind_param("ii", $this->userId, $this->userId);
+        //$statement->bind_param("ii", $this->userId, $this->userId);
         $statement->execute();
         $result = $statement->get_result();
         if ($result && $result->num_rows > 0) {
