@@ -1,0 +1,9 @@
+Array
+(
+    [name] => БилетыМаршруткиticket_3335463.png
+    [full_path] => БилетыМаршруткиticket_3335463.png
+    [type] => image/png
+    [tmp_name] => C:\XAMPP\tmp\php1C7B.tmp
+    [error] => 0
+    [size] => 99128
+)

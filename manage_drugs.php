@@ -657,7 +657,7 @@ try{
         $manufacturer = trim($_POST['manufacturer_name']);
         $price = trim($_POST['price']);
         $quantity = trim($_POST['quantity']);
-    
+        $imgLink = "";//trim($_POST['imgLink']);
         if (trim($name) === '') {
             $_SESSION['error_message'] = 'Пожалуйста, введите название.';
         } elseif (trim($manufacturer) === '') {
@@ -675,6 +675,49 @@ try{
         } elseif (!filter_var($quantity, FILTER_VALIDATE_INT) || $quantity <= 0 || $quantity > PHP_INT_MAX) {
             $_SESSION['error_message'] = 'Число продукции должно быть положительным целым числом и не должна превышать допустимый диапазон.';
         } else {
+            if (isset($_FILES['medicinePhoto']) && $_FILES['medicinePhoto']['error'] === UPLOAD_ERR_OK && $_FILES['medicinePhoto']['name'] !== '') {
+                $file = $_FILES['medicinePhoto'];
+                $fileTmpName = $file['tmp_name'];
+                $fileName = $file['name'];
+                $fileSize = $file['size'];
+                $fileError = $file['error'];
+                if ($fileSize > 10 * 1024 * 1024) {
+                    $_SESSION['error_message'] = 'Размер файла не должен превышать 10 МБ.';
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit;
+                }
+                $allowedExtensions = array('jpeg', 'jpg', 'png');
+                $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                if (!in_array($fileExtension, $allowedExtensions)) {
+                    $_SESSION['error_message'] = 'Допустимые типы файлов: .jpeg, .jpg, .png.';
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit;
+                }
+            
+                if (!getimagesize($fileTmpName)) {
+                    $_SESSION['error_message'] = 'Изображение повреждено. Пожалуйста, замените его на не поврежденный вариант.';
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit;
+                }
+
+                // Генерация уникального имени файла
+                $uniqueFileName = uniqid() . '.' . $fileExtension;
+                $uploadDir = 'images/';
+                $uploadFile = $uploadDir . $uniqueFileName;
+            
+                // Копирование файла в папку
+                if (move_uploaded_file($fileTmpName, $uploadFile)) {
+                    $imgLink = $uploadFile;
+                } else {
+                    $_SESSION['error_message'] = 'Ошибка загрузки файла.';
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit;
+                }
+            } else {
+                $_SESSION['error_message'] = 'Пожалуйста, выберите изображение.';
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit;
+            }
             $manufacturer_query = $conn->prepare("SELECT id FROM manufacturers WHERE name = ?");
             $manufacturer_query->bind_param('s', $manufacturer);
             $manufacturer_query->execute();
@@ -714,9 +757,14 @@ try{
             $price = $conn->real_escape_string(htmlspecialchars($price, ENT_QUOTES, 'UTF-8'));
             $quantity = $conn->real_escape_string(htmlspecialchars($quantity, ENT_QUOTES, 'UTF-8'));
             $cost = $conn->real_escape_string(htmlspecialchars($cost, ENT_QUOTES, 'UTF-8'));
-    
-            $insert_query = $conn->prepare("INSERT INTO drugs (name, manufacturer_id, provider_id, price, quantity, cost) VALUES (?, ?, ?, ?, ?, ?)");
-            $insert_query->bind_param('siidid', $name, $manufacturer_id, $provider_id, $price, $quantity, $cost);
+            if (!empty($imgLink)) {
+                $imgLink = $conn->real_escape_string(htmlspecialchars($imgLink, ENT_QUOTES, 'UTF-8'));
+            } else {
+                $imgLink = null; // Устанавливаем в NULL, если ссылка не предоставлена
+            }
+            
+            $insert_query = $conn->prepare("INSERT INTO drugs (name, manufacturer_id, provider_id, price, quantity, cost, medicinePhoto) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $insert_query->bind_param('siidiss', $name, $manufacturer_id, $provider_id, $price, $quantity, $cost, $imgLink);
             if ($insert_query->execute()) {
                 $_SESSION['success_message'] = 'Лекарство успешно добавлено.';
             } else {
@@ -1421,7 +1469,12 @@ try{
     $stmt->execute();
     $drugs_add_requests_feedback =  $stmt->get_result();
 
-    
+    $pdo = new PDO('mysql:host=localhost;dbname=pharmacy2', 'root', '');
+    $userId = $_SESSION['user_id'];
+    $stmt = $pdo->prepare("SELECT profilePhoto FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $profilePhoto = $user ? base64_encode($user['profilePhoto']) : null;
     
 
 } catch(mysqli_sql_exception $e){

@@ -39,11 +39,18 @@ if($_SESSION["user_type"] == 1):
 
 <body>
 	<h1 class="title mb20 mt20">Управление Лекарствами</h1>
+
+	<div id="imageContainer">Click to upload image
+		<input type="file" id="fileInput" accept="image/*">
+	</div>
 	<form method="POST" action="
     <?php   
         // session_unset();
         // session_destroy(); 
     ?>">
+
+
+
 		<button type="submit" name="logout" class="button button__fixed button__fixed_right">
 			Выйти
 		</button>
@@ -235,9 +242,11 @@ if($_SESSION["user_type"] == 1):
 	<h1 class="title mb20 mt20">Заявки на поставку</h1>
 	<?php $rowSum = $supplier_analytics_sum_drugs->fetch_assoc();
 	 $rowMedDrug = $supplier_analytics_med_drugs->fetch_assoc();?>
-	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарная стоимость заказов: <?php echo htmlspecialchars(number_format($rowSum['sumCost'], 2, '.', ''))?></h1>
-	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средний доход с продажи единицы: <?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
-    	
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарная стоимость заказов:
+		<?php echo htmlspecialchars(number_format($rowSum['sumCost'], 2, '.', ''))?></h1>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средний доход с продажи единицы:
+		<?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
+
 	<table>
 		<thead>
 			<tr>
@@ -257,7 +266,8 @@ if($_SESSION["user_type"] == 1):
 				<th class="column-status"><a
 						href="?order_by_supplier=status&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Статус</a></th>
 				<th class="column-status"><a
-						href="?order_by_supplier=last_updated&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Время обновления</a></th>
+						href="?order_by_supplier=last_updated&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Время
+						обновления</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -274,7 +284,7 @@ if($_SESSION["user_type"] == 1):
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
 				<td data-type="status" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="my_orders_requests" data-field="status"
-				style="cursor:pointer" class="openPopup"><?php echo htmlspecialchars($row['status']); ?></td>
+					style="cursor:pointer" class="openPopup"><?php echo htmlspecialchars($row['status']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['last_updated']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
@@ -308,7 +318,7 @@ if($_SESSION["user_type"] == 1):
 	</div>
 
 	<?php if ($orders_from_shoppers->num_rows > 0 ||  $drugs_add_requests->num_rows > 0 || $drugs_add_requests_feedback->num_rows): ?>
-		<div class="message message_open">
+	<div class="message message_open">
 		<div class="message__inner">
 			<?php
 			while ($row = $orders_from_shoppers->fetch_assoc()) {
@@ -321,26 +331,28 @@ if($_SESSION["user_type"] == 1):
 				$quantity =  htmlspecialchars($row['quantity']);
 				$orderId = htmlspecialchars($row['id']);
 				?>
-				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
-					<p class="message__name">
-						<span>Имя: </span><?php echo $name;?>
-					</p>
-					<p class="message__date">
-						<span>Дата: </span><?php echo $date; ?>
-					</p>
-					<div class="message__text"><?php echo "$status. Покупатель заказал лекарство '$drugName' от производителя '$manufacturerName' в количестве $quantity штук на стоимость $cost у.е."; ?></div>
-					<div class="button-container">
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-							<input type="hidden" name="order_from_shopper_apply" value="<?php echo $orderId; ?>">
-							<button type="submit" class="button message__button">Одобрить</button>
-						</form>
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"> 
-							<input type="hidden" name="order_from_shopper_cancel" value="<?php echo $orderId; ?>">
-							<button type="submit" class="button message__button">Отклонить</button>
-						</form>
-					</div>
+			<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+				<p class="message__name">
+					<span>Имя: </span><?php echo $name;?>
+				</p>
+				<p class="message__date">
+					<span>Дата: </span><?php echo $date; ?>
+				</p>
+				<div class="message__text">
+					<?php echo "$status. Покупатель заказал лекарство '$drugName' от производителя '$manufacturerName' в количестве $quantity штук на стоимость $cost у.е."; ?>
 				</div>
-				<?php
+				<div class="button-container">
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="order_from_shopper_apply" value="<?php echo $orderId; ?>">
+						<button type="submit" class="button message__button">Одобрить</button>
+					</form>
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="order_from_shopper_cancel" value="<?php echo $orderId; ?>">
+						<button type="submit" class="button message__button">Отклонить</button>
+					</form>
+				</div>
+			</div>
+			<?php
 			}
 			?>
 			<?php
@@ -354,26 +366,28 @@ if($_SESSION["user_type"] == 1):
 				$quantity =  htmlspecialchars($row['quantity']);
 				$drugId = htmlspecialchars($row['id']);
 				?>
-				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
-					<p class="message__name">
-						<span>Имя поставщика: </span><?php echo $name;?>
-					</p>
-					<p class="message__date">
-						<span>Дата: </span><?php echo $date; ?>
-					</p>
-					<div class="message__text"><?php echo "$status. Поставщик '$name' поставляет лекарство '$drugName' от производителя '$manufacturerName' в количестве $quantity штук по цене $cost у.е. за штуку. Одобрить поставку?"; ?></div>
-					<div class="button-container">
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-							<input type="hidden" name="drug_supply_apply" value="<?php echo $drugId; ?>">
-							<button type="submit" class="button message__button">Одобрить</button>
-						</form>
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"> 
-							<input type="hidden" name="drug_supply_cancel" value="<?php echo $drugId; ?>">
-							<button type="submit" class="button message__button">Отклонить</button>
-						</form>
-					</div>
+			<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+				<p class="message__name">
+					<span>Имя поставщика: </span><?php echo $name;?>
+				</p>
+				<p class="message__date">
+					<span>Дата: </span><?php echo $date; ?>
+				</p>
+				<div class="message__text">
+					<?php echo "$status. Поставщик '$name' поставляет лекарство '$drugName' от производителя '$manufacturerName' в количестве $quantity штук по цене $cost у.е. за штуку. Одобрить поставку?"; ?>
 				</div>
-				<?php
+				<div class="button-container">
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="drug_supply_apply" value="<?php echo $drugId; ?>">
+						<button type="submit" class="button message__button">Одобрить</button>
+					</form>
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="drug_supply_cancel" value="<?php echo $drugId; ?>">
+						<button type="submit" class="button message__button">Отклонить</button>
+					</form>
+				</div>
+			</div>
+			<?php
 			}
 			?>
 			<?php
@@ -387,22 +401,24 @@ if($_SESSION["user_type"] == 1):
 				$quantity =  htmlspecialchars($row['quantity']);
 				$orderId = htmlspecialchars($row['id']);
 				?>
-				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
-					<p class="message__name">
-						<span>Имя: </span><?php echo $name; ?>
-					</p>
-					<p class="message__date">
-						<span>Дата: </span><?php echo $date; ?>
-					</p>
-					<div class="message__text"><?php $money = $cost*$quantity; echo "Доступен результат по обработке поставки лекарства '$drugName' со стороны админитсрации от производителя '$manufacturerName' на сумму $money у.е. Результат: $status"; ?></div>
-						<div class="button-container">
-							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-								<input type="hidden" name="drug_request_status_viewed" value="<?php echo $orderId; ?>">
-								<button type="submit" class="button message__button">Понятно</button>
-							</form>
-						</div>
-					</div>
-				<?php
+			<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+				<p class="message__name">
+					<span>Имя: </span><?php echo $name; ?>
+				</p>
+				<p class="message__date">
+					<span>Дата: </span><?php echo $date; ?>
+				</p>
+				<div class="message__text">
+					<?php $money = $cost*$quantity; echo "Доступен результат по обработке поставки лекарства '$drugName' со стороны админитсрации от производителя '$manufacturerName' на сумму $money у.е. Результат: $status"; ?>
+				</div>
+				<div class="button-container">
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="drug_request_status_viewed" value="<?php echo $orderId; ?>">
+						<button type="submit" class="button message__button">Понятно</button>
+					</form>
+				</div>
+			</div>
+			<?php
 			}
 			?>
 		</div>
@@ -410,104 +426,144 @@ if($_SESSION["user_type"] == 1):
 			<button id="message__button" class="button message__button__close">Закрыть</button>
 			<button id="expand__button" class="button message__button__expand" style="display:none;">Развернуть сообщения</button>
 		</div>
-	<?php  endif;?>	
+		<?php  endif;?>
 
 
 </body>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-	const messageContainer = document.querySelector('.message__inner');
-	const closeButton = document.getElementById('message__button');
-	const expandButton = document.getElementById('expand__button');
+		try {
+			const imageContainer = document.getElementById('imageContainer');
+			const fileInput = document.getElementById('fileInput');
 
-	// Открываем попап при клике на кнопку
-	document.querySelectorAll('.openPopup').forEach((element) => {
-		element.addEventListener('click', function(event) {
-			const clickedText = event.target.innerText;
-			const type = event.target.dataset.type;
-			const id = event.target.dataset.id;
-			const table = event.target.dataset.table; // Получаем таблицу
-			const field = event.target.dataset.field; // Получаем поле
+			// Добавляем обработчик клика по div
+			imageContainer.addEventListener('click', () => {
+				fileInput.click(); // Открывает диалоговое окно выбора файла
+			});
 
-			document.getElementById('popupInput').value = clickedText;
-			event.stopPropagation();
-			openPopup(type, id, table, field); // Передаем таблицу и поле
-		});
-	})
+			// Обработчик для загрузки файла
+			fileInput.addEventListener('change', (event) => {
+				const file = event.target.files[0];
+				if (file) {
+					const reader = new FileReader();
 
-	// Функция для открытия попапа
-	function openPopup(type, id, table, field) {
-		const formType = document.querySelector('#formType');
-		const formId = document.querySelector('#formId');
-		const tableName = document.querySelector('#tableName');
-		const fieldName = document.querySelector('#fieldName');
-		const popupInput = document.getElementById('popupInput');
-		const statusSelect = document.getElementById('statusSelect');
+					// Загружаем изображение в div
+					reader.onload = (e) => {
+						imageContainer.style.backgroundImage = `url(${e.target.result})`;
+						imageContainer.textContent = ''; // Убираем текст после загрузки изображения
+					};
 
-		formType.value = type;
-		formId.value = id;
-		tableName.value = table;
-		fieldName.value = field;
+					reader.readAsDataURL(file); // Читает файл как URL данных
+				}
+			});
 
-		if (table === 'my_orders_requests' && field === 'status') {
-			statusSelect.innerHTML = `
+			const messageContainer = document.querySelector('.message__inner');
+			const closeButton = document.getElementById('message__button');
+			const expandButton = document.getElementById('expand__button');
+
+			// Открываем попап при клике на кнопку
+			document.querySelectorAll('.openPopup').forEach((element) => {
+				element.addEventListener('click', function(event) {
+					const clickedText = event.target.innerText;
+					const type = event.target.dataset.type;
+					const id = event.target.dataset.id;
+					const table = event.target.dataset.table; // Получаем таблицу
+					const field = event.target.dataset.field; // Получаем поле
+
+					document.getElementById('popupInput').value = clickedText;
+					event.stopPropagation();
+					openPopup(type, id, table, field); // Передаем таблицу и поле
+				});
+			})
+
+			// Функция для открытия попапа
+			function openPopup(type, id, table, field) {
+				const formType = document.querySelector('#formType');
+				const formId = document.querySelector('#formId');
+				const tableName = document.querySelector('#tableName');
+				const fieldName = document.querySelector('#fieldName');
+				const popupInput = document.getElementById('popupInput');
+				const statusSelect = document.getElementById('statusSelect');
+
+				formType.value = type;
+				formId.value = id;
+				tableName.value = table;
+				fieldName.value = field;
+
+				if (table === 'my_orders_requests' && field === 'status') {
+					statusSelect.innerHTML = `
 				<option value="" disabled selected>Выберите статус</option>
 				<option value="Собирается">Собирается</option>
 				<option value="Отклонено">Отклонено</option>
 				<option value="В обработке">В обработке</option>
 			`;
-			popupInput.style.display = 'none'; // Скрыть текстовое поле
-			statusSelect.style.display = 'block'; // Показать селект
-		} else if (table === 'drugs' && field === 'is_allowed') {
-			statusSelect.innerHTML = `
+					popupInput.style.display = 'none'; // Скрыть текстовое поле
+					statusSelect.style.display = 'block'; // Показать селект
+				} else if (table === 'drugs' && field === 'is_allowed') {
+					statusSelect.innerHTML = `
 				<option value="" disabled selected>Выберите статус</option>
 				<option value="Одобрено">Одобрено</option>
 				<option value="Отклонено">Отклонено</option>
 				<option value="В обработке">В обработке</option>
 			`;
-			popupInput.style.display = 'none'; // Скрыть текстовое поле
-			statusSelect.style.display = 'block'; // Показать селект
-		} else {
-			popupInput.style.display = 'block'; // Показать текстовое поле
-			statusSelect.style.display = 'none'; // Скрыть селект
+					popupInput.style.display = 'none'; // Скрыть текстовое поле
+					statusSelect.style.display = 'block'; // Показать селект
+				} else {
+					popupInput.style.display = 'block'; // Показать текстовое поле
+					statusSelect.style.display = 'none'; // Скрыть селект
+				}
+
+				const popup = document.getElementById("popup");
+				popup.classList.add("popup_open");
+			}
+
+			// Обработчик для закрытия попапа при клике вне формы
+			document.addEventListener('click', function(event) {
+				const popup = document.getElementById("popup");
+				const popupContent = document.querySelector(".popup__content");
+
+				if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
+					popup.classList.remove("popup_open"); // Закрываем попап
+				}
+			});
+
+			// Предотвращаем закрытие попапа при клике внутри формы
+			document.querySelector('.popup__content').addEventListener('click', function(event) {
+				event.stopPropagation();
+			});
+
+			// Обработчик для кнопки "Удалить"
+			// document.querySelector('.message__button__close').addEventListener('click', function() {
+			// 	document.querySelector('.message').classList.remove('message_open');
+			// });
+
+			if (closeButton) {
+				closeButton.addEventListener('click', function() {
+					messageContainer.style.display = 'none'; // Скрыть сообщения
+					closeButton.style.display = 'none'; // Скрыть кнопку закрытия
+					expandButton.style.display = 'block'; // Показать кнопку развернуть
+				});
+			}
+
+			if (expandButton) {
+				expandButton.addEventListener('click', function() {
+					messageContainer.style.display = 'block'; // Показать сообщения
+					closeButton.style.display = 'block'; // Показать кнопку закрытия
+					expandButton.style.display = 'none'; // Скрыть кнопку развернуть
+				});
+			}
+
+		} catch (error) {
+			console.log(error)
 		}
 
-		const popup = document.getElementById("popup");
-		popup.classList.add("popup_open");
+
+
 	}
 
-	// Обработчик для закрытия попапа при клике вне формы
-	document.addEventListener('click', function(event) {
-		const popup = document.getElementById("popup");
-		const popupContent = document.querySelector(".popup__content");
 
-		if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
-			popup.classList.remove("popup_open"); // Закрываем попап
-		}
-	});
-
-	// Предотвращаем закрытие попапа при клике внутри формы
-	document.querySelector('.popup__content').addEventListener('click', function(event) {
-		event.stopPropagation();
-	});
-
-	// Обработчик для кнопки "Удалить"
-	// document.querySelector('.message__button__close').addEventListener('click', function() {
-	// 	document.querySelector('.message').classList.remove('message_open');
-	// });
-
-	closeButton.addEventListener('click', function() {
-				messageContainer.style.display = 'none'; // Скрыть сообщения
-				closeButton.style.display = 'none'; // Скрыть кнопку закрытия
-				expandButton.style.display = 'block'; // Показать кнопку развернуть
-	});
-	expandButton.addEventListener('click', function() {
-				messageContainer.style.display = 'block'; // Показать сообщения
-				closeButton.style.display = 'block'; // Показать кнопку закрытия
-				expandButton.style.display = 'none'; // Скрыть кнопку развернуть
-	});
-});
+);
 </script>
 
 </html>
@@ -530,11 +586,20 @@ else:
 
 <body>
 	<h1 class="title mb20 mt20">Управление Лекарствами</h1>
+
+	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
+		<?php if (!$profilePhoto): ?>
+			Загрузить фотку
+		<?php endif; ?>
+        <input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+    </div>
 	<form method="POST" action="
     <?php   
         // session_unset();
         // session_destroy(); 
     ?>">
+
+
 		<button type="submit" name="logout" class="button button__fixed button__fixed_right">
 			Выйти
 		</button>
@@ -544,7 +609,7 @@ else:
 		На главную
 	</a>
 	<!-- style="display:none;" Форма поиска лекарств-->
-	<form  method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
 		<input type="text" name="search_for_user" class="input" placeholder="Поиск..." value="<?php 
 		echo htmlspecialchars($search_query_user); ?>">
@@ -552,7 +617,7 @@ else:
 	</form>
 
 	<!-- Форма добавления новой записи -->
-	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form" enctype="multipart/form-data">
 		<p class="title">Добавление лекарств</p>
 		<input type="text" name="name" class="input" placeholder="Название" required>
 		<!-- <input type="text" name="manufacturer_name" class="input" placeholder="Производитель" required> -->
@@ -576,6 +641,8 @@ else:
 
 		<input type="number" name="price" class="input" placeholder="Цена" step="0.01" required>
 		<input type="number" name="quantity" class="input" placeholder="Количество" step="1" required>
+		<input type="file" name="medicinePhoto" class="input" accept="image/*" required>
+		<!-- <input type="text" name="imgLink" class="input" placeholder="Ссылка на картинку"> -->
 		<button type="submit" name="add_drugs_user" class="button">Добавить</button>
 		<?php if (isset($_SESSION['error_message'])): ?>
 		<div class="auth__message">
@@ -591,6 +658,7 @@ else:
 	<table>
 		<thead>
 			<tr>
+				<th class="column-id"><a href="?order_by_user=id&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">IMG</a></th>
 				<th class="column-id"><a href="?order_by_user=id&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">ID</a></th>
 				<th class="column-name"><a href="?order_by_user=name&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">Название</a>
 				</th>
@@ -601,7 +669,8 @@ else:
 						href="?order_by_user=quantity&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">Количество</a></th>
 				<th class="column-cost"><a href="?order_by_user=cost&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">Стоимость</a>
 				</th>
-				<th class="column-status"><a href="?order_by_user=is_allowed&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">Статус</a>
+				<th class="column-status"><a
+						href="?order_by_user=is_allowed&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">Статус</a>
 				</th>
 				<th class="column-actions">Действия</th>
 			</tr>
@@ -612,9 +681,16 @@ else:
                 while ($row = $result_user->fetch_assoc()) {
                     ?>
 			<tr>
+				<td>
+					<img class="table__img openImageUpdate" src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
+						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
+						
+						<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
+				</td>
 				<td><?php echo htmlspecialchars($row['id']); ?></td>
-				<td data-type="name" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="name"
-					class="openPopup" style="cursor:pointer">
+				<td data-type="name" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="name" class="openPopup"
+					style="cursor:pointer">
 					<?php echo htmlspecialchars($row['name']); ?></td>
 				<td data-type="manufacturer" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="manufacturer"
 					class="openPopup" style="cursor:pointer">
@@ -623,7 +699,7 @@ else:
 					class="openPopup" style="cursor:pointer">
 					<?php echo htmlspecialchars($row['price']); ?></td>
 				<td data-type="quantity" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="quantity"
-					 style="cursor:pointer">
+					style="cursor:pointer">
 					<?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td data-type="cost" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="cost"
 					style="cursor:pointer">
@@ -650,9 +726,11 @@ else:
 	<h1 class="title mb20 mt20">Заявки на поставку</h1>
 	<?php $rowSum = $supplier_analytics_sum_drugs->fetch_assoc();
 	 $rowMedDrug = $supplier_analytics_med_drugs->fetch_assoc();?>
-	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарная стоимость заказов: <?php echo htmlspecialchars(number_format($rowSum['sumCost'], 2, '.', ''))?></h1>
-	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средний доход с продажи единицы: <?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
-    
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарная стоимость заказов:
+		<?php echo htmlspecialchars(number_format($rowSum['sumCost'], 2, '.', ''))?></h1>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средний доход с продажи единицы:
+		<?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
+
 	<table>
 		<thead>
 			<tr>
@@ -672,7 +750,8 @@ else:
 				<th class="column-status"><a
 						href="?order_by_supplier=status&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Статус</a></th>
 				<th class="column-status"><a
-						href="?order_by_supplier=last_updated&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Время обновления</a></th>
+						href="?order_by_supplier=last_updated&order_dir_supplier=<?php echo htmlspecialchars($order_dir_supplier); ?>">Время
+						обновления</a></th>
 				<th class="column-actions">Действия</th>
 			</tr>
 		</thead>
@@ -688,7 +767,8 @@ else:
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['price']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['quantity']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['cost']); ?></td>
-				<td data-id="<?php echo htmlspecialchars($row['id']); ?>" data-type="status" data-table="my_orders_requests" data-field="status" class="openPopup" style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
+				<td data-id="<?php echo htmlspecialchars($row['id']); ?>" data-type="status" data-table="my_orders_requests" data-field="status"
+					class="openPopup" style="cursor:pointer"><?php echo htmlspecialchars($row['status']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['last_updated']); ?></td>
 				<td>
 					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display:inline;">
@@ -726,7 +806,7 @@ else:
 	</div>
 
 	<!-- <div id="statusPopup" class="popup">
-		<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="popup__content">
+		<form method="POST" action="<?php //echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="popup__content">
 			<input type="hidden" id="statusFormId" name="formId">
 			<select id="statusSelect" name="input" class="input" required>
 				<option value="" disabled selected>Выберите статус</option>
@@ -737,10 +817,17 @@ else:
 			<button type="submit" class="button popup__button">Сохранить</button>
 		</form>
 	</div> -->
-
+	<div id="vsplyvImage" class="vsplyvImage">
+		<div class="vsplyvImage__content">
+			<img id="currentImage" class="vsplyvImage__img" src="" alt="Текущая картинка" />
+			<input type="file" id="newImageFile" class="input" accept="image/*" required>
+			<button id="uploadImageButton" class="button vsplyvImage__button">Обновить изображение</button>
+			<button id="closeImageButton" class="button vsplyvImage__button">Закрыть</button>
+		</div>
+	</div>
 
 	<?php if ($orders_from_shoppers->num_rows > 0 || $drugs_add_requests_feedback->num_rows > 0): ?>
-		<div class="message message_open">
+	<div class="message message_open">
 		<div class="message__inner">
 			<?php
 			while ($row = $orders_from_shoppers->fetch_assoc()) {
@@ -753,26 +840,28 @@ else:
 				$quantity =  htmlspecialchars($row['quantity']);
 				$orderId = htmlspecialchars($row['id']);
 				?>
-				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
-					<p class="message__name">
-						<span>Имя: </span><?php echo $name;?>
-					</p>
-					<p class="message__date">
-						<span>Дата: </span><?php echo $date; ?>
-					</p>
-					<div class="message__text"><?php echo "$status. Покупатель заказал лекарство '$drugName' от производителя '$manufacturerName' в количестве $quantity штук на стоимость $cost у.е."; ?></div>
-					<div class="button-container">
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-							<input type="hidden" name="order_from_shopper_apply" value="<?php echo $orderId; ?>">
-							<button type="submit" class="button message__button">Одобрить</button>
-						</form>
-						<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"> 
-							<input type="hidden" name="order_from_shopper_cancel" value="<?php echo $orderId; ?>">
-							<button type="submit" class="button message__button">Отклонить</button>
-						</form>
-					</div>
+			<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+				<p class="message__name">
+					<span>Имя: </span><?php echo $name;?>
+				</p>
+				<p class="message__date">
+					<span>Дата: </span><?php echo $date; ?>
+				</p>
+				<div class="message__text">
+					<?php echo "$status. Покупатель заказал лекарство '$drugName' от производителя '$manufacturerName' в количестве $quantity штук на стоимость $cost у.е."; ?>
 				</div>
-				<?php
+				<div class="button-container">
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="order_from_shopper_apply" value="<?php echo $orderId; ?>">
+						<button type="submit" class="button message__button">Одобрить</button>
+					</form>
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="order_from_shopper_cancel" value="<?php echo $orderId; ?>">
+						<button type="submit" class="button message__button">Отклонить</button>
+					</form>
+				</div>
+			</div>
+			<?php
 			}
 			?>
 			<?php
@@ -786,22 +875,24 @@ else:
 				$quantity =  htmlspecialchars($row['quantity']);
 				$orderId = htmlspecialchars($row['id']);
 				?>
-				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
-					<p class="message__name">
-						<span>Имя: </span><?php echo $name; ?>
-					</p>
-					<p class="message__date">
-						<span>Дата: </span><?php echo $date; ?>
-					</p>
-					<div class="message__text"><?php $money = $cost*$quantity; echo "Доступен результат по обработке поставки лекарства '$drugName' со стороны админитсрации от производителя '$manufacturerName' на сумму $money у.е. Результат: $status"; ?></div>
-						<div class="button-container">
-							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-								<input type="hidden" name="drug_request_status_viewed" value="<?php echo $orderId; ?>">
-								<button type="submit" class="button message__button">Понятно</button>
-							</form>
-						</div>
-					</div>
-				<?php
+			<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+				<p class="message__name">
+					<span>Имя: </span><?php echo $name; ?>
+				</p>
+				<p class="message__date">
+					<span>Дата: </span><?php echo $date; ?>
+				</p>
+				<div class="message__text">
+					<?php $money = $cost*$quantity; echo "Доступен результат по обработке поставки лекарства '$drugName' со стороны админитсрации от производителя '$manufacturerName' на сумму $money у.е. Результат: $status"; ?>
+				</div>
+				<div class="button-container">
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="drug_request_status_viewed" value="<?php echo $orderId; ?>">
+						<button type="submit" class="button message__button">Понятно</button>
+					</form>
+				</div>
+			</div>
+			<?php
 			}
 			?>
 		</div>
@@ -811,92 +902,216 @@ else:
 			<button id="expand__button" class="button message__button__expand" style="display:none;">Развернуть сообщения</button>
 		</div>
 	</div>
-	<?php  endif;?>	
+	<?php  endif;?>
 
 
 </body>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-	const messageContainer = document.querySelector('.message__inner');
-	const closeButton = document.getElementById('message__button');
-	const expandButton = document.getElementById('expand__button');
+	try {
+		const vsplyvImage = document.getElementById('vsplyvImage');
+		const newImageLinkInput = document.getElementById('newImageLink');
+		const currentImage = document.getElementById('currentImage');
+		const updateImageButton = document.getElementById('updateImageButton');
+		const closeImageButton = document.getElementById('closeImageButton');
+		baseDrugImage  = "";
+		let currentID = 0;
+		// Функция для открытия vsplyvImage
+		function openVsplyvImage(imageSrc, id) {
+			currentImage.src = imageSrc;
+			currentID = id;
+			vsplyvImage.classList.add('open');
+		}
 
-
-	// Открываем попап при клике на кнопку
-	document.querySelectorAll('.openPopup').forEach((element) => {
-		element.addEventListener('click', function(event) {
-			const clickedText = event.target.innerText;
-			const type = event.target.dataset.type;
-			const id = event.target.dataset.id;
-			const table = event.target.dataset.table; // Получаем таблицу
-			const field = event.target.dataset.field; // Получаем поле
-
-			document.getElementById('popupInput').value = clickedText;
-			event.stopPropagation();
-			openPopup(type, id, table, field); // Передаем таблицу и поле
+		// Обработчик клика для открытия vsplyvImage при необходимости
+		document.querySelectorAll('.openImageUpdate').forEach((element) => {
+			element.addEventListener('click', function() {
+				const imageSrc = element.src; // Get the image source
+				const id = element.dataset.id; // Get the ID
+				openVsplyvImage(imageSrc, id);
+			});
 		});
-	})
 
-	// Функция для открытия попапа
-	function openPopup(type, id, table, field) {
-		const formType = document.querySelector('#formType');
-		const formId = document.querySelector('#formId');
-		const tableName = document.querySelector('#tableName');
-		const fieldName = document.querySelector('#fieldName');
-		const popupInput = document.getElementById('popupInput');
-		const statusSelect = document.getElementById('statusSelect');
+		// Обработчик для обновления ссылки на изображение
+		uploadImageButton.addEventListener('click', function() {
+			const fileInput = document.getElementById('newImageFile');
+			const file = fileInput.files[0];
 
-		formType.value = type;
-		formId.value = id;
-		tableName.value = table;
-		fieldName.value = field;
+			if (file) {
+				const formData = new FormData();
+				formData.append('medicinePhoto', file);
+				formData.append('id', currentID);
 
-		if (field === 'status') {
-			popupInput.style.display = 'none'; // Скрыть текстовое поле
-			statusSelect.style.display = 'block'; // Показать селект
-		} else {
-			popupInput.style.display = 'block'; // Показать текстовое поле
-			statusSelect.style.display = 'none'; // Скрыть селект
+				fetch('photoAPI/medicinePhotoUpd.php', {
+					method: 'POST',
+					body: formData
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.status === 'success') {
+						currentImage.src = URL.createObjectURL(file); // Update displayed image
+						alert('Изображение обновлено успешно.');
+						vsplyvImage.classList.remove('open');
+					} else {
+						alert(data.message);
+					}
+				})
+				.catch(error => {
+					console.error('Ошибка:', error);
+				});
+			} else {
+				alert('Пожалуйста, выберите изображение.');
+			}
+		});
+
+		// Обработчик для закрытия vsplyvImage
+		closeImageButton.addEventListener('click', function() {
+			vsplyvImage.classList.remove('open');
+		});
+		// Закрытие vsplyvImage при клике вне содержимого
+		vsplyvImage.addEventListener('click', function(event) {
+			if (event.target === vsplyvImage) {
+				vsplyvImage.classList.remove('open');
+			}
+		});
+
+		//console.log(2)
+		const imageContainer = document.getElementById('imageContainer');
+		const fileInput = document.getElementById('fileInput');
+
+		// Добавляем обработчик клика по div
+		imageContainer.addEventListener('click', () => {
+			fileInput.click(); // Открывает диалоговое окно выбора файла
+		});
+		
+		// Обработчик для загрузки файла
+		fileInput.addEventListener('change', (event) => {
+			const file = event.target.files[0];
+			if (file) {
+				const formData = new FormData();
+				formData.append('profilePhoto', file);
+				const reader = new FileReader();
+
+				fetch('photoAPI/userProfilePhoto.php', {
+					method: 'POST',
+					body: formData
+				})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Сетевая ошибка: ответ не был получен');
+					}
+					return response.json(); 
+				})
+				.then(data => {
+					if (data.status === 'success') {
+						// Только после успешного ответа обновляем изображение
+						reader.onload = function(e) {
+							imageContainer.style.backgroundImage = `url(${e.target.result})`;
+							imageContainer.textContent = ''; 
+						};
+						reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
+					} else {
+						// Если статус не success, выводим сообщение об ошибке
+						alert(data.message);
+						console.error(data.message);
+					}
+				})
+				.catch(error => {
+					const errorMessage = 'Ошибка при загрузке изображения: ' + error.message; // Используем error.message для более ясного сообщения
+					console.error('Ошибка:', error);
+					alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
+				});
+			}
+		});
+
+		const messageContainer = document.querySelector('.message__inner');
+		const closeButton = document.getElementById('message__button');
+		const expandButton = document.getElementById('expand__button');
+
+		// Открываем попап при клике на кнопку
+		document.querySelectorAll('.openPopup').forEach((element) => {
+			element.addEventListener('click', function(event) {
+				const clickedText = event.target.innerText;
+				const type = event.target.dataset.type;
+				const id = event.target.dataset.id;
+				const table = event.target.dataset.table; // Получаем таблицу
+				const field = event.target.dataset.field; // Получаем поле
+
+				document.getElementById('popupInput').value = clickedText;
+				event.stopPropagation();
+				openPopup(type, id, table, field); // Передаем таблицу и поле
+			});
+		})
+
+		// Функция для открытия попапа
+		function openPopup(type, id, table, field) {
+			const formType = document.querySelector('#formType');
+			const formId = document.querySelector('#formId');
+			const tableName = document.querySelector('#tableName');
+			const fieldName = document.querySelector('#fieldName');
+			const popupInput = document.getElementById('popupInput');
+			const statusSelect = document.getElementById('statusSelect');
+
+			formType.value = type;
+			formId.value = id;
+			tableName.value = table;
+			fieldName.value = field;
+
+			if (field === 'status') {
+				popupInput.style.display = 'none'; // Скрыть текстовое поле
+				statusSelect.style.display = 'block'; // Показать селект
+			} else {
+				popupInput.style.display = 'block'; // Показать текстовое поле
+				statusSelect.style.display = 'none'; // Скрыть селект
+			}
+
+			const popup = document.getElementById("popup");
+			popup.classList.add("popup_open");
 		}
 
-		const popup = document.getElementById("popup");
-		popup.classList.add("popup_open");
+		// Обработчик для закрытия попапа при клике вне формы
+		document.addEventListener('click', function(event) {
+			const popup = document.getElementById("popup");
+			const popupContent = document.querySelector(".popup__content");
+
+			if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
+				popup.classList.remove("popup_open"); // Закрываем попап
+			}
+		});
+
+		// Предотвращаем закрытие попапа при клике внутри формы
+		document.querySelector('.popup__content').addEventListener('click', function(event) {
+			event.stopPropagation();
+		});
+
+		// Обработчик для кнопки "Удалить"
+		// document.querySelector('.message__button__close').addEventListener('click', function() {
+		// 	document.querySelector('.message').classList.remove('message_open');
+		// });
+
+
+
+		if (closeButton) {
+			closeButton.addEventListener('click', function() {
+				messageContainer.style.display = 'none'; // Скрыть сообщения
+				closeButton.style.display = 'none'; // Скрыть кнопку закрытия
+				expandButton.style.display = 'block'; // Показать кнопку развернуть
+			});
+		}
+
+		if (expandButton) {
+			expandButton.addEventListener('click', function() {
+				messageContainer.style.display = 'block'; // Показать сообщения
+				closeButton.style.display = 'block'; // Показать кнопку закрытия
+				expandButton.style.display = 'none'; // Скрыть кнопку развернуть
+			});
+		}
+
+
+	} catch (error) {
+		console.log(error)
 	}
-
-	// Обработчик для закрытия попапа при клике вне формы
-	document.addEventListener('click', function(event) {
-		const popup = document.getElementById("popup");
-		const popupContent = document.querySelector(".popup__content");
-
-		if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
-			popup.classList.remove("popup_open"); // Закрываем попап
-		}
-	});
-
-	// Предотвращаем закрытие попапа при клике внутри формы
-	document.querySelector('.popup__content').addEventListener('click', function(event) {
-		event.stopPropagation();
-	});
-
-	// Обработчик для кнопки "Удалить"
-	// document.querySelector('.message__button__close').addEventListener('click', function() {
-	// 	document.querySelector('.message').classList.remove('message_open');
-	// });
-
-	
-
-	closeButton.addEventListener('click', function() {
-		messageContainer.style.display = 'none'; // Скрыть сообщения
-		closeButton.style.display = 'none'; // Скрыть кнопку закрытия
-		expandButton.style.display = 'block'; // Показать кнопку развернуть
-	});
-
-	expandButton.addEventListener('click', function() {
-		messageContainer.style.display = 'block'; // Показать сообщения
-		closeButton.style.display = 'block'; // Показать кнопку закрытия
-		expandButton.style.display = 'none'; // Скрыть кнопку развернуть
-	});
 });
 </script>
 
@@ -919,7 +1134,12 @@ else:
 
 <body>
 	<h1 class="title mb20 mt20">Закупка лекарствами</h1>
+	<div id="imageContainer">Click to upload image
+		<input type="file" id="fileInput" accept="image/*">
+	</div>
 	<form method="POST">
+
+
 		<button type="submit" name="logout" class="button button__fixed button__fixed_right">
 			Выйти
 		</button>
@@ -931,11 +1151,11 @@ else:
 
 	<form method="POST" style="display:none;">
 		<button type="submit" name="drop_res" class="button button_not_fixed button__fixed_colhoz">
-		Убрать рекомендации
+			Убрать рекомендации
 		</button>
 	</form>
 	<!-- Форма поиска лекарств style="display:none;" -->
-	<form  method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
 		<input type="text" name="search_for_shopper" class="input" placeholder="Поиск..."
 			value="<?php echo htmlspecialchars($search_query_shopper); ?>">
@@ -1001,9 +1221,11 @@ else:
 	<h1 class="title mb20 mt20">Моя корзина</h1>
 	<?php $rowSum = $user_analytics_sum_drugs->fetch_assoc();
 	 $rowMedDrug = $user_analytics_med_drugs->fetch_assoc();?>
-	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарные затраты: <?php echo htmlspecialchars(number_format($rowSum['sumCost'], 2, '.', ''))?></h1>
-	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средние затраты на единицу товара: <?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
-    <div class="button-container" style="margin: 0 auto;">
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Суммарные затраты:
+		<?php echo htmlspecialchars(number_format($rowSum['sumCost'], 2, '.', ''))?></h1>
+	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средние затраты на единицу товара:
+		<?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
+	<div class="button-container" style="margin: 0 auto;">
 		<form style="margin-bottom: 12px" class="form__checkbox" method="POST" id="checkboxForm">
 			<input type="hidden" name="action" value="delete"> <!-- Добавляем скрытое поле для действия удаления -->
 			<button class="button form__button" type="button" id="processButton">Удалить</button>
@@ -1039,7 +1261,8 @@ else:
 						href="?order_by_shopper_cart=status&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Статус</a>
 				</th>
 				<th class="column-status"><a
-						href="?order_by_shopper_cart=last_updated&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Время обновления</a>
+						href="?order_by_shopper_cart=last_updated&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Время
+						обновления</a>
 				</th>
 				<th class="column-quantity"><a
 						href="?order_by_shopper=percent&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Процент</a></th>
@@ -1090,6 +1313,7 @@ else:
 
 	<script>
 	document.addEventListener('DOMContentLoaded', function() {
+
 		console.log("Script loaded and DOM is ready");
 
 		// Получаем кнопку для удаления и форму
@@ -1199,29 +1423,31 @@ else:
 				$quantity =  htmlspecialchars($row['quantity']);
 				$orderId = htmlspecialchars($row['id']);
 				?>
-				<div class="message__item" data-order-id="<?php echo $orderId; ?>">
-					<p class="message__name">
-						<span>Имя: </span><?php echo $name; ?>
-					</p>
-					<p class="message__date">
-						<span>Дата: </span><?php echo $date; ?>
-					</p>
-					<div class="message__text"><?php echo "Доступен результат по заказу лекарства '$drugName' от производителя '$manufacturerName' на сумму $cost у.е. Результат: $status"; ?></div>
-						<div class="button-container">
-							<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-								<input type="hidden" name="order_shopper_viewed" value="<?php echo $orderId; ?>">
-								<button type="submit" class="button message__button">Понятно </button>
-							</form>
-						</div>
-					</div>
-				<?php
+			<div class="message__item" data-order-id="<?php echo $orderId; ?>">
+				<p class="message__name">
+					<span>Имя: </span><?php echo $name; ?>
+				</p>
+				<p class="message__date">
+					<span>Дата: </span><?php echo $date; ?>
+				</p>
+				<div class="message__text">
+					<?php echo "Доступен результат по заказу лекарства '$drugName' от производителя '$manufacturerName' на сумму $cost у.е. Результат: $status"; ?>
+				</div>
+				<div class="button-container">
+					<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+						<input type="hidden" name="order_shopper_viewed" value="<?php echo $orderId; ?>">
+						<button type="submit" class="button message__button">Понятно </button>
+					</form>
+				</div>
+			</div>
+			<?php
 			}
 			?>
-				</div>
-				<div class="message__buttons">
-					<button id="message__button" class="button message__button__close">Закрыть</button>
-					<button id="expand__button" class="button message__button__expand" style="display:none;">Развернуть сообщения</button>
-				</div>
+		</div>
+		<div class="message__buttons">
+			<button id="message__button" class="button message__button__close">Закрыть</button>
+			<button id="expand__button" class="button message__button__expand" style="display:none;">Развернуть сообщения</button>
+		</div>
 	</div>
 	<?php  endif;?>
 
@@ -1247,76 +1473,113 @@ function getQuantity(drugId) {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-	const messageContainer = document.querySelector('.message__inner');
-	const closeButton = document.getElementById('message__button');
-	const expandButton = document.getElementById('expand__button');
+	try {
+		console.log(1)
+		const imageContainer = document.getElementById('imageContainer');
+		const fileInput = document.getElementById('fileInput');
 
-	closeButton.addEventListener('click', function() {
-		messageContainer.style.display = 'none'; // Скрыть сообщения
-		closeButton.style.display = 'none'; // Скрыть кнопку закрытия
-		expandButton.style.display = 'block'; // Показать кнопку развернуть
-	});
-
-	expandButton.addEventListener('click', function() {
-		messageContainer.style.display = 'block'; // Показать сообщения
-		closeButton.style.display = 'block'; // Показать кнопку закрытия
-		expandButton.style.display = 'none'; // Скрыть кнопку развернуть
-	});
-	// Открываем попап при клике на кнопку
-	document.querySelectorAll('.openPopup').forEach((element) => {
-		element.addEventListener('click', function(event) {
-			const clickedText = event.target.innerText;
-			const type = event.target.dataset.type;
-			const id = event.target.dataset.id;
-			const table = event.target.dataset.table; // Получаем таблицу
-			const field = event.target.dataset.field; // Получаем поле
-
-			document.getElementById('popupInput').value = clickedText;
-			event.stopPropagation();
-			openPopup(type, id, table, field); // Передаем таблицу и поле
+		// Добавляем обработчик клика по div
+		imageContainer.addEventListener('click', () => {
+			fileInput.click(); // Открывает диалоговое окно выбора файла
 		});
-	})
 
+		// Обработчик для загрузки файла
+		fileInput.addEventListener('change', (event) => {
+			const file = event.target.files[0];
+			if (file) {
+				const reader = new FileReader();
 
-	// Функция для открытия попапа
-	function openPopup(type, id, table, field) {
-		const formType = document.querySelector('#formType');
-		const formId = document.querySelector('#formId');
-		const tableName = document.querySelector('#tableName');
-		const fieldName = document.querySelector('#fieldName');
+				// Загружаем изображение в div
+				reader.onload = (e) => {
+					imageContainer.style.backgroundImage = `url(${e.target.result})`;
+					imageContainer.textContent = ''; // Убираем текст после загрузки изображения
+				};
 
-		formType.value = type; // Измени на .value
-		formId.value = id; // Измени на .value
-		tableName.value = table; // Измени на .value
-		fieldName.value = field; // Измени на .value
+				reader.readAsDataURL(file); // Читает файл как URL данных
+			}
+		});
 
-		const popup = document.getElementById("popup");
-		popup.classList.add("popup_open");
-	}
+		const messageContainer = document.querySelector('.message__inner');
+		const closeButton = document.getElementById('message__button');
+		const expandButton = document.getElementById('expand__button');
 
-	// Обработчик для закрытия попапа при клике вне формы
-	document.addEventListener('click', function(event) {
-		const popup = document.getElementById("popup");
-		const popupContent = document.querySelector(".popup__content");
-
-		// Проверяем, был ли клик не по форме (вне .popup__content)
-		if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
-			popup.classList.remove("popup_open"); // Закрываем попап
+		if (closeButton) {
+			closeButton.addEventListener('click', function() {
+				messageContainer.style.display = 'none'; // Скрыть сообщения
+				closeButton.style.display = 'none'; // Скрыть кнопку закрытия
+				expandButton.style.display = 'block'; // Показать кнопку развернуть
+			});
 		}
-	});
 
-	// Предотвращаем закрытие попапа при клике внутри формы
-	document.querySelector('.popup__content').addEventListener('click', function(event) {
-		event.stopPropagation();
-	});
+		if (expandButton) {
+			expandButton.addEventListener('click', function() {
+				messageContainer.style.display = 'block'; // Показать сообщения
+				closeButton.style.display = 'block'; // Показать кнопку закрытия
+				expandButton.style.display = 'none'; // Скрыть кнопку развернуть
+			});
+		}
+		// Открываем попап при клике на кнопку
+		document.querySelectorAll('.openPopup').forEach((element) => {
+			element.addEventListener('click', function(event) {
+				const clickedText = event.target.innerText;
+				const type = event.target.dataset.type;
+				const id = event.target.dataset.id;
+				const table = event.target.dataset.table; // Получаем таблицу
+				const field = event.target.dataset.field; // Получаем поле
+
+				document.getElementById('popupInput').value = clickedText;
+				event.stopPropagation();
+				openPopup(type, id, table, field); // Передаем таблицу и поле
+			});
+		})
 
 
-	// // Обработчик для кнопки "Закрыть"
-	// document.querySelector('.message__button__close').addEventListener('click', function() {
-	// 	document.querySelector('.message').classList.remove('message_open');
-	// });
+		// Функция для открытия попапа
+		function openPopup(type, id, table, field) {
+			const formType = document.querySelector('#formType');
+			const formId = document.querySelector('#formId');
+			const tableName = document.querySelector('#tableName');
+			const fieldName = document.querySelector('#fieldName');
+
+			formType.value = type; // Измени на .value
+			formId.value = id; // Измени на .value
+			tableName.value = table; // Измени на .value
+			fieldName.value = field; // Измени на .value
+
+			const popup = document.getElementById("popup");
+			popup.classList.add("popup_open");
+		}
+
+		// Обработчик для закрытия попапа при клике вне формы
+		document.addEventListener('click', function(event) {
+			const popup = document.getElementById("popup");
+			const popupContent = document.querySelector(".popup__content");
+
+			// Проверяем, был ли клик не по форме (вне .popup__content)
+			if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
+				popup.classList.remove("popup_open"); // Закрываем попап
+			}
+		});
+
+		// Предотвращаем закрытие попапа при клике внутри формы
+		document.querySelector('.popup__content').addEventListener('click', function(event) {
+			event.stopPropagation();
+		});
+
+
+		// // Обработчик для кнопки "Закрыть"
+		// document.querySelector('.message__button__close').addEventListener('click', function() {
+		// 	document.querySelector('.message').classList.remove('message_open');
+		// });
+
+
+	} catch (error) {
+		console.log(error)
+	}
 });
 </script>
+
+
 
 </html>
 
