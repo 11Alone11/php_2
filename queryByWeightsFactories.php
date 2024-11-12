@@ -549,12 +549,18 @@ class AdminQueryFactory extends QueryFactory {
                 SELECT
                     id,
                     CASE
-                        WHEN quantity < (SELECT 
-                                    SUM(POWER(quantity, 2)) / NULLIF(SUM(quantity), 0) 
-                                FROM 
-                                    drugs
-                                WHERE 
-                                    is_hiden <> 1) 
+                        WHEN quantity < (
+                SELECT 
+                    quantity 
+                    FROM (
+                        SELECT 
+                            quantity,
+                            ROW_NUMBER() OVER (ORDER BY quantity) AS row_num,
+                            COUNT(*) OVER () AS total_count
+                        FROM 
+                            drugs
+                    ) AS ranked
+                    WHERE row_num = Round(total_count + 1) / 2) - 1
                         THEN 0
                         ELSE 1
                     END AS availability
@@ -657,6 +663,7 @@ class BuyerQueryFactoryPointSystem extends QueryFactory {
                 drugs.price AS price,
                 drugs.quantity AS quantity,
                 drugs.is_allowed,
+                drugs.medicinePhoto,
                 $totalPoints
             FROM 
                 drugs 
@@ -992,6 +999,7 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
                 drugs.quantity AS quantity,
                 drugs.cost AS cost,
                 drugs.is_allowed,
+                drugs.medicinePhoto,
                 $totalPoints
             FROM 
                 drugs 
@@ -1328,6 +1336,7 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
                 drugs.quantity AS quantity,
                 drugs.cost AS cost,
                 drugs.is_allowed,
+                drugs.medicinePhoto,
                 $totalPoints
             FROM 
                 drugs 
