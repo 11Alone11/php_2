@@ -10,6 +10,7 @@ include 'login.php';
 	<title>Login</title>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
+			<!-- Форма входа -->
 
 <body>
 	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>" class="login-form">
