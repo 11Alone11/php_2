@@ -40,9 +40,9 @@ if($_SESSION["user_type"] == 1):
 <body>
 	<h1 class="title mb20 mt20">Управление Лекарствами</h1>
 
-	<div id="imageContainer">Click to upload image
+	<!-- <div id="imageContainer">Click to upload image
 		<input type="file" id="fileInput" accept="image/*">
-	</div>
+	</div> -->
 	<form method="POST" action="
     <?php   
         // session_unset();
@@ -65,6 +65,12 @@ if($_SESSION["user_type"] == 1):
 	<a href="tables_settings.php" class="button button__fixed button__fixed_table_settings">
 		Веса таблиц
 	</a>
+	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
+		<?php if (!$profilePhoto): ?>
+			Загрузить фотку
+		<?php endif; ?>
+        <input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+    </div>
 	<!-- Форма поиска лекарств-->
 	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
@@ -95,6 +101,7 @@ if($_SESSION["user_type"] == 1):
 	<table>
 		<thead>
 			<tr>
+				<th class="column-id"><a href="?order_by=id&order_dir=<?php echo htmlspecialchars($order_dir); ?>">IMG</a></th>
 				<th class="column-id"><a href="?order_by=id&order_dir=<?php echo htmlspecialchars($order_dir); ?>">ID</a></th>
 				<th class="column-name"><a href="?order_by=name&order_dir=<?php echo htmlspecialchars($order_dir); ?>">Название</a></th>
 				<th class="column-manufacturer-id"><a href="?order_by=manufacturer_id&order_dir=<?php echo htmlspecialchars($order_dir); ?>">ID
@@ -114,6 +121,13 @@ if($_SESSION["user_type"] == 1):
                 while ($row = $result->fetch_assoc()) {
                     ?>
 			<tr>
+				<td>
+					<img class="table__img openImageUpdate" src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
+						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
+						
+						<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
+				</td>
 				<td><?php echo htmlspecialchars($row['id']); ?></td>
 				<td data-type="name" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs" data-field="name" class="openPopup"
 					style="cursor:pointer">
@@ -317,6 +331,15 @@ if($_SESSION["user_type"] == 1):
 		</form>
 	</div>
 
+	<div id="vsplyvImage" class="vsplyvImage">
+			<div class="vsplyvImage__content">
+				<img id="currentImage" class="vsplyvImage__img" src="" alt="Текущая картинка" />
+				<input type="file" id="newImageFile" class="input" accept="image/*" required>
+				<button id="uploadImageButton" class="button vsplyvImage__button">Обновить изображение</button>
+				<button id="closeImageButton" class="button vsplyvImage__button">Закрыть</button>
+			</div>
+	</div>
+
 	<?php if ($orders_from_shoppers->num_rows > 0 ||  $drugs_add_requests->num_rows > 0 || $drugs_add_requests_feedback->num_rows): ?>
 	<div class="message message_open">
 		<div class="message__inner">
@@ -434,6 +457,73 @@ if($_SESSION["user_type"] == 1):
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 		try {
+
+			const vsplyvImage = document.getElementById('vsplyvImage');
+			const newImageLinkInput = document.getElementById('newImageLink');
+			const currentImage = document.getElementById('currentImage');
+			const updateImageButton = document.getElementById('updateImageButton');
+			const closeImageButton = document.getElementById('closeImageButton');
+			baseDrugImage  = "";
+			let currentID = 0;
+			// Функция для открытия vsplyvImage
+			function openVsplyvImage(imageSrc, id) {
+				currentImage.src = imageSrc;
+				currentID = id;
+				vsplyvImage.classList.add('open');
+			}
+
+			// Обработчик клика для открытия vsplyvImage при необходимости
+			document.querySelectorAll('.openImageUpdate').forEach((element) => {
+				element.addEventListener('click', function() {
+					const imageSrc = element.src; // Get the image source
+					const id = element.dataset.id; // Get the ID
+					openVsplyvImage(imageSrc, id);
+				});
+			});
+
+			// Обработчик для обновления ссылки на изображение
+			uploadImageButton.addEventListener('click', function() {
+				const fileInput = document.getElementById('newImageFile');
+				const file = fileInput.files[0];
+
+				if (file) {
+					const formData = new FormData();
+					formData.append('medicinePhoto', file);
+					formData.append('id', currentID);
+
+					fetch('photoAPI/medicinePhotoUpd.php', {
+						method: 'POST',
+						body: formData
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data.status === 'success') {
+							currentImage.src = URL.createObjectURL(file); // Update displayed image
+							alert('Изображение обновлено успешно.');
+							vsplyvImage.classList.remove('open');
+						} else {
+							alert(data.message);
+						}
+					})
+					.catch(error => {
+						console.error('Ошибка:', error);
+					});
+				} else {
+					alert('Пожалуйста, выберите изображение.');
+				}
+			});
+
+			// Обработчик для закрытия vsplyvImage
+			closeImageButton.addEventListener('click', function() {
+				vsplyvImage.classList.remove('open');
+			});
+			// Закрытие vsplyvImage при клике вне содержимого
+			vsplyvImage.addEventListener('click', function(event) {
+				if (event.target === vsplyvImage) {
+					vsplyvImage.classList.remove('open');
+				}
+			});
+
 			const imageContainer = document.getElementById('imageContainer');
 			const fileInput = document.getElementById('fileInput');
 
@@ -441,23 +531,46 @@ document.addEventListener('DOMContentLoaded', function() {
 			imageContainer.addEventListener('click', () => {
 				fileInput.click(); // Открывает диалоговое окно выбора файла
 			});
-
+			
 			// Обработчик для загрузки файла
 			fileInput.addEventListener('change', (event) => {
 				const file = event.target.files[0];
 				if (file) {
+					const formData = new FormData();
+					formData.append('profilePhoto', file);
 					const reader = new FileReader();
 
-					// Загружаем изображение в div
-					reader.onload = (e) => {
-						imageContainer.style.backgroundImage = `url(${e.target.result})`;
-						imageContainer.textContent = ''; // Убираем текст после загрузки изображения
-					};
-
-					reader.readAsDataURL(file); // Читает файл как URL данных
+					fetch('photoAPI/userProfilePhoto.php', {
+						method: 'POST',
+						body: formData
+					})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Сетевая ошибка: ответ не был получен');
+						}
+						return response.json(); 
+					})
+					.then(data => {
+						if (data.status === 'success') {
+							// Только после успешного ответа обновляем изображение
+							reader.onload = function(e) {
+								imageContainer.style.backgroundImage = `url(${e.target.result})`;
+								imageContainer.textContent = ''; 
+							};
+							reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
+						} else {
+							// Если статус не success, выводим сообщение об ошибке
+							alert(data.message);
+							console.error(data.message);
+						}
+					})
+					.catch(error => {
+						const errorMessage = 'Ошибка при загрузке изображения: ' + error.message; // Используем error.message для более ясного сообщения
+						console.error('Ошибка:', error);
+						alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
+					});
 				}
-			});
-
+			});	
 			const messageContainer = document.querySelector('.message__inner');
 			const closeButton = document.getElementById('message__button');
 			const expandButton = document.getElementById('expand__button');
@@ -1134,9 +1247,12 @@ else:
 
 <body>
 	<h1 class="title mb20 mt20">Закупка лекарствами</h1>
-	<div id="imageContainer">Click to upload image
-		<input type="file" id="fileInput" accept="image/*">
-	</div>
+	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
+		<?php if (!$profilePhoto): ?>
+			Загрузить фотку
+		<?php endif; ?>
+        <input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+    </div>
 	<form method="POST">
 
 
@@ -1174,6 +1290,7 @@ else:
 	<table class="tbody_drugs_shopper">
 		<thead>
 			<tr>
+				<th class="column-id"><a href="?order_by_user=id&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">IMG</a></th>
 				<th class="column-name"><a
 						href="?order_by_shopper=name&order_dir_shopper=<?php echo htmlspecialchars($order_dir_shopper); ?>">Название</a></th>
 				<th class="column-manufacturer"><a
@@ -1194,6 +1311,13 @@ else:
 				while ($row = $result_shopper->fetch_assoc()) {
 					?>
 			<tr>
+				<td>
+					<img class="table__img" src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
+						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
+						
+						<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
+				</td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['supplier']); ?></td>
@@ -1474,7 +1598,7 @@ function getQuantity(drugId) {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 	try {
-		console.log(1)
+
 		const imageContainer = document.getElementById('imageContainer');
 		const fileInput = document.getElementById('fileInput');
 
@@ -1482,20 +1606,44 @@ document.addEventListener('DOMContentLoaded', function() {
 		imageContainer.addEventListener('click', () => {
 			fileInput.click(); // Открывает диалоговое окно выбора файла
 		});
-
+		
 		// Обработчик для загрузки файла
 		fileInput.addEventListener('change', (event) => {
 			const file = event.target.files[0];
 			if (file) {
+				const formData = new FormData();
+				formData.append('profilePhoto', file);
 				const reader = new FileReader();
 
-				// Загружаем изображение в div
-				reader.onload = (e) => {
-					imageContainer.style.backgroundImage = `url(${e.target.result})`;
-					imageContainer.textContent = ''; // Убираем текст после загрузки изображения
-				};
-
-				reader.readAsDataURL(file); // Читает файл как URL данных
+				fetch('photoAPI/userProfilePhoto.php', {
+					method: 'POST',
+					body: formData
+				})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Сетевая ошибка: ответ не был получен');
+					}
+					return response.json(); 
+				})
+				.then(data => {
+					if (data.status === 'success') {
+						// Только после успешного ответа обновляем изображение
+						reader.onload = function(e) {
+							imageContainer.style.backgroundImage = `url(${e.target.result})`;
+							imageContainer.textContent = ''; 
+						};
+						reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
+					} else {
+						// Если статус не success, выводим сообщение об ошибке
+						alert(data.message);
+						console.error(data.message);
+					}
+				})
+				.catch(error => {
+					const errorMessage = 'Ошибка при загрузке изображения: ' + error.message; // Используем error.message для более ясного сообщения
+					console.error('Ошибка:', error);
+					alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
+				});
 			}
 		});
 
