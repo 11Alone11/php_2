@@ -1669,29 +1669,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		});
 		console.log(1)
-		const imageContainer = document.getElementById('imageContainer');
-		const fileInput = document.getElementById('fileInput');
-
-		// Добавляем обработчик клика по div
-		imageContainer.addEventListener('click', () => {
-			fileInput.click(); // Открывает диалоговое окно выбора файла
-		});
-
-		// Обработчик для загрузки файла
-		fileInput.addEventListener('change', (event) => {
-			const file = event.target.files[0];
-			if (file) {
-				const reader = new FileReader();
-
-				// Загружаем изображение в div
-				reader.onload = (e) => {
-					imageContainer.style.backgroundImage = `url(${e.target.result})`;
-					imageContainer.textContent = ''; // Убираем текст после загрузки изображения
-				};
-
-				reader.readAsDataURL(file); // Читает файл как URL данных
-			}
-		});
+		
 
 		const messageContainer = document.querySelector('.message__inner');
 		const closeButton = document.getElementById('message__button');
