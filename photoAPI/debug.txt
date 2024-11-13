@@ -1,9 +1,9 @@
 Array
 (
-    [name] => БилетыМаршруткиticket_3335463.png
-    [full_path] => БилетыМаршруткиticket_3335463.png
-    [type] => image/png
-    [tmp_name] => C:\XAMPP\tmp\php1C7B.tmp
+    [name] => imageRabbit.jpg
+    [full_path] => imageRabbit.jpg
+    [type] => image/jpeg
+    [tmp_name] => C:\XAMPP\tmp\phpBE2A.tmp
     [error] => 0
-    [size] => 99128
+    [size] => 100102
 )

@@ -32,6 +32,53 @@ abstract class QueryFactory {
     private static function getUserType($userId) {
         return $_SESSION['user_type'] ?? 'Неопределенный тип';
     }
+    protected static function checkImageAccesValid($result){
+        $imageDirectory = __DIR__ . '/images';
+        if (!is_readable($imageDirectory)) {
+            $_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна.";
+            return false; 
+        }
+        $flag = false;
+        while ($row = $result->fetch_assoc()) {
+            $medicinePhoto = $row['medicinePhoto'];
+            if ($medicinePhoto !== null) {
+                $filePath = $imageDirectory . '/' . basename($medicinePhoto);
+
+                if (!file_exists($filePath)) {
+                    $_SESSION['medicine_images_error'] = "Изображение ID {$row['id']} не найдено.";
+                    $flag = true;
+                    break;
+                }
+                
+                if (!is_readable($filePath)) {
+                    $_SESSION['medicine_images_error'] = "Нет доступа к изображению ID {$row['id']}.";
+                    $flag = true;
+                    break;
+                }
+                
+                if (filesize($filePath) > 10 * 1024 * 1024) { // 10 MB
+                    $_SESSION['medicine_images_error'] = "Изображение ID {$row['id']} превышает лимит в 10 MB.";
+                    $flag = true;
+                    break;
+                }
+
+                $fileType = pathinfo($filePath, PATHINFO_EXTENSION);
+                if (!in_array(strtolower($fileType), ['jpg', 'jpeg', 'png'])) {
+                    $_SESSION['medicine_images_error'] = "Неверный тип файла. Изображение ID {$row['id']}.";
+                    $flag = true;
+                    break;
+                }
+                
+                $imageInfo = @getimagesize($filePath);
+                if ($imageInfo === false) {
+                    $_SESSION['medicine_images_error'] = "Изображение ID {$row['id']} повреждено.";
+                    $flag = true;
+                    break;
+                }
+            }
+        }
+        return !$flag;
+    }
 }
 
 class BuyerQueryFactory extends QueryFactory {
@@ -772,6 +819,15 @@ class BuyerQueryFactoryPointSystem extends QueryFactory {
             $statement = $this->conn->prepare($query);
             $statement->bind_param('ii', $this->userId, $this->userId);
         }
+        // $statement->execute();
+        // $result = $statement->get_result();
+        // $resultFood = $result;
+        // self::checkImageAccesValid($result);
+        // return $resultFood;
+        $statement->execute();
+        $result = $statement->get_result();
+        $resultFood = $result;
+        self::checkImageAccesValid($result);
         $statement->execute();
         return $statement->get_result();
     }
@@ -1109,8 +1165,19 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
             $statement->bind_param('iii', $this->userId, $this->userId, $this->userId);
         }
         //$statement->bind_param('i', $this->userId);
+        // $statement->execute();
+        // return $statement->get_result();
+        $statement->execute();
+        $result = $statement->get_result();
+        $resultFood = $result;
+        self::checkImageAccesValid($result);
         $statement->execute();
         return $statement->get_result();
+        // $statement->execute();
+        // $result = $statement->get_result();
+        // $resultFood = $result;
+        // self::checkImageAccesValid($resultFood);
+        // return $result;
     }
 
     public function createOrderQuery() {
@@ -1439,6 +1506,17 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
             $statement->bind_param('ii', $this->userId, $this->userId);
         }
         //$statement->bind_param('i', $this->userId);
+        // $statement->execute();
+        // return $statement->get_result();
+        // $statement->execute();
+        // $result = $statement->get_result();
+        // $resultFood = $result;
+        // self::checkImageAccesValid($result);
+        // return $resultFood;
+        $statement->execute();
+        $result = $statement->get_result();
+        $resultFood = $result;
+        self::checkImageAccesValid($result);
         $statement->execute();
         return $statement->get_result();
     }

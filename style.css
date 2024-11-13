@@ -395,6 +395,24 @@ main {
 	border: 1.5px solid #000;
 }
 
+.image_error_message {
+	width: 100%;
+	padding: 8px 12px;
+	border-radius: 8px;
+	border: 1.5px solid #000;
+}
+
+.centr {
+	margin: 0 auto;
+	margin-bottom: 40px;
+	max-width: 500px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: center;
+	justify-content: center;
+}
+
 .auth__inputs {
 	display: flex;
 	flex-direction: column;

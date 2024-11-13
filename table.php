@@ -86,6 +86,7 @@ if($_SESSION["user_type"] == 1):
 		<input type="number" name="price" class="input" placeholder="Цена" step="0.01" required>
 		<input type="number" name="quantity" class="input" placeholder="Количество" step="1" required>
 		<input type="number" name="provider_id" class="input" placeholder="ID поставщика" step="1" required>
+		<!-- <input type="file" name="medicinePhoto" class="input" accept="image/*" required> -->
 		<button type="submit" name="add" class="button">Добавить</button>
 		<?php if (isset($_SESSION['error_message'])): ?>
 		<div class="auth__message">
@@ -97,7 +98,14 @@ if($_SESSION["user_type"] == 1):
 
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Лекарства</h1>
-
+	<?php if (isset($_SESSION['medicine_images_error'])): ?>
+		<div class="centr">
+			<div class="image_error_message">
+				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
+				<?php unset($_SESSION['medicine_images_error']); ?>
+			</div>
+		</div>
+	<?php endif; ?>		
 	<table>
 		<thead>
 			<tr>
@@ -767,7 +775,14 @@ else:
 
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Ваши лекарства</h1>
-
+	<?php if (isset($_SESSION['medicine_images_error'])): ?>
+		<div class="centr">
+			<div class="image_error_message">
+				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
+				<?php unset($_SESSION['medicine_images_error']); ?>
+			</div>
+		</div>
+	<?php endif; ?>		
 	<table>
 		<thead>
 			<tr>
@@ -1286,7 +1301,14 @@ else:
 
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Все лекарства</h1>
-
+	<?php if (isset($_SESSION['medicine_images_error'])): ?>
+		<div class="centr">
+			<div class="image_error_message">
+				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
+				<?php unset($_SESSION['medicine_images_error']); ?>
+			</div>
+		</div>
+	<?php endif; ?>
 	<table class="tbody_drugs_shopper">
 		<thead>
 			<tr>
@@ -1644,6 +1666,30 @@ document.addEventListener('DOMContentLoaded', function() {
 					console.error('Ошибка:', error);
 					alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
 				});
+			}
+		});
+		console.log(1)
+		const imageContainer = document.getElementById('imageContainer');
+		const fileInput = document.getElementById('fileInput');
+
+		// Добавляем обработчик клика по div
+		imageContainer.addEventListener('click', () => {
+			fileInput.click(); // Открывает диалоговое окно выбора файла
+		});
+
+		// Обработчик для загрузки файла
+		fileInput.addEventListener('change', (event) => {
+			const file = event.target.files[0];
+			if (file) {
+				const reader = new FileReader();
+
+				// Загружаем изображение в div
+				reader.onload = (e) => {
+					imageContainer.style.backgroundImage = `url(${e.target.result})`;
+					imageContainer.textContent = ''; // Убираем текст после загрузки изображения
+				};
+
+				reader.readAsDataURL(file); // Читает файл как URL данных
 			}
 		});
 
