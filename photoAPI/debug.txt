@@ -1,9 +1,9 @@
 Array
 (
-    [name] => imageRabbit.jpg
-    [full_path] => imageRabbit.jpg
+    [name] => 67337de323c65.jpg
+    [full_path] => 67337de323c65.jpg
     [type] => image/jpeg
-    [tmp_name] => C:\XAMPP\tmp\phpBE2A.tmp
+    [tmp_name] => C:\XAMPP\tmp\phpC3EA.tmp
     [error] => 0
-    [size] => 100102
+    [size] => 165000
 )
