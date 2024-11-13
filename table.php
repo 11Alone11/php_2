@@ -506,9 +506,14 @@ document.addEventListener('DOMContentLoaded', function() {
 					.then(response => response.json())
 					.then(data => {
 						if (data.status === 'success') {
-							currentImage.src = URL.createObjectURL(file); // Update displayed image
+							currentImage.src = `images/${data.fileName}`;
+							const newImageUrl = `images/${data.fileName}`;
+							const imageElement = document.querySelector(`img[data-id='${currentID}']`);
+							if (imageElement) {
+								imageElement.src = newImageUrl; // Обновляем изображение в таблице
+							}
 							alert('Изображение обновлено успешно.');
-							vsplyvImage.classList.remove('open');
+							//vsplyvImage.classList.remove('open');
 						} else {
 							alert(data.message);
 						}
@@ -1078,9 +1083,14 @@ document.addEventListener('DOMContentLoaded', function() {
 				.then(response => response.json())
 				.then(data => {
 					if (data.status === 'success') {
-						currentImage.src = URL.createObjectURL(file); // Update displayed image
+						currentImage.src = `images/${data.fileName}`;
+						const newImageUrl = `images/${data.fileName}`;
+                        const imageElement = document.querySelector(`img[data-id='${currentID}']`);
+                        if (imageElement) {
+                            imageElement.src = newImageUrl;
+                        }
 						alert('Изображение обновлено успешно.');
-						vsplyvImage.classList.remove('open');
+						//vsplyvImage.classList.remove('open');
 					} else {
 						alert(data.message);
 					}
