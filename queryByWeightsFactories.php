@@ -34,10 +34,14 @@ abstract class QueryFactory {
     }
     protected static function checkImageAccesValid($result){
         $imageDirectory = __DIR__ . '/images';
-        if (!is_readable($imageDirectory)) {
+        if (!is_readable($imageDirectory)||!is_writable($imageDirectory)) {
             $_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна.";
             return false; 
         }
+        // if (!is_dir($imageDirectory) || !(fileperms($imageDirectory) & 00400)) {
+        //     $_SESSION['medicine_images_error'] = "Папка, хранящая изображения лекарств, недоступна.";
+        //     return false; 
+        // }
         $flag = false;
         while ($row = $result->fetch_assoc()) {
             $medicinePhoto = $row['medicinePhoto'];

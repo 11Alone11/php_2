@@ -1,6 +1,8 @@
 <?php
 include 'sessionConf.php';
-
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 session_start(); // Начинаем сессию
 $_SESSION['sql_error_message'] = 'Ошибка базы данных:';
 $_SESSION['server_error_message'] = 'Ошибка сервера';
@@ -17,6 +19,13 @@ include 'manage_drugs.php'; // Подключаем файл обработки 
 // Проверяем, произошла ли ошибка при выполнении запроса
 if (!$result) {
     $_SESSION['error_message'] = "Ошибка запроса: " . htmlspecialchars($mysqli->error);
+}
+$directory = 'images/';
+$files = glob($directory . '*', GLOB_MARK);
+foreach ($files as $file) {
+    if (is_file($file)) {
+        clearstatcache(true, $file);
+    }
 }
 //Закоммент
 // echo $_SESSION["user"];
@@ -102,9 +111,7 @@ if($_SESSION["user_type"] == 1):
 		<div class="centr">
 			<div class="image_error_message">
 				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']);
-				if($_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна."); 
-				unset($_SESSION['medicine_images_error']);?>
+				<?php unset($_SESSION['medicine_images_error']);?>
 			</div>
 		</div>
 	<?php endif; ?>		
@@ -786,10 +793,7 @@ else:
 		<div class="centr">
 			<div class="image_error_message">
 				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']);
-				if($_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна.");
-				unset($_SESSION['medicine_images_error']);
-				?>
+				<?php unset($_SESSION['medicine_images_error']);?>
 			</div>
 		</div>
 	<?php endif; ?>		
@@ -1320,9 +1324,7 @@ else:
 		<div class="centr">
 			<div class="image_error_message">
 				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']);
-				if($_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна.");
-				unset($_SESSION['medicine_images_error']); ?>
+				<?php unset($_SESSION['medicine_images_error']);?>
 			</div>
 		</div>
 	<?php endif; ?>
