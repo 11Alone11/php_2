@@ -102,7 +102,9 @@ if($_SESSION["user_type"] == 1):
 		<div class="centr">
 			<div class="image_error_message">
 				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']); ?>
+				<?php unset($_SESSION['medicine_images_error']);
+				if($_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна."); 
+				unset($_SESSION['medicine_images_error']);?>
 			</div>
 		</div>
 	<?php endif; ?>		
@@ -784,7 +786,10 @@ else:
 		<div class="centr">
 			<div class="image_error_message">
 				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']); ?>
+				<?php unset($_SESSION['medicine_images_error']);
+				if($_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна.");
+				unset($_SESSION['medicine_images_error']);
+				?>
 			</div>
 		</div>
 	<?php endif; ?>		
@@ -1315,7 +1320,9 @@ else:
 		<div class="centr">
 			<div class="image_error_message">
 				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']); ?>
+				<?php unset($_SESSION['medicine_images_error']);
+				if($_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна.");
+				unset($_SESSION['medicine_images_error']); ?>
 			</div>
 		</div>
 	<?php endif; ?>
