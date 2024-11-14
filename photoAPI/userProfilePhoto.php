@@ -60,6 +60,6 @@ try {
     }
 } catch (Exception $ex) {
     file_put_contents('debug.txt', $ex->getMessage());
-    $a = 'Произошла ошибка на сервере. ' . $ex->getMessage()
+    $a = 'Произошла ошибка на сервере. ' . $ex->getMessage();
     echo json_encode(['status' => 'error', 'message' => $a]);
 }
