@@ -1,8 +1,8 @@
 <?php
 include 'sessionConf.php';
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
+// header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+// //header("Cache-Control: post-check=0, pre-check=0", false);
+// header("Pragma: no-cache");
 session_start(); // Начинаем сессию
 $_SESSION['sql_error_message'] = 'Ошибка базы данных:';
 $_SESSION['server_error_message'] = 'Ошибка сервера';
@@ -20,13 +20,13 @@ include 'manage_drugs.php'; // Подключаем файл обработки 
 if (!$result) {
     $_SESSION['error_message'] = "Ошибка запроса: " . htmlspecialchars($mysqli->error);
 }
-$directory = 'images/';
-$files = glob($directory . '*', GLOB_MARK);
-foreach ($files as $file) {
-    if (is_file($file)) {
-        clearstatcache(true, $file);
-    }
-}
+// $directory = 'images/';
+// $files = glob($directory . '*', GLOB_MARK);
+// foreach ($files as $file) {
+//     if (is_file($file)) {
+//         clearstatcache(true, $file);
+//     }
+// }
 //Закоммент
 // echo $_SESSION["user"];
 // echo $_SESSION["user_id"];
@@ -42,6 +42,9 @@ if($_SESSION["user_type"] == 1):
 
 <head>
 	<meta charset="UTF-8">
+	<!-- <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" /> -->
 	<title>Управление Лекарствами</title>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
@@ -74,12 +77,20 @@ if($_SESSION["user_type"] == 1):
 	<a href="tables_settings.php" class="button button__fixed button__fixed_table_settings">
 		Веса таблиц
 	</a>
+	<!-- <div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
+		<?php// if (!$profilePhoto): ?>
+			Загрузить фотку
+		<?php// endif; ?>
+        <input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+    </div> -->
 	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php if (!$profilePhoto): ?>
-			Загрузить фотку
+			<span>Загрузить фотку</span>
+		<?php else: ?>
+			<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
-        <input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
-    </div>
+		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+	</div>
 	<!-- Форма поиска лекарств-->
 	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
@@ -474,6 +485,19 @@ if($_SESSION["user_type"] == 1):
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 		try {
+			
+			const imageContainer1 = document.getElementById('imageContainer');
+			const profilePhoto = '<?php echo $profilePhoto; ?>';
+
+			// Проверка на битое изображение
+			const img = new Image();
+			img.src = 'data:image/jpeg;base64,' + profilePhoto;
+
+			img.onerror = function() {
+				// Если изображение не загружается, показываем сообщение об ошибке
+				document.querySelector('.error-mess').style.display = 'block';
+				imageContainer1.style.backgroundImage = 'none'; // опционально убираем фон
+			};
 
 			const vsplyvImage = document.getElementById('vsplyvImage');
 			const newImageLinkInput = document.getElementById('newImageLink');
@@ -714,6 +738,9 @@ else:
 <html lang="ru">
 
 <head>
+	<!-- <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" /> -->
 	<meta charset="UTF-8">
 	<title>Управление Лекарствами</title>
 	<link rel="stylesheet" type="text/css" href="style.css" />
@@ -722,12 +749,20 @@ else:
 <body>
 	<h1 class="title mb20 mt20">Управление Лекарствами</h1>
 
+	<!-- <div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
+		<?php //if (!$profilePhoto): ?>
+			Загрузить фотку
+		<?php //endif; ?>
+        <input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+    </div> -->
 	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php if (!$profilePhoto): ?>
-			Загрузить фотку
+			<span>Загрузить фотку</span>
+		<?php else: ?>
+			<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
-        <input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
-    </div>
+		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+	</div>
 	<form method="POST" action="
     <?php   
         // session_unset();
@@ -1052,6 +1087,19 @@ else:
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 	try {
+		const imageContainer1 = document.getElementById('imageContainer');
+		const profilePhoto = '<?php echo $profilePhoto; ?>';
+
+		// Проверка на битое изображение
+		const img = new Image();
+		img.src = 'data:image/jpeg;base64,' + profilePhoto;
+
+		img.onerror = function() {
+			// Если изображение не загружается, показываем сообщение об ошибке
+			document.querySelector('.error-mess').style.display = 'block';
+			imageContainer1.style.backgroundImage = 'none'; // опционально убираем фон
+		};
+
 		const vsplyvImage = document.getElementById('vsplyvImage');
 		const newImageLinkInput = document.getElementById('newImageLink');
 		const currentImage = document.getElementById('currentImage');
@@ -1274,6 +1322,9 @@ else:
 <html lang="ru">
 
 <head>
+	<!-- <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" /> -->
 	<meta charset="UTF-8">
 	<title>Добро пожаловать домой, Сиджей</title>
 	<link rel="stylesheet" type="text/css" href="style.css" />
@@ -1281,12 +1332,20 @@ else:
 
 <body>
 	<h1 class="title mb20 mt20">Закупка лекарствами</h1>
+	<!-- <div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
+		<?php //if (!$profilePhoto): ?>
+			Загрузить фотку
+		<?php //endif; ?>
+        <input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+    </div> -->
 	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php if (!$profilePhoto): ?>
-			Загрузить фотку
+			<span>Загрузить фотку</span>
+		<?php else: ?>
+			<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
-        <input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
-    </div>
+		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+	</div>
 	<form method="POST">
 
 
@@ -1478,6 +1537,19 @@ else:
 
 	<script>
 	document.addEventListener('DOMContentLoaded', function() {
+
+		const imageContainer1 = document.getElementById('imageContainer');
+		const profilePhoto = '<?php echo $profilePhoto; ?>';
+
+		// Проверка на битое изображение
+		const img = new Image();
+		img.src = 'data:image/jpeg;base64,' + profilePhoto;
+
+		img.onerror = function() {
+			// Если изображение не загружается, показываем сообщение об ошибке
+			document.querySelector('.error-mess').style.display = 'block';
+			imageContainer1.style.backgroundImage = 'none'; // опционально убираем фон
+		};
 
 		console.log("Script loaded and DOM is ready");
 

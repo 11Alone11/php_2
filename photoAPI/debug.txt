@@ -1,9 +1,9 @@
 Array
 (
-    [name] => 67337de323c65.jpg
-    [full_path] => 67337de323c65.jpg
-    [type] => image/jpeg
-    [tmp_name] => C:\XAMPP\tmp\phpC3EA.tmp
+    [name] => Статистика на 13.09.2024.png
+    [full_path] => Статистика на 13.09.2024.png
+    [type] => image/png
+    [tmp_name] => C:\XAMPP\tmp\phpDE77.tmp
     [error] => 0
-    [size] => 165000
+    [size] => 36454
 )
