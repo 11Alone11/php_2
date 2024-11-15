@@ -1,9 +1,9 @@
 Array
 (
-    [name] => Статистика на 13.09.2024.png
-    [full_path] => Статистика на 13.09.2024.png
+    [name] => test.png
+    [full_path] => test.png
     [type] => image/png
-    [tmp_name] => C:\XAMPP\tmp\phpDE77.tmp
+    [tmp_name] => C:\XAMPP\tmp\phpB6EA.tmp
     [error] => 0
-    [size] => 36454
+    [size] => 1333652
 )
