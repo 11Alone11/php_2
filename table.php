@@ -485,7 +485,27 @@ if($_SESSION["user_type"] == 1):
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 		try {
-			
+			const bfr = 400;
+			document.getElementById('fileInput').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (file) {
+                var fileSize = file.size;
+                var maxSize = bfr * 1024 * 1024;
+                if (fileSize > maxSize) {
+                    alert('Файл слишком большой. Максимальный размер: 10 MB.');
+                }
+            }
+        	});
+			document.getElementById('newImageFile').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (file) {
+                var fileSize = file.size;
+                var maxSize = bfr * 1024 * 1024;
+                if (fileSize > maxSize) {
+                    alert('Файл слишком большой. Максимальный размер: 10 MB.');
+                }
+            }
+        	});
 			const imageContainer1 = document.getElementById('imageContainer');
 			const profilePhoto = '<?php echo $profilePhoto; ?>';
 
@@ -1087,6 +1107,27 @@ else:
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 	try {
+		const bfr = 400;
+		document.getElementById('fileInput').addEventListener('change', function(event) {
+		var file = event.target.files[0];
+		if (file) {
+			var fileSize = file.size;
+			var maxSize = bfr * 1024 * 1024;
+			if (fileSize > maxSize) {
+				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			}
+		}
+		});
+		document.getElementById('newImageFile').addEventListener('change', function(event) {
+		var file = event.target.files[0];
+		if (file) {
+			var fileSize = file.size;
+			var maxSize = bfr * 1024 * 1024;
+			if (fileSize > maxSize) {
+				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			}
+		}
+		});
 		const imageContainer1 = document.getElementById('imageContainer');
 		const profilePhoto = '<?php echo $profilePhoto; ?>';
 
@@ -1537,6 +1578,28 @@ else:
 
 	<script>
 	document.addEventListener('DOMContentLoaded', function() {
+		
+		const bfr = 400;
+		document.getElementById('fileInput').addEventListener('change', function(event) {
+		var file = event.target.files[0];
+		if (file) {
+			var fileSize = file.size;
+			var maxSize = bfr * 1024 * 1024;
+			if (fileSize > maxSize) {
+				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			}
+		}
+		});
+		document.getElementById('newImageFile').addEventListener('change', function(event) {
+		var file = event.target.files[0];
+		if (file) {
+			var fileSize = file.size;
+			var maxSize = bfr * 1024 * 1024;
+			if (fileSize > maxSize) {
+				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			}
+		}
+		});
 
 		const imageContainer1 = document.getElementById('imageContainer');
 		const profilePhoto = '<?php echo $profilePhoto; ?>';
