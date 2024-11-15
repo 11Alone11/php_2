@@ -5,17 +5,22 @@ try {
     }
     header('Content-Type: application/json');
     include "../db.php";
+    $uploadDir = 'images/';
+
+    
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $_POST['id'] ?? null;
-
         if (isset($_FILES['medicinePhoto']) && $_FILES['medicinePhoto']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['medicinePhoto'];
             $fileTmpName = $file['tmp_name'];
             $fileName = $file['name'];
             $fileSize = $file['size'];
             $fileError = $file['error'];
-
+            if (!is_dir("../" . $uploadDir)) {
+                echo json_encode(['status' => 'error', 'message' => 'Папка для загрузки изображений не доступна.']);
+                exit;
+            }
             // Check file size
             if ($fileSize > 10 * 1024 * 1024) {
                 echo json_encode(['status' => 'error', 'message' => 'Размер файла не должен превышать 10 МБ.']);

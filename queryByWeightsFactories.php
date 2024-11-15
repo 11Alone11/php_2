@@ -33,8 +33,13 @@ abstract class QueryFactory {
         return $_SESSION['user_type'] ?? 'Неопределенный тип';
     }
     protected static function checkImageAccesValid($result){
+        // $uploadDir = 'images/';
+        // if (!is_dir("./" . $uploadDir)) {
+        //     $_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна."
+        //     exit;
+        // }
         $imageDirectory = __DIR__ . '/images';
-        if (!is_readable($imageDirectory)||!is_writable($imageDirectory)) {
+        if (!is_readable($imageDirectory)||!is_writable($imageDirectory)||!is_dir($imageDirectory)) {
             $_SESSION['medicine_images_error'] = "Папка хранящая изображения лекарств недоступна.";
             return false; 
         }
