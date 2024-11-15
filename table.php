@@ -601,7 +601,15 @@ document.addEventListener('DOMContentLoaded', function() {
 			// Обработчик для загрузки файла
 			fileInput.addEventListener('change', (event) => {
 				const file = event.target.files[0];
+				let res = true;
 				if (file) {
+					var fileSize = file.size;
+					var maxSize = bfr * 1024 * 1024;
+					if (fileSize > maxSize) {
+						res = false;
+					}
+				}
+				if (file && res) {
 					const formData = new FormData();
 					formData.append('profilePhoto', file);
 					const reader = new FileReader();
@@ -1224,7 +1232,15 @@ document.addEventListener('DOMContentLoaded', function() {
 		// Обработчик для загрузки файла
 		fileInput.addEventListener('change', (event) => {
 			const file = event.target.files[0];
+			let res = true;
 			if (file) {
+				var fileSize = file.size;
+				var maxSize = bfr * 1024 * 1024;
+				if (fileSize > maxSize) {
+					res = false;
+				}
+			}
+			if (file && res) {
 				const formData = new FormData();
 				formData.append('profilePhoto', file);
 				const reader = new FileReader();
@@ -1786,7 +1802,15 @@ document.addEventListener('DOMContentLoaded', function() {
 		// Обработчик для загрузки файла
 		fileInput.addEventListener('change', (event) => {
 			const file = event.target.files[0];
+			let res = true;
 			if (file) {
+				var fileSize = file.size;
+				var maxSize = bfr * 1024 * 1024;
+				if (fileSize > maxSize) {
+					res = false;
+				}
+			}
+			if (file && res) {
 				const formData = new FormData();
 				formData.append('profilePhoto', file);
 				const reader = new FileReader();

@@ -1,9 +1,9 @@
 Array
 (
-    [name] => Apache-NetBeans-17-bin-windows-x64.png
-    [full_path] => Apache-NetBeans-17-bin-windows-x64.png
-    [type] => image/png
-    [tmp_name] => C:\XAMPP\tmp\phpFD5.tmp
+    [name] => fg.gif
+    [full_path] => fg.gif
+    [type] => image/gif
+    [tmp_name] => C:\XAMPP\tmp\php5FF5.tmp
     [error] => 0
-    [size] => 477002632
+    [size] => 109595
 )
