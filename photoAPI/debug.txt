@@ -1,9 +1,9 @@
 Array
 (
-    [name] => fg.gif
-    [full_path] => fg.gif
-    [type] => image/gif
-    [tmp_name] => C:\XAMPP\tmp\php5FF5.tmp
+    [name] => восемьмб.png
+    [full_path] => восемьмб.png
+    [type] => image/png
+    [tmp_name] => C:\XAMPP\tmp\php1CCF.tmp
     [error] => 0
-    [size] => 109595
+    [size] => 8388608
 )

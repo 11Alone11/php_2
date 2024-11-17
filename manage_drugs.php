@@ -49,7 +49,6 @@ try{
         throw new Exception("Ошибка соединения с сервером");
     }
     $dbExecuter = new ActionLogger();
-    
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //var_dump($_POST); // Выводим все переменные POST для отладки
         if (isset($_POST['formType'], $_POST['formId'], $_POST['tableName'], $_POST['fieldName'])) {
@@ -464,11 +463,11 @@ try{
         }
     }
 
-    if (isset($_POST['search'])) {
-        $search_query = isset($_POST['search_query']) ? $_POST['search_query'] : '';
-        $Actstr = "Администратор установил строку поиска '$search_query' для таблицы лекарств.";
-        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
-    }
+    // if (isset($_POST['search'])) {
+    //     $search_query = isset($_POST['search_query']) ? $_POST['search_query'] : '';
+    //     $Actstr = "Администратор установил строку поиска '$search_query' для таблицы лекарств.";
+    //     $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
+    // }
     
 
     if (isset($_POST['search_for_user'])) {
@@ -538,115 +537,8 @@ try{
     $total_row = $total_result->fetch_assoc();
     $total_quantity = $total_row['total_quantity'] ?: 1;
 
-    // $uid = $_SESSION['user_id'];
-    // $query = "
-    //     SELECT DISTINCT
-    //         drugs.id AS id,
-    //         drugs.name AS name,
-    //         manufacturers.name AS manufacturer,
-    //         users.name AS supplier,
-    //         drugs.price AS price,
-    //         drugs.quantity AS quantity,
-    //         drugs.is_allowed,
-    //         COALESCE(order_counts.total_quantity, 0) AS total_quantity,
-    //         (drugs.quantity /$total_quantity * 100) as percent
-            
-    //     FROM 
-    //         drugs 
-    //     JOIN 
-    //         manufacturers ON drugs.manufacturer_id = manufacturers.id 
-    //     JOIN 
-    //         users ON drugs.provider_id = users.id 
-    //     LEFT JOIN (
-    //         SELECT 
-    //             drug_id,
-    //             SUM(quantity) AS total_quantity,
-    //             user_id
-    //         FROM 
-    //             orders
-    //         WHERE user_id = $uid
-    //         GROUP BY 
-    //             drug_id
-    //     ) AS order_counts ON drugs.id = order_counts.drug_id
-    //     WHERE 
-    //         drugs.is_allowed = 'Одобрено' 
-    //         AND drugs.is_hiden <> 1
-    // ";
     
-    // if (!empty($search_query_shopper)) {
-    //     $query .= " AND drugs.name LIKE '%$search_query_shopper%' ";
-    // }
-
-    // $query .= "
-    //     ORDER BY 
-    //         total_quantity DESC, 
-    //         $order_by_shopper $order_dir_shopper
-    // ";
-    // $result_shopper = $conn->query($query);
-    $orderByBuyerQuerry = $order_by_shopper . " " . $order_dir_shopper;
-    $buyerWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByBuyerQuerry ", '', $conn);
-    $result_shopper = $buyerWorker->createMedicineQuery();
-    //search_btn_post
-    if (isset($_POST['search_us_btn'])) {
-        $search_query_shopper = htmlspecialchars($_POST['search_for_shopper']);
-        $Actstr = "Покупатель установил строку поиска '$search_query_shopper' для лекарств.";
-        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
-        $_SESSION['yummy'] = $search_query_shopper;
-    }
     $uid = $_SESSION['user_id'];
-    if (isset($_SESSION['yummy'])){
-        $search_query_shopper = $_SESSION['yummy'];
-        
-            // $query = "
-            //     SELECT DISTINCT
-            //         drugs.id AS id,
-            //         drugs.name AS name,
-            //         manufacturers.name AS manufacturer,
-            //         users.name AS supplier,
-            //         drugs.price AS price,
-            //         drugs.quantity AS quantity,
-            //         drugs.is_allowed,
-            //         COALESCE(order_counts.total_quantity, 0) AS total_quantity,
-            //         (drugs.quantity / $total_quantity* 100) as percent
-            //     FROM 
-            //         drugs 
-            //     JOIN 
-            //         manufacturers ON drugs.manufacturer_id = manufacturers.id 
-            //     JOIN 
-            //         users ON drugs.provider_id = users.id 
-            //     LEFT JOIN (
-            //         SELECT 
-            //             drug_id,
-            //             SUM(quantity) AS total_quantity,
-            //             user_id
-            //         FROM 
-            //             orders
-            //         WHERE user_id = $uid
-            //         GROUP BY 
-            //             drug_id
-            //     ) AS order_counts ON drugs.id = order_counts.drug_id
-            //     WHERE 
-            //         drugs.is_allowed = 'Одобрено' 
-            //         AND drugs.is_hiden <> 1
-            // ";
-            
-            // if (!empty($search_query_shopper)) {
-            //     $query .= " AND drugs.name LIKE '%$search_query_shopper%' ";
-            // }
-    
-            // $query .= "
-            //     ORDER BY 
-            //         total_quantity DESC, 
-            //         $order_by_shopper $order_dir_shopper
-            // ";
-            // $result_shopper = $conn->query($query);
-            $orderByBuyerQuerry = $order_by_shopper . " " . $order_dir_shopper;
-            $buyerWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByBuyerQuerry ", "$search_query_shopper", $conn);
-            $result_shopper = $buyerWorker->createMedicineQuery();
-    }
-    
-    
-
     $user_analytics_querry = "Select sum(cost) as sumCost from orders where user_id = $uid and is_hiden_byShopper <> 1";
     $user_analytics_sum_drugs  = $conn->query($user_analytics_querry);
     $user_analytics_querry = "Select sum(cost)/sum(quantity) as medCost from orders where user_id = $uid and is_hiden_byShopper <> 1";
@@ -815,54 +707,25 @@ try{
         }
     }
 
-    // $query = "
-    // SELECT 
-    //     drugs.id AS id, 
-    //     manufacturers.name AS manufacturer, 
-    //     drugs.name AS name, 
-    //     drugs.price AS price, 
-    //     drugs.quantity AS quantity, 
-    //     drugs.cost AS cost,
-    //     drugs.is_allowed,
-    //     drugs.is_hiden,
-    //     COALESCE(order_counts.total_quantity, 0) AS total_quantity
-    // FROM 
-    //     drugs 
-    // JOIN 
-    //     manufacturers ON drugs.manufacturer_id = manufacturers.id 
-    // LEFT JOIN (
-    //     SELECT 
-    //         drug_id,
-    //         SUM(quantity) AS total_quantity,
-    //         user_id
-    //     FROM 
-    //         orders
-    //     WHERE user_id IN (
-    //         SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
-    //     )
-    //     GROUP BY 
-    //         drug_id
-    // ) AS order_counts ON drugs.id = order_counts.drug_id    
-    // WHERE 
-    //     provider_id IN (
-    //         SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
-    //     ) AND is_hiden <> 1
-    // ";
-    // if (!empty($search_query_user)) {
-    //     if (is_numeric($search_query_user)) {
-    //         $query .= " AND (
-    //             drugs.cost = $search_query_user 
-    //             OR  drugs.price = $search_query_user 
-    //             OR  drugs.quantity = $search_query_user)";
-    //     } else {
-    //         $query .= " AND drugs.name LIKE '%$search_query_user%' OR manufacturers.name LIKE '%$search_query_user%'";
-    //     }
-    // }
-    
-    // // Добавляем условия сортировки
-    // $query .= " ORDER BY total_quantity DESC, 
-    //             $order_by_user $order_dir_user";
-    // $result_user = $conn->query($query);
+    //search_us_btn
+    $orderByBuyerQuerry = $order_by_shopper . " " . $order_dir_shopper;
+    $buyerWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByBuyerQuerry ", '', $conn);
+    $result_shopper = $buyerWorker->createMedicineQuery();
+    if (isset($_POST['search_us_btn'])) {
+        $search_query_shopper = htmlspecialchars($_POST['search_for_shopper']);
+        $Actstr = "Покупатель установил строку поиска '$search_query_shopper' для лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
+        $_SESSION['yummy'] = $search_query_shopper;
+    }
+    $uid = $_SESSION['user_id'];
+    if (isset($_SESSION['yummy'])){
+        $search_query_shopper = $_SESSION['yummy'];
+            $orderByBuyerQuerry = $order_by_shopper . " " . $order_dir_shopper;
+            $buyerWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByBuyerQuerry ", "$search_query_shopper", $conn);
+            $result_shopper = $buyerWorker->createMedicineQuery();
+    }
+
+    //search_btn_post
     $orderByUserQuerry = $order_by_user . " " . $order_dir_user;
     $shopperWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByUserQuerry", '', $conn);
     $result_user = $shopperWorker->createMedicineQuery();
@@ -875,60 +738,28 @@ try{
     $uid = $_SESSION['user_id'];
     if (isset($_SESSION['yummy_1'])){
         $search_query_user = $_SESSION['yummy_1'];
-        // $query = "
-        // SELECT 
-        //     drugs.id AS id, 
-        //     manufacturers.name AS manufacturer, 
-        //     drugs.name AS name, 
-        //     drugs.price AS price, 
-        //     drugs.quantity AS quantity, 
-        //     drugs.cost AS cost,
-        //     drugs.is_allowed,
-        //     drugs.is_hiden,
-        //     COALESCE(order_counts.total_quantity, 0) AS total_quantity
-
-        // FROM 
-        //     drugs 
-        // JOIN 
-        //     manufacturers ON drugs.manufacturer_id = manufacturers.id 
-        // LEFT JOIN (
-        //     SELECT 
-        //         drug_id,
-        //         SUM(quantity) AS total_quantity,
-        //         user_id
-        //     FROM 
-        //         orders
-        //     WHERE user_id IN (
-        //         SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
-        //     )
-        //     GROUP BY 
-        //         drug_id
-        // ) AS order_counts ON drugs.id = order_counts.drug_id    
-        // WHERE 
-        //     provider_id IN (
-        //         SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
-        //     ) AND is_hiden <> 1
-        // ";
-        // if (!empty($search_query_user)) {
-        //     if (is_numeric($search_query_user)) {
-        //         $query .= " AND (
-        //             drugs.cost = $search_query_user 
-        //             OR  drugs.price = $search_query_user 
-        //             OR  drugs.quantity = $search_query_user)";
-        //     } else {
-        //         $query .= " AND drugs.name LIKE '%$search_query_user%' OR manufacturers.name LIKE '%$search_query_user%'";
-        //     }
-        // }
-        
-        // // Добавляем условия сортировки
-        // $query .= " ORDER BY total_quantity DESC, 
-        //             $order_by_user $order_dir_user";
-        // $result_user = $conn->query($query);
         $orderByUserQuerry = $order_by_user . " " . $order_dir_user;
         $shopperWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByUserQuerry", "$search_query_user", $conn);
         $result_user = $shopperWorker->createMedicineQuery();
     }
 
+    //search_1
+    $orderByAdminQuerry = $order_by . " " . $order_dir;
+    $adminWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByAdminQuerry", '', $conn);
+    $result = $adminWorker->createMedicineQuery();   
+    if (isset($_POST['search_1'])) {
+        $search_query = htmlspecialchars($_POST['search_query']);
+        $_SESSION['$search_query'] = $search_query;
+        $Actstr = "Администратор установил строку поиска '$search_query' для таблицы лекарств.";
+        $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
+        $_SESSION['yummy_adm'] = $search_query;
+    }
+    if (isset($_SESSION['yummy_adm'])){
+        $search_query_adm = $_SESSION['yummy_adm'];
+        $orderByAdminQuerry = $order_by . " " . $order_dir;
+        $adminWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByAdminQuerry", "$search_query_adm", $conn);
+        $result = $adminWorker->createMedicineQuery();  
+    }
 
     $supplier_analytics_querry = "Select sum(cost) as sumCost from orders where provider_id = $uid and is_hiden_byProvider <> 1";
     $supplier_analytics_sum_drugs  = $conn->query($supplier_analytics_querry);
@@ -1263,47 +1094,8 @@ try{
         header('Location: ' . $_SERVER['HTTP_REFERER']); 
         exit();
     }
-    // $uid = $_SESSION['user_id'];
-    // $query = "
-    //     SELECT 
-    //         drugs.*, 
-    //         COALESCE(order_counts.total_quantity, 0) AS total_quantity 
-    //     FROM 
-    //         drugs 
-    //     LEFT JOIN (
-    //         SELECT 
-    //             drug_id,
-    //             SUM(quantity) AS total_quantity,
-    //             provider_id
-    //         FROM 
-    //             orders
-    //         WHERE provider_id = $uid
-    //         GROUP BY 
-    //             drug_id
-    //     ) AS order_counts ON drugs.id = order_counts.drug_id
-    //     WHERE 
-    //         drugs.is_hiden <> 1
-    // ";
-
-    // if (!empty($search_query)) {
-    //     if (is_numeric($search_query)) {
-    //         $query .= " AND (drugs.manufacturer_id = $search_query 
-    //             OR drugs.provider_id = $search_query 
-    //             OR drugs.cost = $search_query 
-    //             OR drugs.price = $search_query 
-    //             OR drugs.quantity = $search_query)";
-    //     } else {
-    //         $query .= " AND drugs.name LIKE '%$search_query%'";
-    //     }
-    // }
-
-    // // Добавляем условия сортировки
-    // $query .= " ORDER BY total_quantity DESC, $order_by $order_dir";
-    // $result = $conn->query($query);
-    $orderByAdminQuerry = $order_by . " " . $order_dir;
-    $adminWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByAdminQuerry", "$search_query", $conn);
-    $result = $adminWorker->createMedicineQuery();    
-
+    
+    
     $query = "SELECT * FROM users ORDER BY $users_order_by $users_order_dir";
     $res = $conn->query($query);
 

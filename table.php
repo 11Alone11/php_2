@@ -67,7 +67,23 @@ if($_SESSION["user_type"] == 1):
 			Выйти
 		</button>
 	</form>
-
+<!-- 6 лаба -->
+	<div id="popup" class="popup">
+		<form id="colorForm" class="popup__content__cookie" onsubmit="saveColor(event)">
+			<h2>Выберите цвет таблицы</h2>
+			<input type="color" id="colorInput" name="color" required>
+			<button type="submit" class="button popup__button">Сохранить</button>
+			<h3>История изменений цветов</h3>
+			<ul id="colorHistory"></ul>
+		</form>
+	</div>
+	<div id="popupSearch" class="popup">
+		<form id="popupSearchForm" class="popup__content__cookie" onsubmit="event.preventDefault();">
+			<h2>История поиска</h2>
+			<ul id="searchHistory" class="popup__content__cookie_search_story"></ul>
+		</form>
+	</div>
+<!-- 6 лаба -->
 	<a href="index.php" class="button button__fixed">
 		На главную
 	</a>
@@ -77,6 +93,13 @@ if($_SESSION["user_type"] == 1):
 	<a href="tables_settings.php" class="button button__fixed button__fixed_table_settings">
 		Веса таблиц
 	</a>
+	<p class="button button__fixed button__fixed_table_drugstable" onclick="openPopup()">
+		Цвет таблиц
+	</p>
+	<p class="button button__fixed button__fixed_search_history" onclick="openPopupSearch()">
+		История поиска
+	</p>
+
 	<!-- <div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php// if (!$profilePhoto): ?>
 			Загрузить фотку
@@ -91,13 +114,15 @@ if($_SESSION["user_type"] == 1):
 		<?php endif; ?>
 		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
 	</div>
-	<!-- Форма поиска лекарств-->
-	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+	<!-- Форма поиска лекарств style="display:none;"-->
+	<form  method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
-		<input type="text" name="search_query" class="input" placeholder="Поиск..." value="<?php echo htmlspecialchars($search_query); ?>">
-		<button type="submit" name="search" class="button">Поиск</button>
+		<input type="text" name="search_query" class="input" placeholder="Поиск..." id="searchInput" value="<?php if(isset($_SESSION['$search_query'])){
+			echo htmlspecialchars($_SESSION['$search_query']);
+		}else{ echo '';
+		}?>">
+		<button type="submit" name="search_1" class="button" id="searchInputButton">Поиск</button>
 	</form>
-
 	<!-- Форма добавления новой записи -->
 	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Добавление лекарств</p>
@@ -126,7 +151,7 @@ if($_SESSION["user_type"] == 1):
 			</div>
 		</div>
 	<?php endif; ?>		
-	<table>
+	<table id="medicine_table">
 		<thead>
 			<tr>
 				<th class="column-id"><a href="?order_by=id&order_dir=<?php echo htmlspecialchars($order_dir); ?>">IMG</a></th>
@@ -145,8 +170,8 @@ if($_SESSION["user_type"] == 1):
 		</thead>
 		<tbody>
 			<?php
-            if (isset($result)) {
-                while ($row = $result->fetch_assoc()) {
+			if (isset($result)) {
+				while ($row = $result->fetch_assoc()) {
                     ?>
 			<tr>
 				<td>
@@ -209,7 +234,7 @@ if($_SESSION["user_type"] == 1):
 
 	<h1 class="title mb20 mt20">Производители</h1>
 	<!-- Таблица с данными о производителях!-->
-	<table>
+	<table id="manuf_medicine_table">
 		<thead>
 			<tr>
 				<th class="column-id"><a href="?manufacturers_order_by=id&manufacturers_order_dir=<?php echo $order_dir; ?>">ID</a></th>
@@ -245,7 +270,7 @@ if($_SESSION["user_type"] == 1):
 	<!-- Таблица с данными о пользователях!-->
 	<h1 class="title mb20 mt20">Поставщики</h1>
 
-	<table>
+	<table id="supple_medicine_table">
 		<thead>
 			<tr>
 				<th class="column-id"><a href="?users_order_by=id&users_order_dir=<?php echo $order_dir; ?>">ID</a></th>
@@ -289,7 +314,7 @@ if($_SESSION["user_type"] == 1):
 	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средний доход с продажи единицы:
 		<?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
 
-	<table>
+	<table id="my_requests">
 		<thead>
 			<tr>
 				<th class="column-name"><a
@@ -481,8 +506,159 @@ if($_SESSION["user_type"] == 1):
 
 
 </body>
-
+<!-- <div id="popupSearch" class="popup" style="display:none;">
+		<form id="popupSearchForm" class="popup__content__cookie" onsubmit="event.preventDefault();">
+			<h2>История поиска</h2>
+			<ul id="searchHistory"></ul>
+		</form>
+	</div> -->
 <script>
+//6 лаба
+//попап истории поиска
+	document.addEventListener('DOMContentLoaded', function() {
+		const searchInput = document.getElementById('searchInput');
+		const medicineTable = document.getElementById('medicine_table');
+		if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
+			const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
+			//console.log(999);
+			fetch(apiUrl)
+				.then(response => response.json())
+				.then(data => {
+					//data.first && 
+					if (data.first !== searchInput.value) {
+						
+						fetch('cookieAPI/insertNewSuccesSearch.php', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded'
+							},
+							body: `search_result=${encodeURIComponent(searchInput.value)}`
+						});
+						//console.log(111);
+					}
+				});
+		}
+		loadInitialColor();
+	});
+
+	const popupSearch = document.getElementById('popupSearch');
+
+	function openPopupSearch() {
+		popupSearch.style.display = 'flex';
+		loadInitialSearchHistory();
+	}
+
+	function closePopupSearch() {
+		popupSearch.style.display = 'none';
+	}
+
+	function loadInitialSearchHistory(){
+		fetch('cookieAPI/getAllSuccesSearch.php')
+			.then(response => response.json())
+			.then(data => {
+				const searchHistory = document.getElementById('searchHistory');
+				const searchInputButton = document.getElementById('searchInputButton');
+				searchHistory.innerHTML = '';
+				data.cache.forEach(result => {
+					const li = document.createElement('li');
+					li.textContent = result;
+					console.log("hello " + result); 
+					li.onclick = function() {
+						document.getElementById('searchInput').value = result;
+						closePopupSearch();
+						searchInputButton.click();
+					};
+					searchHistory.appendChild(li);
+				});
+			});
+	}
+
+	window.onclick = function(event) {
+		const popupSearch = document.getElementById('popupSearch');
+		const popup = document.getElementById('popup');
+
+		if (event.target === popupSearch) {
+			closePopupSearch();
+		} else if (event.target === popup) {
+			closePopup();
+		}
+	};
+
+	// Функции для попапа настроек
+	const popup = document.getElementById('popup');
+	const colorHistoryList = document.getElementById('colorHistory');
+
+	function loadInitialColor() {
+		fetch('cookieAPI/color_handler.php')
+			.then(response => response.json())
+			.then(data => {
+				if (data.firstColor) {
+					applyColor(data.firstColor); 
+				}
+				loadColorHistory();
+			});
+	}
+
+	function openPopup() {
+		popup.style.display = 'flex';
+		loadColorHistory();
+	}
+
+	function closePopup() {
+		popup.style.display = 'none';
+	}
+
+	function saveColor(event) {
+		event.preventDefault();
+		const color = document.getElementById('colorInput').value;
+
+		applyColor(color);
+
+		fetch('cookieAPI/color_handler.php', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: new URLSearchParams({ color })
+			})
+			.then(response => response.json())
+			.then(() => {
+				closePopup();
+				loadColorHistory();
+			});
+	}
+
+	function loadColorHistory() {
+		fetch('cookieAPI/color_handler.php')
+			.then(response => response.json())
+			.then(data => {
+				colorHistoryList.innerHTML = data.history.map(color => 
+					`<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
+				).join('');
+			})
+			.catch(error => console.error('Ошибка при загрузке истории цветов:', error));
+	}
+
+	function applyColor(color) {
+			document.getElementById('medicine_table').style.backgroundColor = color;
+			document.getElementById('supple_medicine_table').style.backgroundColor = color;
+			document.getElementById('manuf_medicine_table').style.backgroundColor = color;
+			document.getElementById('my_requests').style.backgroundColor = color;
+	}
+
+	function saveColorFromHistory(color) {
+		applyColor(color);
+		fetch('cookieAPI/color_handler.php', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: new URLSearchParams({ color })
+		});
+		closePopup();
+	}
+
+//до 6 лабы	
 document.addEventListener('DOMContentLoaded', function() {
 		try {
 			const bfr = 400;
@@ -677,7 +853,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				formId.value = id;
 				tableName.value = table;
 				fieldName.value = field;
-
+				console.log(2);
 				if (table === 'my_orders_requests' && field === 'status') {
 					statusSelect.innerHTML = `
 				<option value="" disabled selected>Выберите статус</option>
@@ -775,6 +951,22 @@ else:
 </head>
 
 <body>
+	<div id="popup" class="popup">
+		<form id="colorForm" class="popup__content__cookie" onsubmit="saveColor(event)">
+			<h2>Выберите цвет таблицы</h2>
+			<input type="color" id="colorInput" name="color" required>
+			<button type="submit" class="button popup__button">Сохранить</button>
+			<h3>История изменений цветов</h3>
+			<ul id="colorHistory"></ul>
+		</form>
+	</div>
+
+	<div id="popupSearch" class="popup">
+		<form id="popupSearchForm" class="popup__content__cookie" onsubmit="event.preventDefault();">
+			<h2>История поиска</h2>
+			<ul id="searchHistory" class="popup__content__cookie_search_story"></ul>
+		</form>
+	</div>
 	<h1 class="title mb20 mt20">Управление Лекарствами</h1>
 
 	<!-- <div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
@@ -806,12 +998,19 @@ else:
 	<a href="index.php" class="button button__fixed">
 		На главную
 	</a>
+
+	<p class="button button__fixed button__fixed_colhoz" onclick="openPopup()">
+		Цвет таблиц
+	</p>
+	<p class="button button__fixed button__fixed_table_settings" onclick="openPopupSearch()">
+		История поиска
+	</p>
 	<!-- style="display:none;" Форма поиска лекарств-->
 	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
-		<input type="text" name="search_for_user" class="input" placeholder="Поиск..." value="<?php 
+		<input type="text" name="search_for_user" class="input" placeholder="Поиск..." id="searchInput" value="<?php 
 		echo htmlspecialchars($search_query_user); ?>">
-		<button type="submit" name="search_btn_post" class="button">Поиск</button>
+		<button type="submit" name="search_btn_post" class="button" id="searchInputButton">Поиск</button>
 	</form>
 
 	<!-- Форма добавления новой записи -->
@@ -860,7 +1059,7 @@ else:
 			</div>
 		</div>
 	<?php endif; ?>		
-	<table>
+	<table id="supl_med">
 		<thead>
 			<tr>
 				<th class="column-id"><a href="?order_by_user=id&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">IMG</a></th>
@@ -936,7 +1135,7 @@ else:
 	<h1 class="extrasubtitle mb20-extrasubtitle mt20-extrasubtitle">Средний доход с продажи единицы:
 		<?php echo htmlspecialchars(number_format($rowMedDrug['medCost'], 2, '.', ''))?></h1>
 
-	<table>
+	<table id="zayavki_supl">
 		<thead>
 			<tr>
 				<th class="column-name"><a
@@ -1113,6 +1312,149 @@ else:
 </body>
 
 <script>
+// //до 6 лабы
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const medicineTable = document.getElementById('supl_med');
+	if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
+        const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
+        //console.log(999);
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+				//data.first && 
+                if (data.first !== searchInput.value) {
+					
+                    fetch('cookieAPI/insertNewSuccesSearch.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `search_result=${encodeURIComponent(searchInput.value)}`
+                    });
+					//console.log(111);
+                }
+            });
+    }
+    loadInitialColor();
+});
+
+const popupSearch = document.getElementById('popupSearch');
+
+function openPopupSearch() {
+    popupSearch.style.display = 'flex';
+	loadInitialSearchHistory();
+}
+
+function closePopupSearch() {
+    popupSearch.style.display = 'none';
+}
+
+function loadInitialSearchHistory(){
+	fetch('cookieAPI/getAllSuccesSearch.php')
+        .then(response => response.json())
+        .then(data => {
+            const searchHistory = document.getElementById('searchHistory');
+			const searchInputButton = document.getElementById('searchInputButton');
+            searchHistory.innerHTML = '';
+            data.cache.forEach(result => {
+                const li = document.createElement('li');
+                li.textContent = result;
+				console.log("hello " + result); 
+                li.onclick = function() {
+                    document.getElementById('searchInput').value = result;
+                    closePopupSearch();
+					searchInputButton.click();
+                };
+                searchHistory.appendChild(li);
+            });
+        });
+}
+
+window.onclick = function(event) {
+    const popupSearch = document.getElementById('popupSearch');
+    const popup = document.getElementById('popup');
+
+    if (event.target === popupSearch) {
+        closePopupSearch();
+    } else if (event.target === popup) {
+        closePopup();
+    }
+};
+
+// Функции для попапа настроек
+const popup = document.getElementById('popup');
+const colorHistoryList = document.getElementById('colorHistory');
+
+function loadInitialColor() {
+    fetch('cookieAPI/color_handler.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.firstColor) {
+                applyColor(data.firstColor); 
+            }
+            loadColorHistory();
+        });
+}
+
+function openPopup() {
+    popup.style.display = 'flex';
+    loadColorHistory();
+}
+
+function closePopup() {
+    popup.style.display = 'none';
+}
+
+function saveColor(event) {
+    event.preventDefault();
+    const color = document.getElementById('colorInput').value;
+
+    applyColor(color);
+
+    fetch('cookieAPI/color_handler.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({ color })
+        })
+        .then(response => response.json())
+        .then(() => {
+            closePopup();
+            loadColorHistory();
+        });
+}
+
+function loadColorHistory() {
+    fetch('cookieAPI/color_handler.php')
+        .then(response => response.json())
+        .then(data => {
+            colorHistoryList.innerHTML = data.history.map(color => 
+                `<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
+            ).join('');
+        })
+        .catch(error => console.error('Ошибка при загрузке истории цветов:', error));
+}
+
+function applyColor(color) {
+    document.getElementById('zayavki_supl').style.backgroundColor = color;
+    document.getElementById('supl_med').style.backgroundColor = color;
+}
+
+function saveColorFromHistory(color) {
+    applyColor(color);
+    fetch('cookieAPI/color_handler.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ color })
+    });
+    closePopup();
+}
+//после 6 лабы
+
 document.addEventListener('DOMContentLoaded', function() {
 	try {
 		const bfr = 400;
@@ -1388,6 +1730,21 @@ else:
 </head>
 
 <body>
+	<div id="popup" class="popup">
+		<form id="colorForm" class="popup__content__cookie" onsubmit="saveColor(event)">
+			<h2>Выберите цвет таблицы</h2>
+			<input type="color" id="colorInput" name="color" required>
+			<button type="submit" class="button popup__button">Сохранить</button>
+			<h3>История изменений цветов</h3>
+			<ul id="colorHistory"></ul>
+		</form>
+	</div>
+	<div id="popupSearch" class="popup">
+		<form id="popupSearchForm" class="popup__content__cookie" onsubmit="event.preventDefault();">
+			<h2>История поиска</h2>
+			<ul id="searchHistory" class="popup__content__cookie_search_story"></ul>
+		</form>
+	</div>
 	<h1 class="title mb20 mt20">Закупка лекарствами</h1>
 	<!-- <div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php //if (!$profilePhoto): ?>
@@ -1414,6 +1771,14 @@ else:
 	<a href="index.php" class="button button__fixed">
 		На главную
 	</a>
+	
+	<p class="button button__fixed button__fixed_colhoz" onclick="openPopup()">
+		Цвет таблиц
+	</p>
+	
+	<p class="button button__fixed button__fixed_table_settings" onclick="openPopupSearch()">
+		История поиска
+	</p>
 
 	<form method="POST" style="display:none;">
 		<button type="submit" name="drop_res" class="button button_not_fixed button__fixed_colhoz">
@@ -1424,8 +1789,8 @@ else:
 	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
 		<input type="text" name="search_for_shopper" class="input" placeholder="Поиск..."
-			value="<?php echo htmlspecialchars($search_query_shopper); ?>">
-		<button type="submit" name="search_us_btn" class="button">Поиск</button>
+			value="<?php echo htmlspecialchars($search_query_shopper); ?>" id="searchInput">
+		<button type="submit" name="search_us_btn" class="button" id="searchInputButton">Поиск</button>
 		<?php if (isset($_SESSION['error_message'])): ?>
 		<div class="auth__message">
 			✖ <?php echo htmlspecialchars($_SESSION['error_message']); ?>
@@ -1444,7 +1809,7 @@ else:
 			</div>
 		</div>
 	<?php endif; ?>
-	<table class="tbody_drugs_shopper">
+	<table class="tbody_drugs_shopper" id = "medicine_table_user">
 		<thead>
 			<tr>
 				<th class="column-id"><a href="?order_by_user=id&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">IMG</a></th>
@@ -1517,7 +1882,7 @@ else:
 			<button class="button form__button" type="button" id="updateButton">Оформить</button>
 		</form>
 	</div>
-	<table class="table_cart">
+	<table class="table_cart" id="cart_user">
 		<thead>
 			<tr>
 				<th class="column-name"><a
@@ -1788,6 +2153,151 @@ function getQuantity(drugId) {
 </script>
 
 <script>
+//6 лаба
+	document.addEventListener('DOMContentLoaded', function() {
+		const searchInput = document.getElementById('searchInput');
+		const medicineTable = document.getElementById('medicine_table_user');
+		if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
+			const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
+			//console.log(999);
+			fetch(apiUrl)
+				.then(response => response.json())
+				.then(data => {
+					//data.first && 
+					if (data.first !== searchInput.value) {
+						
+						fetch('cookieAPI/insertNewSuccesSearch.php', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded'
+							},
+							body: `search_result=${encodeURIComponent(searchInput.value)}`
+						});
+						//console.log(111);
+					}
+				});
+		}
+		loadInitialColor();
+	});
+
+	const popupSearch = document.getElementById('popupSearch');
+
+	function openPopupSearch() {
+		popupSearch.style.display = 'flex';
+		loadInitialSearchHistory();
+	}
+
+	function closePopupSearch() {
+		popupSearch.style.display = 'none';
+	}
+
+	function loadInitialSearchHistory(){
+		fetch('cookieAPI/getAllSuccesSearch.php')
+			.then(response => response.json())
+			.then(data => {
+				const searchHistory = document.getElementById('searchHistory');
+				const searchInputButton = document.getElementById('searchInputButton');
+				searchHistory.innerHTML = '';
+				data.cache.forEach(result => {
+					const li = document.createElement('li');
+					li.textContent = result;
+					console.log("hello " + result); 
+					li.onclick = function() {
+						document.getElementById('searchInput').value = result;
+						closePopupSearch();
+						searchInputButton.click();
+					};
+					searchHistory.appendChild(li);
+				});
+			});
+	}
+
+	window.onclick = function(event) {
+		const popupSearch = document.getElementById('popupSearch');
+		const popup = document.getElementById('popup');
+
+		if (event.target === popupSearch) {
+			closePopupSearch();
+		} else if (event.target === popup) {
+			closePopup();
+		}
+	};
+
+	// Функции для попапа настроек
+	const popup = document.getElementById('popup');
+	const colorHistoryList = document.getElementById('colorHistory');
+
+	function loadInitialColor() {
+		fetch('cookieAPI/color_handler.php')
+			.then(response => response.json())
+			.then(data => {
+				if (data.firstColor) {
+					applyColor(data.firstColor); 
+				}
+				loadColorHistory();
+			});
+	}
+
+	function openPopup() {
+		popup.style.display = 'flex';
+		loadColorHistory();
+	}
+
+	function closePopup() {
+		popup.style.display = 'none';
+	}
+
+	function saveColor(event) {
+		event.preventDefault();
+		const color = document.getElementById('colorInput').value;
+
+		applyColor(color);
+
+		fetch('cookieAPI/color_handler.php', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: new URLSearchParams({ color })
+			})
+			.then(response => response.json())
+			.then(() => {
+				closePopup();
+				loadColorHistory();
+			});
+	}
+
+	function loadColorHistory() {
+		fetch('cookieAPI/color_handler.php')
+			.then(response => response.json())
+			.then(data => {
+				colorHistoryList.innerHTML = data.history.map(color => 
+					`<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
+				).join('');
+			})
+			.catch(error => console.error('Ошибка при загрузке истории цветов:', error));
+	}
+
+	function applyColor(color) {
+			document.getElementById('medicine_table_user').style.backgroundColor = color;
+			document.getElementById('cart_user').style.backgroundColor = color;
+		}
+
+	function saveColorFromHistory(color) {
+		applyColor(color);
+		fetch('cookieAPI/color_handler.php', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: new URLSearchParams({ color })
+		});
+		closePopup();
+	}
+
+
+//до 6 лабы	
+
 document.addEventListener('DOMContentLoaded', function() {
 	try {
 

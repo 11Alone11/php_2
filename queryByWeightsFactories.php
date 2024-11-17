@@ -1504,11 +1504,12 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
         ";
         
         if (!empty($this->searchParams)) {
-            $query .= " AND drugs.name LIKE ? ";
+            $query .= "WHERE drugs.name LIKE ? ";
             $query .= "ORDER BY totalPoints DESC". $orderBy;
             $searchParam = '%' . $this->searchParams . '%';
             $statement = $this->conn->prepare($query);
             $statement->bind_param('iis', $this->userId, $this->userId, $searchParam);
+            //$_SESSION['serv_error']=$searchParam;
         } else {
             $query .= "ORDER BY totalPoints DESC". $orderBy;
             $statement = $this->conn->prepare($query);

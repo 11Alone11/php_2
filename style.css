@@ -333,6 +333,22 @@ main {
 	left: 20px;
 }
 
+.button__fixed_table_drugstable {
+	width: 100px;
+	position: fixed;
+	right: 20px;
+	top: 260px;
+	left: 20px;
+}
+
+.button__fixed_search_history {
+	width: 100px;
+	position: fixed;
+	right: 20px;
+	top: 340px;
+	left: 20px;
+}
+
 .button__fixed_back_to_adm {
 	width: 120px;
 	position: fixed;
@@ -921,3 +937,25 @@ input[type='range']::-ms-thumb {
 	max-width: 400px;
 	object-fit: cover;
   }
+
+
+  .popup__content__cookie {
+    display: flex;
+    flex-direction: column; /* Align items in a column */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    gap: 12px; /* Space between items */
+    padding: 24px;
+    background-color: #fff;
+    border-radius: 20px;
+    border: 2px solid #000;
+}
+
+.popup__content__cookie_search_story {
+    display: flex;
+    flex-direction: column; /* Align items in a column */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    gap: 6px; /* Space between items */
+    padding: 12px;
+}
