@@ -1,9 +1,8 @@
 Array
 (
-    [name] => fg.gif
-    [full_path] => fg.gif
+    [name] => gifka.gif
     [type] => image/gif
-    [tmp_name] => C:\XAMPP\tmp\php5FF5.tmp
+    [tmp_name] => C:\xampp\tmp\php48F5.tmp
     [error] => 0
-    [size] => 109595
+    [size] => 1051211
 )

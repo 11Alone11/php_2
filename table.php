@@ -85,11 +85,11 @@ if($_SESSION["user_type"] == 1):
     </div> -->
 	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php if (!$profilePhoto): ?>
-			<span>Загрузить фотку</span>
+		<span>Загрузить фотку</span>
 		<?php else: ?>
-			<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
+		<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
-		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+		<input type="file" id="fileInput" class="image__input" accept=".jpg,.gif" style="display:none;">
 	</div>
 	<!-- Форма поиска лекарств-->
 	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
@@ -119,13 +119,13 @@ if($_SESSION["user_type"] == 1):
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Лекарства</h1>
 	<?php if (isset($_SESSION['medicine_images_error'])): ?>
-		<div class="centr">
-			<div class="image_error_message">
-				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']);?>
-			</div>
+	<div class="centr">
+		<div class="image_error_message">
+			✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
+			<?php unset($_SESSION['medicine_images_error']);?>
 		</div>
-	<?php endif; ?>		
+	</div>
+	<?php endif; ?>
 	<table>
 		<thead>
 			<tr>
@@ -150,11 +150,12 @@ if($_SESSION["user_type"] == 1):
                     ?>
 			<tr>
 				<td>
-					<img class="table__img openImageUpdate" src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+					<img class="table__img openImageUpdate"
+						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
 						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
 						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
-						
-						<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
+
+					<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
 				</td>
 				<td><?php echo htmlspecialchars($row['id']); ?></td>
 				<td data-type="name" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs" data-field="name" class="openPopup"
@@ -360,12 +361,12 @@ if($_SESSION["user_type"] == 1):
 	</div>
 
 	<div id="vsplyvImage" class="vsplyvImage">
-			<div class="vsplyvImage__content">
-				<img id="currentImage" class="vsplyvImage__img" src="" alt="Текущая картинка" />
-				<input type="file" id="newImageFile" class="input" accept="image/*" required>
-				<button id="uploadImageButton" class="button vsplyvImage__button">Обновить изображение</button>
-				<button id="closeImageButton" class="button vsplyvImage__button">Закрыть</button>
-			</div>
+		<div class="vsplyvImage__content">
+			<img id="currentImage" class="vsplyvImage__img" src="" alt="Текущая картинка" />
+			<input type="file" id="newImageFile" class="input" accept=".jpg,.gif" required>
+			<button id="uploadImageButton" class="button vsplyvImage__button">Обновить изображение</button>
+			<button id="closeImageButton" class="button vsplyvImage__button">Закрыть</button>
+		</div>
 	</div>
 
 	<?php if ($orders_from_shoppers->num_rows > 0 ||  $drugs_add_requests->num_rows > 0 || $drugs_add_requests_feedback->num_rows): ?>
@@ -485,38 +486,36 @@ if($_SESSION["user_type"] == 1):
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 		try {
-			const bfr = 400;
+			const bfr = 10;
 			document.getElementById('fileInput').addEventListener('change', function(event) {
-            var file = event.target.files[0];
-            if (file) {
-                var fileSize = file.size;
-                var maxSize = bfr * 1024 * 1024;
-                if (fileSize > maxSize) {
-                    alert('Файл слишком большой. Максимальный размер: 10 MB.');
-                }
-            }
-        	});
+				var file = event.target.files[0];
+				if (file) {
+					var fileSize = file.size;
+					var maxSize = bfr * 1024 * 1024;
+					if (fileSize > maxSize) {
+						alert('Файл слишком большой. Максимальный размер: 10 MB.');
+					}
+				}
+			});
 			document.getElementById('newImageFile').addEventListener('change', function(event) {
-            var file = event.target.files[0];
-            if (file) {
-                var fileSize = file.size;
-                var maxSize = bfr * 1024 * 1024;
-                if (fileSize > maxSize) {
-                    alert('Файл слишком большой. Максимальный размер: 10 MB.');
-                }
-            }
-        	});
+				var file = event.target.files[0];
+				if (file) {
+					var fileSize = file.size;
+					var maxSize = bfr * 1024 * 1024;
+					if (fileSize > maxSize) {
+						alert('Файл слишком большой. Максимальный размер: 10 MB.');
+					}
+				}
+			});
 			const imageContainer1 = document.getElementById('imageContainer');
 			const profilePhoto = '<?php echo $profilePhoto; ?>';
 
-			// Проверка на битое изображение
 			const img = new Image();
 			img.src = 'data:image/jpeg;base64,' + profilePhoto;
 
 			img.onerror = function() {
-				// Если изображение не загружается, показываем сообщение об ошибке
 				document.querySelector('.error-mess').style.display = 'block';
-				imageContainer1.style.backgroundImage = 'none'; // опционально убираем фон
+				imageContainer1.style.backgroundImage = 'none';
 			};
 
 			const vsplyvImage = document.getElementById('vsplyvImage');
@@ -524,25 +523,23 @@ document.addEventListener('DOMContentLoaded', function() {
 			const currentImage = document.getElementById('currentImage');
 			const updateImageButton = document.getElementById('updateImageButton');
 			const closeImageButton = document.getElementById('closeImageButton');
-			baseDrugImage  = "";
+			baseDrugImage = "";
 			let currentID = 0;
-			// Функция для открытия vsplyvImage
+
 			function openVsplyvImage(imageSrc, id) {
 				currentImage.src = imageSrc;
 				currentID = id;
 				vsplyvImage.classList.add('open');
 			}
 
-			// Обработчик клика для открытия vsplyvImage при необходимости
 			document.querySelectorAll('.openImageUpdate').forEach((element) => {
 				element.addEventListener('click', function() {
-					const imageSrc = element.src; // Get the image source
-					const id = element.dataset.id; // Get the ID
+					const imageSrc = element.src;
+					const id = element.dataset.id;
 					openVsplyvImage(imageSrc, id);
 				});
 			});
 
-			// Обработчик для обновления ссылки на изображение
 			uploadImageButton.addEventListener('click', function() {
 				const fileInput = document.getElementById('newImageFile');
 				const file = fileInput.files[0];
@@ -553,37 +550,34 @@ document.addEventListener('DOMContentLoaded', function() {
 					formData.append('id', currentID);
 
 					fetch('photoAPI/medicinePhotoUpd.php', {
-						method: 'POST',
-						body: formData
-					})
-					.then(response => response.json())
-					.then(data => {
-						if (data.status === 'success') {
-							currentImage.src = `images/${data.fileName}`;
-							const newImageUrl = `images/${data.fileName}`;
-							const imageElement = document.querySelector(`img[data-id='${currentID}']`);
-							if (imageElement) {
-								imageElement.src = newImageUrl; // Обновляем изображение в таблице
+							method: 'POST',
+							body: formData
+						})
+						.then(response => response.json())
+						.then(data => {
+							if (data.status === 'success') {
+								currentImage.src = `images/${data.fileName}`;
+								const newImageUrl = `images/${data.fileName}`;
+								const imageElement = document.querySelector(`img[data-id='${currentID}']`);
+								if (imageElement) {
+									imageElement.src = newImageUrl;
+								}
+								alert('Изображение обновлено успешно.');
+							} else {
+								alert(data.message);
 							}
-							alert('Изображение обновлено успешно.');
-							//vsplyvImage.classList.remove('open');
-						} else {
-							alert(data.message);
-						}
-					})
-					.catch(error => {
-						console.error('Ошибка:', error);
-					});
+						})
+						.catch(error => {
+							console.error('Ошибка:', error);
+						});
 				} else {
 					alert('Пожалуйста, выберите изображение.');
 				}
 			});
 
-			// Обработчик для закрытия vsplyvImage
 			closeImageButton.addEventListener('click', function() {
 				vsplyvImage.classList.remove('open');
 			});
-			// Закрытие vsplyvImage при клике вне содержимого
 			vsplyvImage.addEventListener('click', function(event) {
 				if (event.target === vsplyvImage) {
 					vsplyvImage.classList.remove('open');
@@ -593,12 +587,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			const imageContainer = document.getElementById('imageContainer');
 			const fileInput = document.getElementById('fileInput');
 
-			// Добавляем обработчик клика по div
 			imageContainer.addEventListener('click', () => {
-				fileInput.click(); // Открывает диалоговое окно выбора файла
+				fileInput.click();
 			});
-			
-			// Обработчик для загрузки файла
+
 			fileInput.addEventListener('change', (event) => {
 				const file = event.target.files[0];
 				let res = true;
@@ -615,56 +607,55 @@ document.addEventListener('DOMContentLoaded', function() {
 					const reader = new FileReader();
 
 					fetch('photoAPI/userProfilePhoto.php', {
-						method: 'POST',
-						body: formData
-					})
-					.then(response => {
-						if (!response.ok) {
-							throw new Error('Сетевая ошибка: ответ не был получен');
-						}
-						return response.json(); 
-					})
-					.then(data => {
-						if (data.status === 'success') {
-							// Только после успешного ответа обновляем изображение
-							reader.onload = function(e) {
-								imageContainer.style.backgroundImage = `url(${e.target.result})`;
-								imageContainer.textContent = ''; 
-							};
-							reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
-						} else {
-							// Если статус не success, выводим сообщение об ошибке
-							alert(data.message);
-							console.error(data.message);
-						}
-					})
-					.catch(error => {
-						const errorMessage = 'Ошибка при загрузке изображения: ' + error.message; // Используем error.message для более ясного сообщения
-						console.error('Ошибка:', error);
-						alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
-					});
+							method: 'POST',
+							body: formData
+						})
+						.then(response => {
+							if (!response.ok) {
+								throw new Error('Сетевая ошибка: ответ не был получен');
+							}
+							return response.json();
+						})
+						.then(data => {
+							if (data.status === 'success') {
+								reader.onload = function(e) {
+									imageContainer.style.backgroundImage = `url(${e.target.result})`;
+									imageContainer.textContent = '';
+								};
+								reader.readAsDataURL(file);
+							} else {
+
+								alert(data.message);
+								console.error(data.message);
+							}
+						})
+						.catch(error => {
+							const errorMessage = 'Ошибка при загрузке изображения: ' + error
+								.message;
+							console.error('Ошибка:', error);
+							alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
+						});
 				}
-			});	
+			});
 			const messageContainer = document.querySelector('.message__inner');
 			const closeButton = document.getElementById('message__button');
 			const expandButton = document.getElementById('expand__button');
 
-			// Открываем попап при клике на кнопку
 			document.querySelectorAll('.openPopup').forEach((element) => {
 				element.addEventListener('click', function(event) {
 					const clickedText = event.target.innerText;
 					const type = event.target.dataset.type;
 					const id = event.target.dataset.id;
-					const table = event.target.dataset.table; // Получаем таблицу
-					const field = event.target.dataset.field; // Получаем поле
+					const table = event.target.dataset.table;
+					const field = event.target.dataset.field;
 
 					document.getElementById('popupInput').value = clickedText;
 					event.stopPropagation();
-					openPopup(type, id, table, field); // Передаем таблицу и поле
+					openPopup(type, id, table, field);
 				});
 			})
 
-			// Функция для открытия попапа
+
 			function openPopup(type, id, table, field) {
 				const formType = document.querySelector('#formType');
 				const formId = document.querySelector('#formId');
@@ -685,8 +676,8 @@ document.addEventListener('DOMContentLoaded', function() {
 				<option value="Отклонено">Отклонено</option>
 				<option value="В обработке">В обработке</option>
 			`;
-					popupInput.style.display = 'none'; // Скрыть текстовое поле
-					statusSelect.style.display = 'block'; // Показать селект
+					popupInput.style.display = 'none';
+					statusSelect.style.display = 'block';
 				} else if (table === 'drugs' && field === 'is_allowed') {
 					statusSelect.innerHTML = `
 				<option value="" disabled selected>Выберите статус</option>
@@ -694,50 +685,45 @@ document.addEventListener('DOMContentLoaded', function() {
 				<option value="Отклонено">Отклонено</option>
 				<option value="В обработке">В обработке</option>
 			`;
-					popupInput.style.display = 'none'; // Скрыть текстовое поле
-					statusSelect.style.display = 'block'; // Показать селект
+					popupInput.style.display = 'none';
+					statusSelect.style.display = 'block';
 				} else {
-					popupInput.style.display = 'block'; // Показать текстовое поле
-					statusSelect.style.display = 'none'; // Скрыть селект
+					popupInput.style.display = 'block';
+					statusSelect.style.display = 'none';
 				}
 
 				const popup = document.getElementById("popup");
 				popup.classList.add("popup_open");
 			}
 
-			// Обработчик для закрытия попапа при клике вне формы
 			document.addEventListener('click', function(event) {
 				const popup = document.getElementById("popup");
 				const popupContent = document.querySelector(".popup__content");
 
 				if (popup.classList.contains("popup_open") && !popupContent.contains(event.target)) {
-					popup.classList.remove("popup_open"); // Закрываем попап
+					popup.classList.remove("popup_open");
 				}
 			});
 
-			// Предотвращаем закрытие попапа при клике внутри формы
 			document.querySelector('.popup__content').addEventListener('click', function(event) {
 				event.stopPropagation();
 			});
 
-			// Обработчик для кнопки "Удалить"
-			// document.querySelector('.message__button__close').addEventListener('click', function() {
-			// 	document.querySelector('.message').classList.remove('message_open');
-			// });
+
 
 			if (closeButton) {
 				closeButton.addEventListener('click', function() {
-					messageContainer.style.display = 'none'; // Скрыть сообщения
-					closeButton.style.display = 'none'; // Скрыть кнопку закрытия
-					expandButton.style.display = 'block'; // Показать кнопку развернуть
+					messageContainer.style.display = 'none';
+					closeButton.style.display = 'none';
+					expandButton.style.display = 'block';
 				});
 			}
 
 			if (expandButton) {
 				expandButton.addEventListener('click', function() {
-					messageContainer.style.display = 'block'; // Показать сообщения
-					closeButton.style.display = 'block'; // Показать кнопку закрытия
-					expandButton.style.display = 'none'; // Скрыть кнопку развернуть
+					messageContainer.style.display = 'block';
+					closeButton.style.display = 'block';
+					expandButton.style.display = 'none';
 				});
 			}
 
@@ -785,11 +771,11 @@ else:
     </div> -->
 	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php if (!$profilePhoto): ?>
-			<span>Загрузить фотку</span>
+		<span>Загрузить фотку</span>
 		<?php else: ?>
-			<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
+		<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
-		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+		<input type="file" id="fileInput" class="image__input" accept=".jpg,.gif" style="display:none;">
 	</div>
 	<form method="POST" action="
     <?php   
@@ -839,7 +825,7 @@ else:
 
 		<input type="number" name="price" class="input" placeholder="Цена" step="0.01" required>
 		<input type="number" name="quantity" class="input" placeholder="Количество" step="1" required>
-		<input type="file" name="medicinePhoto" class="input" accept="image/*" required>
+		<input type="file" name="medicinePhoto" class="input" accept=".jpg,.gif" required>
 		<!-- <input type="text" name="imgLink" class="input" placeholder="Ссылка на картинку"> -->
 		<button type="submit" name="add_drugs_user" class="button">Добавить</button>
 		<?php if (isset($_SESSION['error_message'])): ?>
@@ -853,13 +839,13 @@ else:
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Ваши лекарства</h1>
 	<?php if (isset($_SESSION['medicine_images_error'])): ?>
-		<div class="centr">
-			<div class="image_error_message">
-				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']);?>
-			</div>
+	<div class="centr">
+		<div class="image_error_message">
+			✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
+			<?php unset($_SESSION['medicine_images_error']);?>
 		</div>
-	<?php endif; ?>		
+	</div>
+	<?php endif; ?>
 	<table>
 		<thead>
 			<tr>
@@ -887,11 +873,12 @@ else:
                     ?>
 			<tr>
 				<td>
-					<img class="table__img openImageUpdate" src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+					<img class="table__img openImageUpdate"
+						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
 						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
 						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
-						
-						<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
+
+					<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
 				</td>
 				<td><?php echo htmlspecialchars($row['id']); ?></td>
 				<td data-type="name" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="name" class="openPopup"
@@ -1025,7 +1012,7 @@ else:
 	<div id="vsplyvImage" class="vsplyvImage">
 		<div class="vsplyvImage__content">
 			<img id="currentImage" class="vsplyvImage__img" src="" alt="Текущая картинка" />
-			<input type="file" id="newImageFile" class="input" accept="image/*" required>
+			<input type="file" id="newImageFile" class="input" accept=".jpg,.gif" required>
 			<button id="uploadImageButton" class="button vsplyvImage__button">Обновить изображение</button>
 			<button id="closeImageButton" class="button vsplyvImage__button">Закрыть</button>
 		</div>
@@ -1115,26 +1102,35 @@ else:
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 	try {
-		const bfr = 400;
-		document.getElementById('fileInput').addEventListener('change', function(event) {
-		var file = event.target.files[0];
-		if (file) {
-			var fileSize = file.size;
-			var maxSize = bfr * 1024 * 1024;
-			if (fileSize > maxSize) {
-				alert('Файл слишком большой. Максимальный размер: 10 MB.');
-			}
+		const bfr = 10;
+
+		function validateFileType(file) {
+			const allowedTypes = ['image/jpeg', 'image/gif'];
+			const allowedExtensions = ['.jpg', '.gif'];
+
+			const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+			return allowedTypes.includes(file.type) && allowedExtensions.includes(fileExtension);
 		}
+
+		document.getElementById('fileInput').addEventListener('change', function(event) {
+			var file = event.target.files[0];
+			if (file) {
+				var fileSize = file.size;
+				var maxSize = bfr * 1024 * 1024;
+				if (fileSize > maxSize) {
+					alert('Файл слишком большой. Максимальный размер: 10 MB.');
+				}
+			}
 		});
 		document.getElementById('newImageFile').addEventListener('change', function(event) {
-		var file = event.target.files[0];
-		if (file) {
-			var fileSize = file.size;
-			var maxSize = bfr * 1024 * 1024;
-			if (fileSize > maxSize) {
-				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			var file = event.target.files[0];
+			if (file) {
+				var fileSize = file.size;
+				var maxSize = bfr * 1024 * 1024;
+				if (fileSize > maxSize) {
+					alert('Файл слишком большой. Максимальный размер: 10 MB.');
+				}
 			}
-		}
 		});
 		const imageContainer1 = document.getElementById('imageContainer');
 		const profilePhoto = '<?php echo $profilePhoto; ?>';
@@ -1154,7 +1150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		const currentImage = document.getElementById('currentImage');
 		const updateImageButton = document.getElementById('updateImageButton');
 		const closeImageButton = document.getElementById('closeImageButton');
-		baseDrugImage  = "";
+		baseDrugImage = "";
 		let currentID = 0;
 		// Функция для открытия vsplyvImage
 		function openVsplyvImage(imageSrc, id) {
@@ -1178,32 +1174,37 @@ document.addEventListener('DOMContentLoaded', function() {
 			const file = fileInput.files[0];
 
 			if (file) {
+
+				if (!validateFileType(file)) {
+					alert('Недопустимый тип файла. Разрешены только JPG и GIF.');
+					return;
+				}
+
 				const formData = new FormData();
 				formData.append('medicinePhoto', file);
 				formData.append('id', currentID);
 
 				fetch('photoAPI/medicinePhotoUpd.php', {
-					method: 'POST',
-					body: formData
-				})
-				.then(response => response.json())
-				.then(data => {
-					if (data.status === 'success') {
-						currentImage.src = `images/${data.fileName}`;
-						const newImageUrl = `images/${data.fileName}`;
-                        const imageElement = document.querySelector(`img[data-id='${currentID}']`);
-                        if (imageElement) {
-                            imageElement.src = newImageUrl;
-                        }
-						alert('Изображение обновлено успешно.');
-						//vsplyvImage.classList.remove('open');
-					} else {
-						alert(data.message);
-					}
-				})
-				.catch(error => {
-					console.error('Ошибка:', error);
-				});
+						method: 'POST',
+						body: formData
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data.status === 'success') {
+							currentImage.src = `images/${data.fileName}`;
+							const newImageUrl = `images/${data.fileName}`;
+							const imageElement = document.querySelector(`img[data-id='${currentID}']`);
+							if (imageElement) {
+								imageElement.src = newImageUrl;
+							}
+							alert('Изображение обновлено успешно.');
+						} else {
+							alert(data.message);
+						}
+					})
+					.catch(error => {
+						console.error('Ошибка:', error);
+					});
 			} else {
 				alert('Пожалуйста, выберите изображение.');
 			}
@@ -1228,12 +1229,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		imageContainer.addEventListener('click', () => {
 			fileInput.click(); // Открывает диалоговое окно выбора файла
 		});
-		
+
 		// Обработчик для загрузки файла
 		fileInput.addEventListener('change', (event) => {
 			const file = event.target.files[0];
 			let res = true;
 			if (file) {
+				if (!validateFileType(file)) {
+					alert('Недопустимый тип файла. Разрешены только JPG и GIF.');
+					return;
+				}
 				var fileSize = file.size;
 				var maxSize = bfr * 1024 * 1024;
 				if (fileSize > maxSize) {
@@ -1246,34 +1251,35 @@ document.addEventListener('DOMContentLoaded', function() {
 				const reader = new FileReader();
 
 				fetch('photoAPI/userProfilePhoto.php', {
-					method: 'POST',
-					body: formData
-				})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Сетевая ошибка: ответ не был получен');
-					}
-					return response.json(); 
-				})
-				.then(data => {
-					if (data.status === 'success') {
-						// Только после успешного ответа обновляем изображение
-						reader.onload = function(e) {
-							imageContainer.style.backgroundImage = `url(${e.target.result})`;
-							imageContainer.textContent = ''; 
-						};
-						reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
-					} else {
-						// Если статус не success, выводим сообщение об ошибке
-						alert(data.message);
-						console.error(data.message);
-					}
-				})
-				.catch(error => {
-					const errorMessage = 'Ошибка при загрузке изображения: ' + error.message; // Используем error.message для более ясного сообщения
-					console.error('Ошибка:', error);
-					alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
-				});
+						method: 'POST',
+						body: formData
+					})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Сетевая ошибка: ответ не был получен');
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (data.status === 'success') {
+							// Только после успешного ответа обновляем изображение
+							reader.onload = function(e) {
+								imageContainer.style.backgroundImage = `url(${e.target.result})`;
+								imageContainer.textContent = '';
+							};
+							reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
+						} else {
+							// Если статус не success, выводим сообщение об ошибке
+							alert(data.message);
+							console.error(data.message);
+						}
+					})
+					.catch(error => {
+						const errorMessage = 'Ошибка при загрузке изображения: ' + error
+							.message; // Используем error.message для более ясного сообщения
+						console.error('Ошибка:', error);
+						alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
+					});
 			}
 		});
 
@@ -1397,11 +1403,11 @@ else:
     </div> -->
 	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php if (!$profilePhoto): ?>
-			<span>Загрузить фотку</span>
+		<span>Загрузить фотку</span>
 		<?php else: ?>
-			<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
+		<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
-		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
+		<input type="file" id="fileInput" class="image__input" accept=".jpg,.gif" style="display:none;">
 	</div>
 	<form method="POST">
 
@@ -1437,12 +1443,12 @@ else:
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Все лекарства</h1>
 	<?php if (isset($_SESSION['medicine_images_error'])): ?>
-		<div class="centr">
-			<div class="image_error_message">
-				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']);?>
-			</div>
+	<div class="centr">
+		<div class="image_error_message">
+			✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
+			<?php unset($_SESSION['medicine_images_error']);?>
 		</div>
+	</div>
 	<?php endif; ?>
 	<table class="tbody_drugs_shopper">
 		<thead>
@@ -1469,11 +1475,12 @@ else:
 					?>
 			<tr>
 				<td>
-					<img class="table__img" src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+					<img class="table__img"
+						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
 						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
 						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
-						
-						<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
+
+					<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
 				</td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
@@ -1594,60 +1601,53 @@ else:
 
 	<script>
 	document.addEventListener('DOMContentLoaded', function() {
-		
-		const bfr = 400;
+
+		const bfr = 10;
 		document.getElementById('fileInput').addEventListener('change', function(event) {
-		var file = event.target.files[0];
-		if (file) {
-			var fileSize = file.size;
-			var maxSize = bfr * 1024 * 1024;
-			if (fileSize > maxSize) {
-				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			var file = event.target.files[0];
+			if (file) {
+				var fileSize = file.size;
+				var maxSize = bfr * 1024 * 1024;
+				if (fileSize > maxSize) {
+					alert('Файл слишком большой. Максимальный размер: 10 MB.');
+				}
 			}
-		}
 		});
 		document.getElementById('newImageFile').addEventListener('change', function(event) {
-		var file = event.target.files[0];
-		if (file) {
-			var fileSize = file.size;
-			var maxSize = bfr * 1024 * 1024;
-			if (fileSize > maxSize) {
-				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			var file = event.target.files[0];
+			if (file) {
+				var fileSize = file.size;
+				var maxSize = bfr * 1024 * 1024;
+				if (fileSize > maxSize) {
+					alert('Файл слишком большой. Максимальный размер: 10 MB.');
+				}
 			}
-		}
 		});
 
 		const imageContainer1 = document.getElementById('imageContainer');
 		const profilePhoto = '<?php echo $profilePhoto; ?>';
 
-		// Проверка на битое изображение
 		const img = new Image();
 		img.src = 'data:image/jpeg;base64,' + profilePhoto;
 
 		img.onerror = function() {
-			// Если изображение не загружается, показываем сообщение об ошибке
 			document.querySelector('.error-mess').style.display = 'block';
-			imageContainer1.style.backgroundImage = 'none'; // опционально убираем фон
+			imageContainer1.style.backgroundImage = 'none';
 		};
 
 		console.log("Script loaded and DOM is ready");
 
-		// Получаем кнопку для удаления и форму
 		const processButton = document.getElementById('processButton');
 		const checkboxForm = document.getElementById('checkboxForm');
 
-		// Обработчик на кнопку "Удалить"
 		processButton.addEventListener('click', function() {
 			console.log("Delete button clicked");
 
-			// Удаляем только динамически добавленные скрытые инпуты для чекбоксов
 			const hiddenInputs = checkboxForm.querySelectorAll('input[name="check_all[]"]');
 			hiddenInputs.forEach(input => input.remove());
 
-			// Получаем все отмеченные чекбоксы
 			const checkedCheckboxes = document.querySelectorAll('input[name="check_all[]"]:checked');
 
-			// Если нет выбранных чекбоксов
 			if (checkedCheckboxes.length === 0) {
 				alert('Пожалуйста, выберите хотя бы один элемент для удаления.');
 				return;
@@ -1655,17 +1655,15 @@ else:
 
 			console.log("Checkboxes selected:", checkedCheckboxes);
 
-			// Для каждого отмеченного чекбокса создаем скрытый инпут внутри формы
 			checkedCheckboxes.forEach(checkbox => {
 				console.log("Processing checkbox with value:", checkbox.value);
 				const hiddenInput = document.createElement('input');
 				hiddenInput.type = 'hidden';
 				hiddenInput.name = 'check_all[]';
 				hiddenInput.value = checkbox.value;
-				checkboxForm.appendChild(hiddenInput); // Добавляем скрытый инпут в форму
+				checkboxForm.appendChild(hiddenInput);
 			});
 
-			// Программно отправляем форму
 			checkboxForm.submit();
 		});
 	});
@@ -1675,22 +1673,17 @@ else:
 	document.addEventListener('DOMContentLoaded', function() {
 		console.log("Script loaded and DOM is ready");
 
-		// Получаем кнопку для удаления и форму
 		const processButton = document.getElementById('updateButton');
 		const updateForm = document.getElementById('updateForm');
 
-		// Обработчик на кнопку "Удалить"
 		processButton.addEventListener('click', function() {
 			console.log("Delete button clicked");
 
-			// Удаляем только динамически добавленные скрытые инпуты для чекбоксов
 			const hiddenInputs = updateForm.querySelectorAll('input[name="check_all[]"]');
 			hiddenInputs.forEach(input => input.remove());
 
-			// Получаем все отмеченные чекбоксы
 			const checkedCheckboxes = document.querySelectorAll('input[name="check_all[]"]:checked');
 
-			// Если нет выбранных чекбоксов
 			if (checkedCheckboxes.length === 0) {
 				alert('Пожалуйста, выберите хотя бы один элемент для оформления.');
 				return;
@@ -1698,17 +1691,15 @@ else:
 
 			console.log("Checkboxes selected:", checkedCheckboxes);
 
-			// Для каждого отмеченного чекбокса создаем скрытый инпут внутри формы
 			checkedCheckboxes.forEach(checkbox => {
 				console.log("Processing checkbox with value:", checkbox.value);
 				const hiddenInput = document.createElement('input');
 				hiddenInput.type = 'hidden';
 				hiddenInput.name = 'check_all[]';
 				hiddenInput.value = checkbox.value;
-				updateForm.appendChild(hiddenInput); // Добавляем скрытый инпут в форму
+				updateForm.appendChild(hiddenInput);
 			});
 
-			// Программно отправляем форму
 			updateForm.submit();
 		});
 	});
@@ -1798,7 +1789,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		imageContainer.addEventListener('click', () => {
 			fileInput.click(); // Открывает диалоговое окно выбора файла
 		});
-		
+
 		// Обработчик для загрузки файла
 		fileInput.addEventListener('change', (event) => {
 			const file = event.target.files[0];
@@ -1816,38 +1807,39 @@ document.addEventListener('DOMContentLoaded', function() {
 				const reader = new FileReader();
 
 				fetch('photoAPI/userProfilePhoto.php', {
-					method: 'POST',
-					body: formData
-				})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Сетевая ошибка: ответ не был получен');
-					}
-					return response.json(); 
-				})
-				.then(data => {
-					if (data.status === 'success') {
-						// Только после успешного ответа обновляем изображение
-						reader.onload = function(e) {
-							imageContainer.style.backgroundImage = `url(${e.target.result})`;
-							imageContainer.textContent = ''; 
-						};
-						reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
-					} else {
-						// Если статус не success, выводим сообщение об ошибке
-						alert(data.message);
-						console.error(data.message);
-					}
-				})
-				.catch(error => {
-					const errorMessage = 'Ошибка при загрузке изображения: ' + error.message; // Используем error.message для более ясного сообщения
-					console.error('Ошибка:', error);
-					alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
-				});
+						method: 'POST',
+						body: formData
+					})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Сетевая ошибка: ответ не был получен');
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (data.status === 'success') {
+							// Только после успешного ответа обновляем изображение
+							reader.onload = function(e) {
+								imageContainer.style.backgroundImage = `url(${e.target.result})`;
+								imageContainer.textContent = '';
+							};
+							reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
+						} else {
+							// Если статус не success, выводим сообщение об ошибке
+							alert(data.message);
+							console.error(data.message);
+						}
+					})
+					.catch(error => {
+						const errorMessage = 'Ошибка при загрузке изображения: ' + error
+							.message; // Используем error.message для более ясного сообщения
+						console.error('Ошибка:', error);
+						alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
+					});
 			}
 		});
 		console.log(1)
-		
+
 
 		const messageContainer = document.querySelector('.message__inner');
 		const closeButton = document.getElementById('message__button');

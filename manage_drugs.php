@@ -681,15 +681,15 @@ try{
                 $fileName = $file['name'];
                 $fileSize = $file['size'];
                 $fileError = $file['error'];
-                if ($fileSize > 10 * 1024 * 1024) {
-                    $_SESSION['error_message'] = 'Размер файла не должен превышать 10 МБ.';
+                if ( $fileSize < 1 * 1024 * 1024 || $fileSize >  2 * 1024 * 1024) {
+                    $_SESSION['error_message'] = 'Размер фотки должен быть от 1 до 2 МБ';
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit;
                 }
-                $allowedExtensions = array('jpeg', 'jpg', 'png');
+                $allowedExtensions = array('jpg', 'gif');
                 $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
                 if (!in_array($fileExtension, $allowedExtensions)) {
-                    $_SESSION['error_message'] = 'Допустимые типы файлов: .jpeg, .jpg, .png.';
+                    $_SESSION['error_message'] = 'Допустимые типы файлов: .jpg, .gif';
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit;
                 }
@@ -700,12 +700,10 @@ try{
                     exit;
                 }
 
-                // Генерация уникального имени файла
                 $uniqueFileName = uniqid() . '.' . $fileExtension;
                 $uploadDir = 'images/';
                 $uploadFile = $uploadDir . $uniqueFileName;
             
-                // Копирование файла в папку
                 if (move_uploaded_file($fileTmpName, $uploadFile)) {
                     $imgLink = $uploadFile;
                 } else {
@@ -732,7 +730,7 @@ try{
                     $insert_manufacturer_query->close();
                     exit;
                 }
-                $manufacturer_id = $conn->insert_id; // Get the new manufacturer ID
+                $manufacturer_id = $conn->insert_id; 
                 $insert_manufacturer_query->close();
             } else {
                 $manufacturer_id = $manufacturer_id['id'];
@@ -1015,49 +1013,7 @@ try{
             $_SESSION['error_message'] = "Поставщик с ID '$provider_id' не найден.";    
         }
         else {
-            // if (isset($_FILES['medicinePhoto']) && $_FILES['medicinePhoto']['error'] === UPLOAD_ERR_OK && $_FILES['medicinePhoto']['name'] !== '') {
-            //     $file = $_FILES['medicinePhoto'];
-            //     $fileTmpName = $file['tmp_name'];
-            //     $fileName = $file['name'];
-            //     $fileSize = $file['size'];
-            //     $fileError = $file['error'];
-            //     if ($fileSize > 10 * 1024 * 1024) {
-            //         $_SESSION['error_message'] = 'Размер файла не должен превышать 10 МБ.';
-            //         header("Location: " . $_SERVER['PHP_SELF']);
-            //         exit;
-            //     }
-            //     $allowedExtensions = array('jpeg', 'jpg', 'png');
-            //     $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-            //     if (!in_array($fileExtension, $allowedExtensions)) {
-            //         $_SESSION['error_message'] = 'Допустимые типы файлов: .jpeg, .jpg, .png.';
-            //         header("Location: " . $_SERVER['PHP_SELF']);
-            //         exit;
-            //     }
-            
-            //     if (!getimagesize($fileTmpName)) {
-            //         $_SESSION['error_message'] = 'Изображение повреждено. Пожалуйста, замените его на не поврежденный вариант.';
-            //         header("Location: " . $_SERVER['PHP_SELF']);
-            //         exit;
-            //     }
-
-            //     // Генерация уникального имени файла
-            //     $uniqueFileName = uniqid() . '.' . $fileExtension;
-            //     $uploadDir = 'images/';
-            //     $uploadFile = $uploadDir . $uniqueFileName;
-            
-            //     // Копирование файла в папку
-            //     if (move_uploaded_file($fileTmpName, $uploadFile)) {
-            //         $imgLink = $uploadFile;
-            //     } else {
-            //         $_SESSION['error_message'] = 'Ошибка загрузки файла.';
-            //         header("Location: " . $_SERVER['PHP_SELF']);
-            //         exit;
-            //     }
-            // } else {
-            //     $_SESSION['error_message'] = 'Пожалуйста, выберите изображение.';
-            //     header("Location: " . $_SERVER['PHP_SELF']);
-            //     exit;
-            // }
+        
             $cost_pre_version = $price * $quantity;
             $name = $conn->real_escape_string(htmlspecialchars($name, ENT_QUOTES, 'UTF-8'));
             $manufacturer_id = $conn->real_escape_string(htmlspecialchars($manufacturer_id, ENT_QUOTES, 'UTF-8'));

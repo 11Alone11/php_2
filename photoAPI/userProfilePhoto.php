@@ -10,10 +10,8 @@ try {
         $file = $_FILES['profilePhoto'];
         $userId = $_SESSION['user_id'];
         
-        // Логирование информации о файле
         file_put_contents('debug.txt', print_r($file, true));
 
-        // Проверка ошибок загрузки файла
         if ($file['error'] !== UPLOAD_ERR_OK) {
             echo json_encode(['status' => 'error', 'message' => 'Ошибка загрузки файла.']);
             exit;
@@ -23,34 +21,28 @@ try {
         $fileName = $file['name'];
         $fileSize = $file['size'];
 
-        // Проверка размера файла
-        if ($fileSize > 10 * 1024 * 1024) {
-            echo json_encode(['status' => 'error', 'message' => 'Размер файла не должен превышать 10 МБ.']);
+        if ($fileSize < 1 * 1024 * 1024 || $fileSize > 2 * 1024 * 1024) {
+            echo json_encode(['status' => 'error', 'message' => 'Размер должен быть от 1 до 2 МБ']);
             exit;
         }
 
-        // Проверка типа файла
-        $allowedExtensions = ['jpeg', 'jpg', 'png', 'gif'];
+        $allowedExtensions = [ 'jpg', 'gif'];
         $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         if (!in_array($fileExtension, $allowedExtensions)) {
-            echo json_encode(['status' => 'error', 'message' => 'Допустимые типы файлов: .jpeg, .jpg, .png, .gif.']);
+            echo json_encode(['status' => 'error', 'message' => 'Допустимые типы файлов: .jpg, .gif.']);
             exit;
         }
 
-        // Проверка корректности изображения
         if (!getimagesize($fileTmpName)) {
             echo json_encode(['status' => 'error', 'message' => 'Изображение повреждено. Замените его на не поврежденный вариант.']);
             exit;
         }
 
-        // Чтение содержимого файла
         $fileData = file_get_contents($fileTmpName);
 
-        // Обновление базы данных с новой ссылкой на изображение
         $stmt = $pdo->prepare("UPDATE users SET profilePhoto = ? WHERE id = ?");
         $stmt->execute([$fileData, $userId]);
 
-        // Проверка успешности обновления
         if ($stmt->rowCount() > 0) {
             echo json_encode(['status' => 'success']);
         } else {

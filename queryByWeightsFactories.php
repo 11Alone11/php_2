@@ -65,14 +65,14 @@ abstract class QueryFactory {
                     break;
                 }
                 
-                if (filesize($filePath) > 10 * 1024 * 1024) { // 10 MB
-                    $_SESSION['medicine_images_error'] = "Изображение ID {$row['id']} превышает лимит в 10 MB.";
+                if (filesize($filePath) < 1 * 1024 * 1024 || filesize($filePath) > 2 * 1024 * 1024) {
+                    $_SESSION['medicine_images_error'] = "Изображение ID {$row['id']} < 1MB или > 2MB.";
                     $flag = true;
                     break;
                 }
 
                 $fileType = pathinfo($filePath, PATHINFO_EXTENSION);
-                if (!in_array(strtolower($fileType), ['jpg', 'jpeg', 'png'])) {
+                if (!in_array(strtolower($fileType), ['jpg', 'gif'])) {
                     $_SESSION['medicine_images_error'] = "Неверный тип файла. Изображение ID {$row['id']}.";
                     $flag = true;
                     break;
