@@ -89,7 +89,7 @@ if($_SESSION["user_type"] == 1):
 		<?php else: ?>
 		<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
-		<input type="file" id="fileInput" class="image__input" accept=".jpg,.gif" style="display:none;">
+		<input type="file" id="fileInput" class="image__input" style="display:none;">
 	</div>
 	<!-- Форма поиска лекарств-->
 	<form style="display:none;" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
@@ -151,7 +151,7 @@ if($_SESSION["user_type"] == 1):
 			<tr>
 				<td>
 					<img class="table__img openImageUpdate"
-						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://dela.ru/medianew/img/Bauo7O-4643004.jpg' : $row['medicinePhoto']); ?>"
 						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
 						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
 
@@ -244,7 +244,7 @@ if($_SESSION["user_type"] == 1):
 	</table>
 
 	<!-- Таблица с данными о пользователях!-->
-	<h1 class="title mb20 mt20">Поставщики</h1>
+	<h1 class="title mb20 mt20">Пользователи</h1>
 
 	<table>
 		<thead>
@@ -363,7 +363,7 @@ if($_SESSION["user_type"] == 1):
 	<div id="vsplyvImage" class="vsplyvImage">
 		<div class="vsplyvImage__content">
 			<img id="currentImage" class="vsplyvImage__img" src="" alt="Текущая картинка" />
-			<input type="file" id="newImageFile" class="input" accept=".jpg,.gif" required>
+			<input type="file" id="newImageFile" class="input" required>
 			<button id="uploadImageButton" class="button vsplyvImage__button">Обновить изображение</button>
 			<button id="closeImageButton" class="button vsplyvImage__button">Закрыть</button>
 		</div>
@@ -514,8 +514,14 @@ document.addEventListener('DOMContentLoaded', function() {
 			img.src = 'data:image/jpeg;base64,' + profilePhoto;
 
 			img.onerror = function() {
-				document.querySelector('.error-mess').style.display = 'block';
-				imageContainer1.style.backgroundImage = 'none';
+				const erroImg = document.querySelector('.error-mess')
+				if (erroImg) {
+					erroImg.style.display = 'block';
+				}
+				const imageContainer1 = document.getElementById('imageContainer');
+				if (imageContainer1) {
+					imageContainer1.style.backgroundImage = 'none';
+				}
 			};
 
 			const vsplyvImage = document.getElementById('vsplyvImage');
@@ -775,7 +781,7 @@ else:
 		<?php else: ?>
 		<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
-		<input type="file" id="fileInput" class="image__input" accept=".jpg,.gif" style="display:none;">
+		<input type="file" id="fileInput" class="image__input" style="display:none;">
 	</div>
 	<form method="POST" action="
     <?php   
@@ -825,7 +831,7 @@ else:
 
 		<input type="number" name="price" class="input" placeholder="Цена" step="0.01" required>
 		<input type="number" name="quantity" class="input" placeholder="Количество" step="1" required>
-		<input type="file" name="medicinePhoto" class="input" accept=".jpg,.gif" required>
+		<input type="file" name="medicinePhoto" class="input" required>
 		<!-- <input type="text" name="imgLink" class="input" placeholder="Ссылка на картинку"> -->
 		<button type="submit" name="add_drugs_user" class="button">Добавить</button>
 		<?php if (isset($_SESSION['error_message'])): ?>
@@ -874,7 +880,7 @@ else:
 			<tr>
 				<td>
 					<img class="table__img openImageUpdate"
-						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://dela.ru/medianew/img/Bauo7O-4643004.jpg' : $row['medicinePhoto']); ?>"
 						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
 						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
 
@@ -1012,7 +1018,7 @@ else:
 	<div id="vsplyvImage" class="vsplyvImage">
 		<div class="vsplyvImage__content">
 			<img id="currentImage" class="vsplyvImage__img" src="" alt="Текущая картинка" />
-			<input type="file" id="newImageFile" class="input" accept=".jpg,.gif" required>
+			<input type="file" id="newImageFile" class="input" required>
 			<button id="uploadImageButton" class="button vsplyvImage__button">Обновить изображение</button>
 			<button id="closeImageButton" class="button vsplyvImage__button">Закрыть</button>
 		</div>
@@ -1105,11 +1111,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		const bfr = 10;
 
 		function validateFileType(file) {
-			const allowedTypes = ['image/jpeg', 'image/gif'];
-			const allowedExtensions = ['.jpg', '.gif'];
+			const allowedTypes = ['image/jpeg', 'image/gif', 'image/png', 'image/jpg', 'image/webp'];
 
 			const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
-			return allowedTypes.includes(file.type) && allowedExtensions.includes(fileExtension);
+			return allowedTypes.includes(file.type)
 		}
 
 		document.getElementById('fileInput').addEventListener('change', function(event) {
@@ -1140,9 +1145,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		img.src = 'data:image/jpeg;base64,' + profilePhoto;
 
 		img.onerror = function() {
-			// Если изображение не загружается, показываем сообщение об ошибке
-			document.querySelector('.error-mess').style.display = 'block';
-			imageContainer1.style.backgroundImage = 'none'; // опционально убираем фон
+			const erroImg = document.querySelector('.error-mess')
+			if (erroImg) {
+				erroImg.style.display = 'block';
+			}
+			const imageContainer1 = document.getElementById('imageContainer');
+			if (imageContainer1) {
+				imageContainer1.style.backgroundImage = 'none';
+			}
 		};
 
 		const vsplyvImage = document.getElementById('vsplyvImage');
@@ -1176,7 +1186,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (file) {
 
 				if (!validateFileType(file)) {
-					alert('Недопустимый тип файла. Разрешены только JPG и GIF.');
+					alert('Недопустимый тип файла');
 					return;
 				}
 
@@ -1236,7 +1246,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			let res = true;
 			if (file) {
 				if (!validateFileType(file)) {
-					alert('Недопустимый тип файла. Разрешены только JPG и GIF.');
+					alert('Недопустимый тип файла');
 					return;
 				}
 				var fileSize = file.size;
@@ -1407,7 +1417,7 @@ else:
 		<?php else: ?>
 		<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
-		<input type="file" id="fileInput" class="image__input" accept=".jpg,.gif" style="display:none;">
+		<input type="file" id="fileInput" class="image__input" style="display:none;">
 	</div>
 	<form method="POST">
 
@@ -1476,7 +1486,7 @@ else:
 			<tr>
 				<td>
 					<img class="table__img"
-						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://dela.ru/medianew/img/Bauo7O-4643004.jpg' : $row['medicinePhoto']); ?>"
 						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
 						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
 
@@ -1613,16 +1623,7 @@ else:
 				}
 			}
 		});
-		document.getElementById('newImageFile').addEventListener('change', function(event) {
-			var file = event.target.files[0];
-			if (file) {
-				var fileSize = file.size;
-				var maxSize = bfr * 1024 * 1024;
-				if (fileSize > maxSize) {
-					alert('Файл слишком большой. Максимальный размер: 10 MB.');
-				}
-			}
-		});
+
 
 		const imageContainer1 = document.getElementById('imageContainer');
 		const profilePhoto = '<?php echo $profilePhoto; ?>';
@@ -1631,8 +1632,14 @@ else:
 		img.src = 'data:image/jpeg;base64,' + profilePhoto;
 
 		img.onerror = function() {
-			document.querySelector('.error-mess').style.display = 'block';
-			imageContainer1.style.backgroundImage = 'none';
+			const erroImg = document.querySelector('.error-mess')
+			if (erroImg) {
+				erroImg.style.display = 'block';
+			}
+			const imageContainer1 = document.getElementById('imageContainer');
+			if (imageContainer1) {
+				imageContainer1.style.backgroundImage = 'none';
+			}
 		};
 
 		console.log("Script loaded and DOM is ready");
@@ -1781,6 +1788,8 @@ function getQuantity(drugId) {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 	try {
+
+		const bfr = 10;
 
 		const imageContainer = document.getElementById('imageContainer');
 		const fileInput = document.getElementById('fileInput');

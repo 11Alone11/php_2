@@ -65,14 +65,14 @@ abstract class QueryFactory {
                     break;
                 }
                 
-                if (filesize($filePath) < 1 * 1024 * 1024 || filesize($filePath) > 2 * 1024 * 1024) {
-                    $_SESSION['medicine_images_error'] = "Изображение ID {$row['id']} < 1MB или > 2MB.";
+                if (filesize($filePath) > 10 * 1024 * 1024) { // 10 MB
+                    $_SESSION['medicine_images_error'] = "Изображение ID {$row['id']} превышает лимит в 10 MB.";
                     $flag = true;
                     break;
                 }
 
                 $fileType = pathinfo($filePath, PATHINFO_EXTENSION);
-                if (!in_array(strtolower($fileType), ['jpg', 'gif'])) {
+                if (!in_array(strtolower($fileType), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
                     $_SESSION['medicine_images_error'] = "Неверный тип файла. Изображение ID {$row['id']}.";
                     $flag = true;
                     break;
@@ -605,18 +605,12 @@ class AdminQueryFactory extends QueryFactory {
                 SELECT
                     id,
                     CASE
-                        WHEN quantity < (
-                SELECT 
-                    quantity 
-                    FROM (
-                        SELECT 
-                            quantity,
-                            ROW_NUMBER() OVER (ORDER BY quantity) AS row_num,
-                            COUNT(*) OVER () AS total_count
-                        FROM 
-                            drugs
-                    ) AS ranked
-                    WHERE row_num = Round(total_count + 1) / 2) - 1
+                        WHEN quantity < (SELECT 
+                                    SUM(POWER(quantity, 2)) / NULLIF(SUM(quantity), 0) 
+                                FROM 
+                                    drugs
+                                WHERE 
+                                    is_hiden <> 1) 
                         THEN 0
                         ELSE 1
                     END AS availability
@@ -702,13 +696,28 @@ class BuyerQueryFactoryPointSystem extends QueryFactory {
         $MAX_gen_demand = $maxPointsPreNormalized['MAX_gen_demand'];
         $MAX_comparative_price = $maxPointsPreNormalized['MAX_comparative_price'];
         $MAX_availability = $maxPointsPreNormalized['MAX_availability'];
+
+        // Set default values for variables if they are not set
+        $MAX_total_quantity = isset($MAX_total_quantity) ? $MAX_total_quantity : 1;
+        $MAX_frequency = isset($MAX_frequency) ? $MAX_frequency : 1;
+        $MAX_supl_frequency = isset($MAX_supl_frequency) ? $MAX_supl_frequency : 1;
+        $MAX_gen_demand = isset($MAX_gen_demand) ? $MAX_gen_demand : 1;
+        $MAX_comparative_price = isset($MAX_comparative_price) ? $MAX_comparative_price : 1;
+        $MAX_availability = isset($MAX_availability) ? $MAX_availability : 1;
+        $total_quantity = isset($total_quantity) ? $total_quantity : 0.5;
+        $frequency = isset($frequency) ? $frequency : 0.5;
+        $supl_frequency = isset($supl_frequency) ? $supl_frequency : 0.5;
+        $gen_demand = isset($gen_demand) ? $gen_demand : 0.5;
+        $comparative_price = isset($comparative_price) ? $comparative_price : 0.5;
+        $availability = isset($availability) ? $availability : 0.5;
+
         $totalPoints = "
-            COALESCE(order_counts.total_quantity, 0)/$MAX_total_quantity*100*$total_quantity+
-            COALESCE(order_frequency.frequency, 0)/$MAX_frequency*100*$frequency+
-            COALESCE(manufSuplFrequency.supl_frequency, 0)/$MAX_supl_frequency*100*$supl_frequency+
-            COALESCE(drug_demand.gen_demand, 0)/$MAX_gen_demand*100*$gen_demand+
-            COALESCE(comparative.comparative_price, 0)/$MAX_comparative_price*100*$comparative_price+
-            COALESCE(drugs_availability.availability, 0)/$MAX_availability*100*$availability as totalPoints
+            COALESCE(order_counts.total_quantity, 0)/NULLIF($MAX_total_quantity, 0)*100*$total_quantity+
+            COALESCE(order_frequency.frequency, 0)/NULLIF($MAX_frequency, 0)*100*$frequency+
+            COALESCE(manufSuplFrequency.supl_frequency, 0)/NULLIF($MAX_supl_frequency, 0)*100*$supl_frequency+
+            COALESCE(drug_demand.gen_demand, 0)/NULLIF($MAX_gen_demand, 0)*100*$gen_demand+
+            COALESCE(comparative.comparative_price, 0)/NULLIF($MAX_comparative_price, 0)*100*$comparative_price+
+            COALESCE(drugs_availability.availability, 0)/NULLIF($MAX_availability, 0)*100*$availability as totalPoints
         ";
         $query = "
             SELECT DISTINCT
@@ -998,7 +1007,7 @@ class BuyerQueryFactoryPointSystem extends QueryFactory {
         ";
 
         $statement = $this->conn->prepare($query);
-        $statement->bind_param("ii", $this->userId, $this->userId);
+        $statement->bind_param('ii', $this->userId, $this->userId);
         $statement->execute();
         $result = $statement->get_result();
         if ($result && $result->num_rows > 0) {
@@ -1044,15 +1053,28 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
         $MAX_gen_demand = $maxPointsPreNormalized['MAX_gen_demand'];
         $MAX_comparative_price = $maxPointsPreNormalized['MAX_comparative_price'];
         $MAX_availability = $maxPointsPreNormalized['MAX_availability'];
-        //file_put_contents('debug.txt', "$MAX_total_quantity $MAX_frequency $MAX_supl_frequency $MAX_gen_demand $MAX_comparative_price $MAX_availability");
-        //file_put_contents('debug.txt', "$total_quantity $frequency $gen_demand $comparative_price $availability $supl_frequency");
+
+        // Set default values for variables if they are not set
+        $MAX_total_quantity = isset($MAX_total_quantity) ? $MAX_total_quantity : 1;
+        $MAX_frequency = isset($MAX_frequency) ? $MAX_frequency : 1;
+        $MAX_supl_frequency = isset($MAX_supl_frequency) ? $MAX_supl_frequency : 1;
+        $MAX_gen_demand = isset($MAX_gen_demand) ? $MAX_gen_demand : 1;
+        $MAX_comparative_price = isset($MAX_comparative_price) ? $MAX_comparative_price : 1;
+        $MAX_availability = isset($MAX_availability) ? $MAX_availability : 1;
+        $total_quantity = isset($total_quantity) ? $total_quantity : 0.5;
+        $frequency = isset($frequency) ? $frequency : 0.5;
+        $supl_frequency = isset($supl_frequency) ? $supl_frequency : 0.5;
+        $gen_demand = isset($gen_demand) ? $gen_demand : 0.5;
+        $comparative_price = isset($comparative_price) ? $comparative_price : 0.5;
+        $availability = isset($availability) ? $availability : 0.5;
+
         $totalPoints = "
-            COALESCE(order_counts.total_quantity, 0)/$MAX_total_quantity*100*$total_quantity+
-            COALESCE(order_frequency.frequency, 0)/$MAX_frequency*100*$frequency+
-            COALESCE(manufSuplFrequency.supl_frequency, 0)/$MAX_supl_frequency*100*$supl_frequency+
-            COALESCE(drug_demand.gen_demand, 0)/$MAX_gen_demand*100*$gen_demand+
-            COALESCE(comparative.comparative_price, 0)/$MAX_comparative_price*100*$comparative_price+
-            COALESCE(drugs_availability.availability, 0)/$MAX_availability*100*$availability as totalPoints
+            COALESCE(order_counts.total_quantity, 0)/NULLIF($MAX_total_quantity, 0)*100*$total_quantity+
+            COALESCE(order_frequency.frequency, 0)/NULLIF($MAX_frequency, 0)*100*$frequency+
+            COALESCE(manufSuplFrequency.supl_frequency, 0)/NULLIF($MAX_supl_frequency, 0)*100*$supl_frequency+
+            COALESCE(drug_demand.gen_demand, 0)/NULLIF($MAX_gen_demand, 0)*100*$gen_demand+
+            COALESCE(comparative.comparative_price, 0)/NULLIF($MAX_comparative_price, 0)*100*$comparative_price+
+            COALESCE(drugs_availability.availability, 0)/NULLIF($MAX_availability, 0)*100*$availability as totalPoints
         ";
         $query = "
             SELECT DISTINCT
@@ -1272,7 +1294,7 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
                     user_id
                 FROM 
                     orders
-                WHERE  is_hiden_byShopper <> 1
+                WHERE is_hiden_byShopper <> 1
                 GROUP BY 
                     user_id, drug_id
             ) AS order_frequency ON drugs.id = order_frequency.drug_id
@@ -1372,7 +1394,7 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
             ];
         }
     }
-}
+}    
 
 class AdminQueryFactoryPointSystem extends QueryFactory {
     public function createMedicineQuery() {
@@ -1391,16 +1413,28 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
         $MAX_gen_demand = $maxPointsPreNormalized['MAX_gen_demand'];
         $MAX_comparative_price = $maxPointsPreNormalized['MAX_comparative_price'];
         $MAX_availability = $maxPointsPreNormalized['MAX_availability'];
-        // file_put_contents('debug.txt', "$MAX_total_quantity $MAX_frequency $MAX_supl_frequency $MAX_gen_demand $MAX_comparative_price $MAX_availability");
-        // file_put_contents('debug.txt', "$total_quantity $frequency $gen_demand $comparative_price $availability $supl_frequency");
-        
+
+        // Set default values for variables if they are not set
+        $MAX_total_quantity = isset($MAX_total_quantity) ? $MAX_total_quantity : 1;
+        $MAX_frequency = isset($MAX_frequency) ? $MAX_frequency : 1;
+        $MAX_supl_frequency = isset($MAX_supl_frequency) ? $MAX_supl_frequency : 1;
+        $MAX_gen_demand = isset($MAX_gen_demand) ? $MAX_gen_demand : 1;
+        $MAX_comparative_price = isset($MAX_comparative_price) ? $MAX_comparative_price : 1;
+        $MAX_availability = isset($MAX_availability) ? $MAX_availability : 1;
+        $total_quantity = isset($total_quantity) ? $total_quantity : 0.5;
+        $frequency = isset($frequency) ? $frequency : 0.5;
+        $supl_frequency = isset($supl_frequency) ? $supl_frequency : 0.5;
+        $gen_demand = isset($gen_demand) ? $gen_demand : 0.5;
+        $comparative_price = isset($comparative_price) ? $comparative_price : 0.5;
+        $availability = isset($availability) ? $availability : 0.5;
+
         $totalPoints = "
-            COALESCE(order_counts.total_quantity, 0)/$MAX_total_quantity*100*$total_quantity+
-            COALESCE(order_frequency.frequency, 0)/$MAX_frequency*100*$frequency+
-            COALESCE(manufSuplFrequency.supl_frequency, 0)/$MAX_supl_frequency*100*$supl_frequency+
-            COALESCE(drug_demand.gen_demand, 0)/$MAX_gen_demand*100*$gen_demand+
-            COALESCE(comparative.comparative_price, 0)/$MAX_comparative_price*100*$comparative_price+
-            COALESCE(drugs_availability.availability, 0)/$MAX_availability*100*$availability as totalPoints
+            COALESCE(order_counts.total_quantity, 0)/NULLIF($MAX_total_quantity, 0)*100*$total_quantity+
+            COALESCE(order_frequency.frequency, 0)/NULLIF($MAX_frequency, 0)*100*$frequency+
+            COALESCE(manufSuplFrequency.supl_frequency, 0)/NULLIF($MAX_supl_frequency, 0)*100*$supl_frequency+
+            COALESCE(drug_demand.gen_demand, 0)/NULLIF($MAX_gen_demand, 0)*100*$gen_demand+
+            COALESCE(comparative.comparative_price, 0)/NULLIF($MAX_comparative_price, 0)*100*$comparative_price+
+            COALESCE(drugs_availability.availability, 0)/NULLIF($MAX_availability, 0)*100*$availability as totalPoints
         ";
         $query = "
             SELECT DISTINCT
@@ -1517,17 +1551,17 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
         //$statement->bind_param('i', $this->userId);
         // $statement->execute();
         // return $statement->get_result();
-        // $statement->execute();
-        // $result = $statement->get_result();
-        // $resultFood = $result;
-        // self::checkImageAccesValid($result);
-        // return $resultFood;
         $statement->execute();
         $result = $statement->get_result();
         $resultFood = $result;
         self::checkImageAccesValid($result);
         $statement->execute();
         return $statement->get_result();
+        // $statement->execute();
+        // $result = $statement->get_result();
+        // $resultFood = $result;
+        // self::checkImageAccesValid($resultFood);
+        // return $result;
     }
 
     public function createOrderQuery() {

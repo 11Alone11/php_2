@@ -4,7 +4,7 @@ try {
         session_start();
     }
 
-    $pdo = new PDO('mysql:host=localhost;dbname=pharmacy2', 'root', '');
+    $pdo = new PDO('mysql:host=localhost;dbname=pharmacy', 'root', '');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profilePhoto'])) {
         $file = $_FILES['profilePhoto'];
@@ -21,15 +21,15 @@ try {
         $fileName = $file['name'];
         $fileSize = $file['size'];
 
-        if ($fileSize < 1 * 1024 * 1024 || $fileSize > 2 * 1024 * 1024) {
-            echo json_encode(['status' => 'error', 'message' => 'Размер должен быть от 1 до 2 МБ']);
+        if ($fileSize > 10 * 1024 * 1024) {
+            echo json_encode(['status' => 'error', 'message' => 'Размер должен быть до 10 МБ']);
             exit;
         }
 
-        $allowedExtensions = [ 'jpg', 'gif'];
+        $allowedExtensions = [ 'jpg', 'gif', 'png', 'jpeg', 'webp' ];
         $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         if (!in_array($fileExtension, $allowedExtensions)) {
-            echo json_encode(['status' => 'error', 'message' => 'Допустимые типы файлов: .jpg, .gif.']);
+            echo json_encode(['status' => 'error', 'message' => 'Допустимые типы файлов: .jpg, .gif, .png, .jpeg, .webp']);
             exit;
         }
 

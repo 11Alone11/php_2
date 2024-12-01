@@ -1,8 +1,8 @@
 Array
 (
-    [name] => gifka.gif
-    [type] => image/gif
-    [tmp_name] => C:\xampp\tmp\php48F5.tmp
+    [name] => depositphotos_5794543-stock-photo-3d-man-with-boxes.jpg
+    [type] => image/jpeg
+    [tmp_name] => C:\xampp\tmp\php4CAD.tmp
     [error] => 0
-    [size] => 1051211
+    [size] => 9306
 )

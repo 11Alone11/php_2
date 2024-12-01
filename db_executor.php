@@ -6,7 +6,7 @@ class ActionLogger {
         $servername = "localhost";
         $username = "root"; // Ваше имя пользователя MySQL
         $password = ""; // Ваш пароль MySQL
-        $dbname = "pharmacy2"; // Имя вашей базы данных
+        $dbname = "pharmacy"; // Имя вашей базы данных
         
         // Создаем соединение с базой данных
         $this->conn = new mysqli($servername, $username, $password, $dbname);

@@ -681,15 +681,15 @@ try{
                 $fileName = $file['name'];
                 $fileSize = $file['size'];
                 $fileError = $file['error'];
-                if ( $fileSize < 1 * 1024 * 1024 || $fileSize >  2 * 1024 * 1024) {
-                    $_SESSION['error_message'] = 'Размер фотки должен быть от 1 до 2 МБ';
+                if (  $fileSize >  10 * 1024 * 1024) {
+                    $_SESSION['error_message'] = 'Размер фотки должен быть до 10 МБ';
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit;
                 }
-                $allowedExtensions = array('jpg', 'gif');
+                $allowedExtensions = array('jpg', 'gif', 'png', 'jpeg', 'webp');
                 $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
                 if (!in_array($fileExtension, $allowedExtensions)) {
-                    $_SESSION['error_message'] = 'Допустимые типы файлов: .jpg, .gif';
+                    $_SESSION['error_message'] = 'Допустимые типы файлов: .jpg, .gif, .png, .jpeg, .webp.';
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit;
                 }
@@ -1469,7 +1469,7 @@ try{
     $stmt->execute();
     $drugs_add_requests_feedback =  $stmt->get_result();
 
-    $pdo = new PDO('mysql:host=localhost;dbname=pharmacy2', 'root', '');
+    $pdo = new PDO('mysql:host=localhost;dbname=pharmacy', 'root', '');
     $userId = $_SESSION['user_id'];
     $stmt = $pdo->prepare("SELECT profilePhoto FROM users WHERE id = ?");
     $stmt->execute([$userId]);
