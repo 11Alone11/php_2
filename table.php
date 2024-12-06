@@ -67,7 +67,7 @@ if($_SESSION["user_type"] == 1):
 			Выйти
 		</button>
 	</form>
-<!-- 6 лаба -->
+	<!-- 6 лаба -->
 	<div id="popup" class="popup">
 		<form id="colorForm" class="popup__content__cookie" onsubmit="saveColor(event)">
 			<h2>Выберите цвет таблицы</h2>
@@ -83,7 +83,7 @@ if($_SESSION["user_type"] == 1):
 			<ul id="searchHistory" class="popup__content__cookie_search_story"></ul>
 		</form>
 	</div>
-<!-- 6 лаба -->
+	<!-- 6 лаба -->
 	<a href="index.php" class="button button__fixed">
 		На главную
 	</a>
@@ -108,14 +108,14 @@ if($_SESSION["user_type"] == 1):
     </div> -->
 	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php if (!$profilePhoto): ?>
-			<span>Загрузить фотку</span>
+		<span>Загрузить фотку</span>
 		<?php else: ?>
-			<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
+		<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
 		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
 	</div>
 	<!-- Форма поиска лекарств style="display:none;"-->
-	<form  method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="form">
 		<p class="title">Поиск</p>
 		<input type="text" name="search_query" class="input" placeholder="Поиск..." id="searchInput" value="<?php if(isset($_SESSION['$search_query'])){
 			echo htmlspecialchars($_SESSION['$search_query']);
@@ -144,13 +144,13 @@ if($_SESSION["user_type"] == 1):
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Лекарства</h1>
 	<?php if (isset($_SESSION['medicine_images_error'])): ?>
-		<div class="centr">
-			<div class="image_error_message">
-				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']);?>
-			</div>
+	<div class="centr">
+		<div class="image_error_message">
+			✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
+			<?php unset($_SESSION['medicine_images_error']);?>
 		</div>
-	<?php endif; ?>		
+	</div>
+	<?php endif; ?>
 	<table id="medicine_table">
 		<thead>
 			<tr>
@@ -175,11 +175,12 @@ if($_SESSION["user_type"] == 1):
                     ?>
 			<tr>
 				<td>
-					<img class="table__img openImageUpdate" src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+					<img class="table__img openImageUpdate"
+						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
 						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
 						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
-						
-						<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
+
+					<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
 				</td>
 				<td><?php echo htmlspecialchars($row['id']); ?></td>
 				<td data-type="name" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs" data-field="name" class="openPopup"
@@ -385,12 +386,12 @@ if($_SESSION["user_type"] == 1):
 	</div>
 
 	<div id="vsplyvImage" class="vsplyvImage">
-			<div class="vsplyvImage__content">
-				<img id="currentImage" class="vsplyvImage__img" src="" alt="Текущая картинка" />
-				<input type="file" id="newImageFile" class="input" accept="image/*" required>
-				<button id="uploadImageButton" class="button vsplyvImage__button">Обновить изображение</button>
-				<button id="closeImageButton" class="button vsplyvImage__button">Закрыть</button>
-			</div>
+		<div class="vsplyvImage__content">
+			<img id="currentImage" class="vsplyvImage__img" src="" alt="Текущая картинка" />
+			<input type="file" id="newImageFile" class="input" accept="image/*" required>
+			<button id="uploadImageButton" class="button vsplyvImage__button">Обновить изображение</button>
+			<button id="closeImageButton" class="button vsplyvImage__button">Закрыть</button>
+		</div>
 	</div>
 
 	<?php if ($orders_from_shoppers->num_rows > 0 ||  $drugs_add_requests->num_rows > 0 || $drugs_add_requests_feedback->num_rows): ?>
@@ -515,173 +516,177 @@ if($_SESSION["user_type"] == 1):
 <script>
 //6 лаба
 //попап истории поиска
-	document.addEventListener('DOMContentLoaded', function() {
-		const searchInput = document.getElementById('searchInput');
-		const medicineTable = document.getElementById('medicine_table');
-		if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
-			const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
-			//console.log(999);
-			fetch(apiUrl)
-				.then(response => response.json())
-				.then(data => {
-					//data.first && 
-					if (data.first !== searchInput.value) {
-						
-						fetch('cookieAPI/insertNewSuccesSearch.php', {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/x-www-form-urlencoded'
-							},
-							body: `search_result=${encodeURIComponent(searchInput.value)}`
-						});
-						//console.log(111);
-					}
-				});
-		}
-		loadInitialColor();
-	});
-
-	const popupSearch = document.getElementById('popupSearch');
-
-	function openPopupSearch() {
-		popupSearch.style.display = 'flex';
-		loadInitialSearchHistory();
-	}
-
-	function closePopupSearch() {
-		popupSearch.style.display = 'none';
-	}
-
-	function loadInitialSearchHistory(){
-		fetch('cookieAPI/getAllSuccesSearch.php')
+document.addEventListener('DOMContentLoaded', function() {
+	const searchInput = document.getElementById('searchInput');
+	const medicineTable = document.getElementById('medicine_table');
+	if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
+		const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
+		//console.log(999);
+		fetch(apiUrl)
 			.then(response => response.json())
 			.then(data => {
-				const searchHistory = document.getElementById('searchHistory');
-				const searchInputButton = document.getElementById('searchInputButton');
-				searchHistory.innerHTML = '';
-				data.cache.forEach(result => {
-					const li = document.createElement('li');
-					li.textContent = result;
-					console.log("hello " + result); 
-					li.onclick = function() {
-						document.getElementById('searchInput').value = result;
-						closePopupSearch();
-						searchInputButton.click();
-					};
-					searchHistory.appendChild(li);
-				});
-			});
-	}
+				//data.first && 
+				if (data.first !== searchInput.value) {
 
-	window.onclick = function(event) {
-		const popupSearch = document.getElementById('popupSearch');
-		const popup = document.getElementById('popup');
-
-		if (event.target === popupSearch) {
-			closePopupSearch();
-		} else if (event.target === popup) {
-			closePopup();
-		}
-	};
-
-	// Функции для попапа настроек
-	const popup = document.getElementById('popup');
-	const colorHistoryList = document.getElementById('colorHistory');
-
-	function loadInitialColor() {
-		fetch('cookieAPI/color_handler.php')
-			.then(response => response.json())
-			.then(data => {
-				if (data.firstColor) {
-					applyColor(data.firstColor); 
+					fetch('cookieAPI/insertNewSuccesSearch.php', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+						body: `search_result=${encodeURIComponent(searchInput.value)}`
+					});
+					//console.log(111);
 				}
-				loadColorHistory();
 			});
 	}
+	loadInitialColor();
+});
 
-	function openPopup() {
-		popup.style.display = 'flex';
-		loadColorHistory();
-	}
+const popupSearch = document.getElementById('popupSearch');
 
-	function closePopup() {
-		popup.style.display = 'none';
-	}
+function openPopupSearch() {
+	popupSearch.style.display = 'flex';
+	loadInitialSearchHistory();
+}
 
-	function saveColor(event) {
-		event.preventDefault();
-		const color = document.getElementById('colorInput').value;
+function closePopupSearch() {
+	popupSearch.style.display = 'none';
+}
 
-		applyColor(color);
-
-		fetch('cookieAPI/color_handler.php', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-				body: new URLSearchParams({ color })
-			})
-			.then(response => response.json())
-			.then(() => {
-				closePopup();
-				loadColorHistory();
+function loadInitialSearchHistory() {
+	fetch('cookieAPI/getAllSuccesSearch.php')
+		.then(response => response.json())
+		.then(data => {
+			const searchHistory = document.getElementById('searchHistory');
+			const searchInputButton = document.getElementById('searchInputButton');
+			searchHistory.innerHTML = '';
+			data.cache.forEach(result => {
+				const li = document.createElement('li');
+				li.textContent = result;
+				console.log("hello " + result);
+				li.onclick = function() {
+					document.getElementById('searchInput').value = result;
+					closePopupSearch();
+					searchInputButton.click();
+				};
+				searchHistory.appendChild(li);
 			});
-	}
+		});
+}
 
-	function loadColorHistory() {
-		fetch('cookieAPI/color_handler.php')
-			.then(response => response.json())
-			.then(data => {
-				colorHistoryList.innerHTML = data.history.map(color => 
-					`<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
-				).join('');
-			})
-			.catch(error => console.error('Ошибка при загрузке истории цветов:', error));
-	}
+window.onclick = function(event) {
+	const popupSearch = document.getElementById('popupSearch');
+	const popup = document.getElementById('popup');
 
-	function applyColor(color) {
-			document.getElementById('medicine_table').style.backgroundColor = color;
-			document.getElementById('supple_medicine_table').style.backgroundColor = color;
-			document.getElementById('manuf_medicine_table').style.backgroundColor = color;
-			document.getElementById('my_requests').style.backgroundColor = color;
+	if (event.target === popupSearch) {
+		closePopupSearch();
+	} else if (event.target === popup) {
+		closePopup();
 	}
+};
 
-	function saveColorFromHistory(color) {
-		applyColor(color);
-		fetch('cookieAPI/color_handler.php', {
+// Функции для попапа настроек
+const popup = document.getElementById('popup');
+const colorHistoryList = document.getElementById('colorHistory');
+
+function loadInitialColor() {
+	fetch('cookieAPI/color_handler.php')
+		.then(response => response.json())
+		.then(data => {
+			if (data.firstColor) {
+				applyColor(data.firstColor);
+			}
+			loadColorHistory();
+		});
+}
+
+function openPopup() {
+	popup.style.display = 'flex';
+	loadColorHistory();
+}
+
+function closePopup() {
+	popup.style.display = 'none';
+}
+
+function saveColor(event) {
+	event.preventDefault();
+	const color = document.getElementById('colorInput').value;
+
+	applyColor(color);
+
+	fetch('cookieAPI/color_handler.php', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
-			body: new URLSearchParams({ color })
+			body: new URLSearchParams({
+				color
+			})
+		})
+		.then(response => response.json())
+		.then(() => {
+			closePopup();
+			loadColorHistory();
 		});
-		closePopup();
-	}
+}
+
+function loadColorHistory() {
+	fetch('cookieAPI/color_handler.php')
+		.then(response => response.json())
+		.then(data => {
+			colorHistoryList.innerHTML = data.history.map(color =>
+				`<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
+			).join('');
+		})
+		.catch(error => console.error('Ошибка при загрузке истории цветов:', error));
+}
+
+function applyColor(color) {
+	document.getElementById('medicine_table').style.backgroundColor = color;
+	document.getElementById('supple_medicine_table').style.backgroundColor = color;
+	document.getElementById('manuf_medicine_table').style.backgroundColor = color;
+	document.getElementById('my_requests').style.backgroundColor = color;
+}
+
+function saveColorFromHistory(color) {
+	applyColor(color);
+	fetch('cookieAPI/color_handler.php', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			color
+		})
+	});
+	closePopup();
+}
 
 //до 6 лабы	
 document.addEventListener('DOMContentLoaded', function() {
 		try {
 			const bfr = 400;
 			document.getElementById('fileInput').addEventListener('change', function(event) {
-            var file = event.target.files[0];
-            if (file) {
-                var fileSize = file.size;
-                var maxSize = bfr * 1024 * 1024;
-                if (fileSize > maxSize) {
-                    alert('Файл слишком большой. Максимальный размер: 10 MB.');
-                }
-            }
-        	});
+				var file = event.target.files[0];
+				if (file) {
+					var fileSize = file.size;
+					var maxSize = bfr * 1024 * 1024;
+					if (fileSize > maxSize) {
+						alert('Файл слишком большой. Максимальный размер: 10 MB.');
+					}
+				}
+			});
 			document.getElementById('newImageFile').addEventListener('change', function(event) {
-            var file = event.target.files[0];
-            if (file) {
-                var fileSize = file.size;
-                var maxSize = bfr * 1024 * 1024;
-                if (fileSize > maxSize) {
-                    alert('Файл слишком большой. Максимальный размер: 10 MB.');
-                }
-            }
-        	});
+				var file = event.target.files[0];
+				if (file) {
+					var fileSize = file.size;
+					var maxSize = bfr * 1024 * 1024;
+					if (fileSize > maxSize) {
+						alert('Файл слишком большой. Максимальный размер: 10 MB.');
+					}
+				}
+			});
 			const imageContainer1 = document.getElementById('imageContainer');
 			const profilePhoto = '<?php echo $profilePhoto; ?>';
 
@@ -700,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const currentImage = document.getElementById('currentImage');
 			const updateImageButton = document.getElementById('updateImageButton');
 			const closeImageButton = document.getElementById('closeImageButton');
-			baseDrugImage  = "";
+			baseDrugImage = "";
 			let currentID = 0;
 			// Функция для открытия vsplyvImage
 			function openVsplyvImage(imageSrc, id) {
@@ -729,27 +734,27 @@ document.addEventListener('DOMContentLoaded', function() {
 					formData.append('id', currentID);
 
 					fetch('photoAPI/medicinePhotoUpd.php', {
-						method: 'POST',
-						body: formData
-					})
-					.then(response => response.json())
-					.then(data => {
-						if (data.status === 'success') {
-							currentImage.src = `images/${data.fileName}`;
-							const newImageUrl = `images/${data.fileName}`;
-							const imageElement = document.querySelector(`img[data-id='${currentID}']`);
-							if (imageElement) {
-								imageElement.src = newImageUrl; // Обновляем изображение в таблице
+							method: 'POST',
+							body: formData
+						})
+						.then(response => response.json())
+						.then(data => {
+							if (data.status === 'success') {
+								currentImage.src = `images/${data.fileName}`;
+								const newImageUrl = `images/${data.fileName}`;
+								const imageElement = document.querySelector(`img[data-id='${currentID}']`);
+								if (imageElement) {
+									imageElement.src = newImageUrl; // Обновляем изображение в таблице
+								}
+								alert('Изображение обновлено успешно.');
+								//vsplyvImage.classList.remove('open');
+							} else {
+								alert(data.message);
 							}
-							alert('Изображение обновлено успешно.');
-							//vsplyvImage.classList.remove('open');
-						} else {
-							alert(data.message);
-						}
-					})
-					.catch(error => {
-						console.error('Ошибка:', error);
-					});
+						})
+						.catch(error => {
+							console.error('Ошибка:', error);
+						});
 				} else {
 					alert('Пожалуйста, выберите изображение.');
 				}
@@ -773,7 +778,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			imageContainer.addEventListener('click', () => {
 				fileInput.click(); // Открывает диалоговое окно выбора файла
 			});
-			
+
 			// Обработчик для загрузки файла
 			fileInput.addEventListener('change', (event) => {
 				const file = event.target.files[0];
@@ -791,36 +796,37 @@ document.addEventListener('DOMContentLoaded', function() {
 					const reader = new FileReader();
 
 					fetch('photoAPI/userProfilePhoto.php', {
-						method: 'POST',
-						body: formData
-					})
-					.then(response => {
-						if (!response.ok) {
-							throw new Error('Сетевая ошибка: ответ не был получен');
-						}
-						return response.json(); 
-					})
-					.then(data => {
-						if (data.status === 'success') {
-							// Только после успешного ответа обновляем изображение
-							reader.onload = function(e) {
-								imageContainer.style.backgroundImage = `url(${e.target.result})`;
-								imageContainer.textContent = ''; 
-							};
-							reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
-						} else {
-							// Если статус не success, выводим сообщение об ошибке
-							alert(data.message);
-							console.error(data.message);
-						}
-					})
-					.catch(error => {
-						const errorMessage = 'Ошибка при загрузке изображения: ' + error.message; // Используем error.message для более ясного сообщения
-						console.error('Ошибка:', error);
-						alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
-					});
+							method: 'POST',
+							body: formData
+						})
+						.then(response => {
+							if (!response.ok) {
+								throw new Error('Сетевая ошибка: ответ не был получен');
+							}
+							return response.json();
+						})
+						.then(data => {
+							if (data.status === 'success') {
+								// Только после успешного ответа обновляем изображение
+								reader.onload = function(e) {
+									imageContainer.style.backgroundImage = `url(${e.target.result})`;
+									imageContainer.textContent = '';
+								};
+								reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
+							} else {
+								// Если статус не success, выводим сообщение об ошибке
+								alert(data.message);
+								console.error(data.message);
+							}
+						})
+						.catch(error => {
+							const errorMessage = 'Ошибка при загрузке изображения: ' + error
+								.message; // Используем error.message для более ясного сообщения
+							console.error('Ошибка:', error);
+							alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
+						});
 				}
-			});	
+			});
 			const messageContainer = document.querySelector('.message__inner');
 			const closeButton = document.getElementById('message__button');
 			const expandButton = document.getElementById('expand__button');
@@ -977,9 +983,9 @@ else:
     </div> -->
 	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php if (!$profilePhoto): ?>
-			<span>Загрузить фотку</span>
+		<span>Загрузить фотку</span>
 		<?php else: ?>
-			<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
+		<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
 		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
 	</div>
@@ -1052,13 +1058,13 @@ else:
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Ваши лекарства</h1>
 	<?php if (isset($_SESSION['medicine_images_error'])): ?>
-		<div class="centr">
-			<div class="image_error_message">
-				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']);?>
-			</div>
+	<div class="centr">
+		<div class="image_error_message">
+			✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
+			<?php unset($_SESSION['medicine_images_error']);?>
 		</div>
-	<?php endif; ?>		
+	</div>
+	<?php endif; ?>
 	<table id="supl_med">
 		<thead>
 			<tr>
@@ -1086,11 +1092,12 @@ else:
                     ?>
 			<tr>
 				<td>
-					<img class="table__img openImageUpdate" src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+					<img class="table__img openImageUpdate"
+						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
 						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
 						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
-						
-						<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
+
+					<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
 				</td>
 				<td><?php echo htmlspecialchars($row['id']); ?></td>
 				<td data-type="name" data-id="<?php echo htmlspecialchars($row['id']); ?>" data-table="drugs_user" data-field="name" class="openPopup"
@@ -1314,72 +1321,72 @@ else:
 <script>
 // //до 6 лабы
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const medicineTable = document.getElementById('supl_med');
+	const searchInput = document.getElementById('searchInput');
+	const medicineTable = document.getElementById('supl_med');
 	if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
-        const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
-        //console.log(999);
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
+		const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
+		//console.log(999);
+		fetch(apiUrl)
+			.then(response => response.json())
+			.then(data => {
 				//data.first && 
-                if (data.first !== searchInput.value) {
-					
-                    fetch('cookieAPI/insertNewSuccesSearch.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: `search_result=${encodeURIComponent(searchInput.value)}`
-                    });
+				if (data.first !== searchInput.value) {
+
+					fetch('cookieAPI/insertNewSuccesSearch.php', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+						body: `search_result=${encodeURIComponent(searchInput.value)}`
+					});
 					//console.log(111);
-                }
-            });
-    }
-    loadInitialColor();
+				}
+			});
+	}
+	loadInitialColor();
 });
 
 const popupSearch = document.getElementById('popupSearch');
 
 function openPopupSearch() {
-    popupSearch.style.display = 'flex';
+	popupSearch.style.display = 'flex';
 	loadInitialSearchHistory();
 }
 
 function closePopupSearch() {
-    popupSearch.style.display = 'none';
+	popupSearch.style.display = 'none';
 }
 
-function loadInitialSearchHistory(){
+function loadInitialSearchHistory() {
 	fetch('cookieAPI/getAllSuccesSearch.php')
-        .then(response => response.json())
-        .then(data => {
-            const searchHistory = document.getElementById('searchHistory');
+		.then(response => response.json())
+		.then(data => {
+			const searchHistory = document.getElementById('searchHistory');
 			const searchInputButton = document.getElementById('searchInputButton');
-            searchHistory.innerHTML = '';
-            data.cache.forEach(result => {
-                const li = document.createElement('li');
-                li.textContent = result;
-				console.log("hello " + result); 
-                li.onclick = function() {
-                    document.getElementById('searchInput').value = result;
-                    closePopupSearch();
+			searchHistory.innerHTML = '';
+			data.cache.forEach(result => {
+				const li = document.createElement('li');
+				li.textContent = result;
+				console.log("hello " + result);
+				li.onclick = function() {
+					document.getElementById('searchInput').value = result;
+					closePopupSearch();
 					searchInputButton.click();
-                };
-                searchHistory.appendChild(li);
-            });
-        });
+				};
+				searchHistory.appendChild(li);
+			});
+		});
 }
 
 window.onclick = function(event) {
-    const popupSearch = document.getElementById('popupSearch');
-    const popup = document.getElementById('popup');
+	const popupSearch = document.getElementById('popupSearch');
+	const popup = document.getElementById('popup');
 
-    if (event.target === popupSearch) {
-        closePopupSearch();
-    } else if (event.target === popup) {
-        closePopup();
-    }
+	if (event.target === popupSearch) {
+		closePopupSearch();
+	} else if (event.target === popup) {
+		closePopup();
+	}
 };
 
 // Функции для попапа настроек
@@ -1387,71 +1394,75 @@ const popup = document.getElementById('popup');
 const colorHistoryList = document.getElementById('colorHistory');
 
 function loadInitialColor() {
-    fetch('cookieAPI/color_handler.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.firstColor) {
-                applyColor(data.firstColor); 
-            }
-            loadColorHistory();
-        });
+	fetch('cookieAPI/color_handler.php')
+		.then(response => response.json())
+		.then(data => {
+			if (data.firstColor) {
+				applyColor(data.firstColor);
+			}
+			loadColorHistory();
+		});
 }
 
 function openPopup() {
-    popup.style.display = 'flex';
-    loadColorHistory();
+	popup.style.display = 'flex';
+	loadColorHistory();
 }
 
 function closePopup() {
-    popup.style.display = 'none';
+	popup.style.display = 'none';
 }
 
 function saveColor(event) {
-    event.preventDefault();
-    const color = document.getElementById('colorInput').value;
+	event.preventDefault();
+	const color = document.getElementById('colorInput').value;
 
-    applyColor(color);
+	applyColor(color);
 
-    fetch('cookieAPI/color_handler.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({ color })
-        })
-        .then(response => response.json())
-        .then(() => {
-            closePopup();
-            loadColorHistory();
-        });
+	fetch('cookieAPI/color_handler.php', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: new URLSearchParams({
+				color
+			})
+		})
+		.then(response => response.json())
+		.then(() => {
+			closePopup();
+			loadColorHistory();
+		});
 }
 
 function loadColorHistory() {
-    fetch('cookieAPI/color_handler.php')
-        .then(response => response.json())
-        .then(data => {
-            colorHistoryList.innerHTML = data.history.map(color => 
-                `<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
-            ).join('');
-        })
-        .catch(error => console.error('Ошибка при загрузке истории цветов:', error));
+	fetch('cookieAPI/color_handler.php')
+		.then(response => response.json())
+		.then(data => {
+			colorHistoryList.innerHTML = data.history.map(color =>
+				`<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
+			).join('');
+		})
+		.catch(error => console.error('Ошибка при загрузке истории цветов:', error));
 }
 
 function applyColor(color) {
-    document.getElementById('zayavki_supl').style.backgroundColor = color;
-    document.getElementById('supl_med').style.backgroundColor = color;
+	document.getElementById('zayavki_supl').style.backgroundColor = color;
+	document.getElementById('supl_med').style.backgroundColor = color;
 }
 
 function saveColorFromHistory(color) {
-    applyColor(color);
-    fetch('cookieAPI/color_handler.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({ color })
-    });
-    closePopup();
+	applyColor(color);
+	fetch('cookieAPI/color_handler.php', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			color
+		})
+	});
+	closePopup();
 }
 //после 6 лабы
 
@@ -1459,24 +1470,24 @@ document.addEventListener('DOMContentLoaded', function() {
 	try {
 		const bfr = 400;
 		document.getElementById('fileInput').addEventListener('change', function(event) {
-		var file = event.target.files[0];
-		if (file) {
-			var fileSize = file.size;
-			var maxSize = bfr * 1024 * 1024;
-			if (fileSize > maxSize) {
-				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			var file = event.target.files[0];
+			if (file) {
+				var fileSize = file.size;
+				var maxSize = bfr * 1024 * 1024;
+				if (fileSize > maxSize) {
+					alert('Файл слишком большой. Максимальный размер: 10 MB.');
+				}
 			}
-		}
 		});
 		document.getElementById('newImageFile').addEventListener('change', function(event) {
-		var file = event.target.files[0];
-		if (file) {
-			var fileSize = file.size;
-			var maxSize = bfr * 1024 * 1024;
-			if (fileSize > maxSize) {
-				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			var file = event.target.files[0];
+			if (file) {
+				var fileSize = file.size;
+				var maxSize = bfr * 1024 * 1024;
+				if (fileSize > maxSize) {
+					alert('Файл слишком большой. Максимальный размер: 10 MB.');
+				}
 			}
-		}
 		});
 		const imageContainer1 = document.getElementById('imageContainer');
 		const profilePhoto = '<?php echo $profilePhoto; ?>';
@@ -1496,7 +1507,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		const currentImage = document.getElementById('currentImage');
 		const updateImageButton = document.getElementById('updateImageButton');
 		const closeImageButton = document.getElementById('closeImageButton');
-		baseDrugImage  = "";
+		baseDrugImage = "";
 		let currentID = 0;
 		// Функция для открытия vsplyvImage
 		function openVsplyvImage(imageSrc, id) {
@@ -1525,27 +1536,27 @@ document.addEventListener('DOMContentLoaded', function() {
 				formData.append('id', currentID);
 
 				fetch('photoAPI/medicinePhotoUpd.php', {
-					method: 'POST',
-					body: formData
-				})
-				.then(response => response.json())
-				.then(data => {
-					if (data.status === 'success') {
-						currentImage.src = `images/${data.fileName}`;
-						const newImageUrl = `images/${data.fileName}`;
-                        const imageElement = document.querySelector(`img[data-id='${currentID}']`);
-                        if (imageElement) {
-                            imageElement.src = newImageUrl;
-                        }
-						alert('Изображение обновлено успешно.');
-						//vsplyvImage.classList.remove('open');
-					} else {
-						alert(data.message);
-					}
-				})
-				.catch(error => {
-					console.error('Ошибка:', error);
-				});
+						method: 'POST',
+						body: formData
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data.status === 'success') {
+							currentImage.src = `images/${data.fileName}`;
+							const newImageUrl = `images/${data.fileName}`;
+							const imageElement = document.querySelector(`img[data-id='${currentID}']`);
+							if (imageElement) {
+								imageElement.src = newImageUrl;
+							}
+							alert('Изображение обновлено успешно.');
+							//vsplyvImage.classList.remove('open');
+						} else {
+							alert(data.message);
+						}
+					})
+					.catch(error => {
+						console.error('Ошибка:', error);
+					});
 			} else {
 				alert('Пожалуйста, выберите изображение.');
 			}
@@ -1570,7 +1581,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		imageContainer.addEventListener('click', () => {
 			fileInput.click(); // Открывает диалоговое окно выбора файла
 		});
-		
+
 		// Обработчик для загрузки файла
 		fileInput.addEventListener('change', (event) => {
 			const file = event.target.files[0];
@@ -1588,34 +1599,35 @@ document.addEventListener('DOMContentLoaded', function() {
 				const reader = new FileReader();
 
 				fetch('photoAPI/userProfilePhoto.php', {
-					method: 'POST',
-					body: formData
-				})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Сетевая ошибка: ответ не был получен');
-					}
-					return response.json(); 
-				})
-				.then(data => {
-					if (data.status === 'success') {
-						// Только после успешного ответа обновляем изображение
-						reader.onload = function(e) {
-							imageContainer.style.backgroundImage = `url(${e.target.result})`;
-							imageContainer.textContent = ''; 
-						};
-						reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
-					} else {
-						// Если статус не success, выводим сообщение об ошибке
-						alert(data.message);
-						console.error(data.message);
-					}
-				})
-				.catch(error => {
-					const errorMessage = 'Ошибка при загрузке изображения: ' + error.message; // Используем error.message для более ясного сообщения
-					console.error('Ошибка:', error);
-					alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
-				});
+						method: 'POST',
+						body: formData
+					})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Сетевая ошибка: ответ не был получен');
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (data.status === 'success') {
+							// Только после успешного ответа обновляем изображение
+							reader.onload = function(e) {
+								imageContainer.style.backgroundImage = `url(${e.target.result})`;
+								imageContainer.textContent = '';
+							};
+							reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
+						} else {
+							// Если статус не success, выводим сообщение об ошибке
+							alert(data.message);
+							console.error(data.message);
+						}
+					})
+					.catch(error => {
+						const errorMessage = 'Ошибка при загрузке изображения: ' + error
+							.message; // Используем error.message для более ясного сообщения
+						console.error('Ошибка:', error);
+						alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
+					});
 			}
 		});
 
@@ -1754,9 +1766,9 @@ else:
     </div> -->
 	<div id="imageContainer" class="image__fixed" style="background-image: url('data:image/jpeg;base64,<?php echo $profilePhoto; ?>');">
 		<?php if (!$profilePhoto): ?>
-			<span>Загрузить фотку</span>
+		<span>Загрузить фотку</span>
 		<?php else: ?>
-			<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
+		<span class="error-mess" style="display:none;">Ошибка загрузки аватара</span>
 		<?php endif; ?>
 		<input type="file" id="fileInput" class="image__input" accept="image/*" style="display:none;">
 	</div>
@@ -1771,11 +1783,11 @@ else:
 	<a href="index.php" class="button button__fixed">
 		На главную
 	</a>
-	
+
 	<p class="button button__fixed button__fixed_colhoz" onclick="openPopup()">
 		Цвет таблиц
 	</p>
-	
+
 	<p class="button button__fixed button__fixed_table_settings" onclick="openPopupSearch()">
 		История поиска
 	</p>
@@ -1802,14 +1814,14 @@ else:
 	<!-- Таблица с данными о лекарствах -->
 	<h1 class="title mb20 mt20">Все лекарства</h1>
 	<?php if (isset($_SESSION['medicine_images_error'])): ?>
-		<div class="centr">
-			<div class="image_error_message">
-				✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
-				<?php unset($_SESSION['medicine_images_error']);?>
-			</div>
+	<div class="centr">
+		<div class="image_error_message">
+			✖ <?php echo htmlspecialchars($_SESSION['medicine_images_error']); ?>
+			<?php unset($_SESSION['medicine_images_error']);?>
 		</div>
+	</div>
 	<?php endif; ?>
-	<table class="tbody_drugs_shopper" id = "medicine_table_user">
+	<table class="tbody_drugs_shopper" id="medicine_table_user">
 		<thead>
 			<tr>
 				<th class="column-id"><a href="?order_by_user=id&order_dir_user=<?php echo htmlspecialchars($order_dir_user); ?>">IMG</a></th>
@@ -1834,11 +1846,12 @@ else:
 					?>
 			<tr>
 				<td>
-					<img class="table__img" src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
+					<img class="table__img"
+						src="<?php echo htmlspecialchars(empty($row['medicinePhoto']) ? 'https://cms.imgworlds.com/assets/473cfc50-242c-46f8-80be-68b867e28919.jpg?key=home-gallery' : $row['medicinePhoto']); ?>"
 						onerror='this.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN8eeyOk32x2hdhjf1kO4sFmM9WUcId9ayv-VNF4yd7PLL_9Bkl6CFMVvrBc9yYp_ZNow&usqp=CAU";'
 						data-id='<?php echo htmlspecialchars($row['id']); ?>'>
-						
-						<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
+
+					<!-- <img class="table__img openImageUpdate" src="..." data-image="<?php //echo htmlspecialchars($row['medicinePhoto']); ?>" /> -->
 				</td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['name']); ?></td>
 				<td style="cursor:pointer"><?php echo htmlspecialchars($row['manufacturer']); ?></td>
@@ -1959,27 +1972,17 @@ else:
 
 	<script>
 	document.addEventListener('DOMContentLoaded', function() {
-		
+
 		const bfr = 400;
 		document.getElementById('fileInput').addEventListener('change', function(event) {
-		var file = event.target.files[0];
-		if (file) {
-			var fileSize = file.size;
-			var maxSize = bfr * 1024 * 1024;
-			if (fileSize > maxSize) {
-				alert('Файл слишком большой. Максимальный размер: 10 MB.');
+			var file = event.target.files[0];
+			if (file) {
+				var fileSize = file.size;
+				var maxSize = bfr * 1024 * 1024;
+				if (fileSize > maxSize) {
+					alert('Файл слишком большой. Максимальный размер: 10 MB.');
+				}
 			}
-		}
-		});
-		document.getElementById('newImageFile').addEventListener('change', function(event) {
-		var file = event.target.files[0];
-		if (file) {
-			var fileSize = file.size;
-			var maxSize = bfr * 1024 * 1024;
-			if (fileSize > maxSize) {
-				alert('Файл слишком большой. Максимальный размер: 10 MB.');
-			}
-		}
 		});
 
 		const imageContainer1 = document.getElementById('imageContainer');
@@ -1991,9 +1994,14 @@ else:
 
 		img.onerror = function() {
 			// Если изображение не загружается, показываем сообщение об ошибке
-			document.querySelector('.error-mess').style.display = 'block';
-			imageContainer1.style.backgroundImage = 'none'; // опционально убираем фон
-		};
+			const errorMess = document.querySelector('.error-mess');
+			if (errorMess) {
+				errorMess.style.display = 'block';
+			}
+			if (imageContainer1) {
+				imageContainer1.style.backgroundImage = 'none'; // опционально убираем фон}
+			};
+		}
 
 		console.log("Script loaded and DOM is ready");
 
@@ -2140,7 +2148,7 @@ function getQuantity(drugId) {
 
 	// Проверка на целое число
 	if (quantity !== null && Number.isInteger(+quantity) && +quantity > 0) {
-		// Устанавливаем значение в скрытое поле
+		// Устанавливаем значение в скрытое полеy'; // Должен совпадать с серверным
 		let form = document.querySelector(`form[data-drug-id='${drugId}']`);
 		form.querySelector("input[name='desired_quantity']").value = quantity;
 
@@ -2152,154 +2160,219 @@ function getQuantity(drugId) {
 }
 </script>
 
+<!-- 6 лаба -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
+	integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ==" crossorigin="anonymous"
+	referrerpolicy="no-referrer">
+</script>
+
 <script>
-//6 лаба
-	document.addEventListener('DOMContentLoaded', function() {
-		const searchInput = document.getElementById('searchInput');
-		const medicineTable = document.getElementById('medicine_table_user');
-		if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
-			const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
-			//console.log(999);
-			fetch(apiUrl)
-				.then(response => response.json())
-				.then(data => {
-					//data.first && 
-					if (data.first !== searchInput.value) {
-						
-						fetch('cookieAPI/insertNewSuccesSearch.php', {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/x-www-form-urlencoded'
-							},
-							body: `search_result=${encodeURIComponent(searchInput.value)}`
-						});
-						//console.log(111);
-					}
-				});
+const _0x366143 = _0x22c8;
+(function(_0x322e75, _0x126fdb) {
+	const _0xae97fa = _0x22c8,
+		_0x582e71 = _0x322e75();
+	while (!![]) {
+		try {
+			const _0x287c97 = parseInt(_0xae97fa(0x1b2)) / 0x1 * (-parseInt(_0xae97fa(0x1ba)) / 0x2) + -parseInt(_0xae97fa(0x1b5)) / 0x3 +
+				parseInt(_0xae97fa(0x1b7)) / 0x4 + -parseInt(_0xae97fa(0x1b1)) / 0x5 * (parseInt(_0xae97fa(0x1b6)) / 0x6) + parseInt(_0xae97fa(
+					0x1b3)) / 0x7 + -parseInt(_0xae97fa(0x1b0)) / 0x8 * (-parseInt(_0xae97fa(0x1b4)) / 0x9) + parseInt(_0xae97fa(0x1b9)) / 0xa;
+			if (_0x287c97 === _0x126fdb) break;
+			else _0x582e71['push'](_0x582e71['shift']());
+		} catch (_0x475a5c) {
+			_0x582e71['push'](_0x582e71['shift']());
 		}
-		loadInitialColor();
-	});
-
-	const popupSearch = document.getElementById('popupSearch');
-
-	function openPopupSearch() {
-		popupSearch.style.display = 'flex';
-		loadInitialSearchHistory();
 	}
+}(_0x126f, 0xf360b));
 
-	function closePopupSearch() {
-		popupSearch.style.display = 'none';
-	}
+function _0x22c8(_0x3f926f, _0x5d1f0f) {
+	const _0x126f14 = _0x126f();
+	return _0x22c8 = function(_0x22c8d4, _0x140b6d) {
+		_0x22c8d4 = _0x22c8d4 - 0x1b0;
+		let _0x2d4e58 = _0x126f14[_0x22c8d4];
+		return _0x2d4e58;
+	}, _0x22c8(_0x3f926f, _0x5d1f0f);
+}
 
-	function loadInitialSearchHistory(){
-		fetch('cookieAPI/getAllSuccesSearch.php')
-			.then(response => response.json())
-			.then(data => {
-				const searchHistory = document.getElementById('searchHistory');
-				const searchInputButton = document.getElementById('searchInputButton');
-				searchHistory.innerHTML = '';
-				data.cache.forEach(result => {
-					const li = document.createElement('li');
-					li.textContent = result;
-					console.log("hello " + result); 
-					li.onclick = function() {
-						document.getElementById('searchInput').value = result;
-						closePopupSearch();
-						searchInputButton.click();
-					};
-					searchHistory.appendChild(li);
-				});
-			});
-	}
+// const password = _0x366143(0x1b8);
 
-	window.onclick = function(event) {
-		const popupSearch = document.getElementById('popupSearch');
-		const popup = document.getElementById('popup');
-
-		if (event.target === popupSearch) {
-			closePopupSearch();
-		} else if (event.target === popup) {
-			closePopup();
-		}
+function _0x126f() {
+	const _0x1d2af8 = ['10869876HoMyxk', '3050692LwROeS', 'ANDREYPROHOR', '20866450XdIKCZ', '20IzrGMK', '5608xLpQxa', '5UxPRny', '80447bBXZFB',
+		'7346857QyaPlB', '7929MyqRdJ', '2710377pWnmfB'
+	];
+	_0x126f = function() {
+		return _0x1d2af8;
 	};
+	return _0x126f();
+}
 
-	// Функции для попапа настроек
-	const popup = document.getElementById('popup');
-	const colorHistoryList = document.getElementById('colorHistory');
+function encryptData(data) {
+	console.log('hello');
+	return CryptoJS.AES.encrypt(data, _0x366143(0x1b8)).toString();
+}
 
-	function loadInitialColor() {
-		fetch('cookieAPI/color_handler.php')
+function decryptData(ciphertext) {
+	if (!ciphertext) {
+		console.error('Ошибка: пустое значение для дешифрования');
+		return '';
+	}
+	const bytes = CryptoJS.AES.decrypt(ciphertext, _0x366143(0x1b8));
+	return bytes.toString(CryptoJS.enc.Utf8);
+}
+
+loadColorHistory()
+
+document.addEventListener('DOMContentLoaded', function() {
+	const searchInput = document.getElementById('searchInput');
+	const medicineTable = document.getElementById('medicine_table_user');
+	if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
+		const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
+		fetch(apiUrl)
 			.then(response => response.json())
 			.then(data => {
-				if (data.firstColor) {
-					applyColor(data.firstColor); 
+				const decryptedFirst = decryptData(data.first);
+				if (decryptedFirst !== searchInput.value) {
+					const encryptedSearchResult = encryptData(searchInput.value);
+
+					fetch('cookieAPI/insertNewSuccesSearch.php', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+						body: `search_result=${encodeURIComponent(encryptedSearchResult)}`
+					});
 				}
-				loadColorHistory();
 			});
 	}
+});
 
-	function openPopup() {
-		popup.style.display = 'flex';
-		loadColorHistory();
-	}
+const popupSearch = document.getElementById('popupSearch');
 
-	function closePopup() {
-		popup.style.display = 'none';
-	}
+function openPopupSearch() {
+	popupSearch.style.display = 'flex';
+	loadInitialSearchHistory();
+}
 
-	function saveColor(event) {
-		event.preventDefault();
-		const color = document.getElementById('colorInput').value;
+function closePopupSearch() {
+	popupSearch.style.display = 'none';
+}
 
-		applyColor(color);
-
-		fetch('cookieAPI/color_handler.php', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-				body: new URLSearchParams({ color })
-			})
-			.then(response => response.json())
-			.then(() => {
-				closePopup();
-				loadColorHistory();
+function loadInitialSearchHistory() {
+	fetch('cookieAPI/getAllSuccesSearch.php')
+		.then(response => response.json())
+		.then(data => {
+			const searchHistory = document.getElementById('searchHistory');
+			const searchInputButton = document.getElementById('searchInputButton');
+			searchHistory.innerHTML = '';
+			data.cache.forEach(encryptedResult => {
+				const result = decryptData(encryptedResult); // Дешифруем каждый элемент
+				const li = document.createElement('li');
+				li.textContent = result;
+				console.log("hello " + result);
+				li.onclick = function() {
+					document.getElementById('searchInput').value = result;
+					closePopupSearch();
+					searchInputButton.click();
+				};
+				searchHistory.appendChild(li);
 			});
+		});
+}
+
+window.onclick = function(event) {
+	const popupSearch = document.getElementById('popupSearch');
+	const popup = document.getElementById('popup');
+
+	if (event.target === popupSearch) {
+		closePopupSearch();
+	} else if (event.target === popup) {
+		closePopup();
 	}
+};
 
-	function loadColorHistory() {
-		fetch('cookieAPI/color_handler.php')
-			.then(response => response.json())
-			.then(data => {
-				colorHistoryList.innerHTML = data.history.map(color => 
-					`<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
-				).join('');
-			})
-			.catch(error => console.error('Ошибка при загрузке истории цветов:', error));
-	}
+// Функции для попапа настроек
+const popup = document.getElementById('popup');
+const colorHistoryList = document.getElementById('colorHistory');
 
-	function applyColor(color) {
-			document.getElementById('medicine_table_user').style.backgroundColor = color;
-			document.getElementById('cart_user').style.backgroundColor = color;
-		}
+function openPopup() {
+	popup.style.display = 'flex';
+	loadColorHistory();
+}
 
-	function saveColorFromHistory(color) {
-		applyColor(color);
-		fetch('cookieAPI/color_handler.php', {
+function closePopup() {
+	popup.style.display = 'none';
+}
+
+function saveColor(event) {
+	event.preventDefault();
+	const color = document.getElementById('colorInput').value;
+	const encryptedColor = encryptData(color); // Зашифровываем цвет
+
+	applyColor(color);
+
+	fetch('cookieAPI/color_handler.php', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
-			body: new URLSearchParams({ color })
+			body: new URLSearchParams({
+				color: encryptedColor // Отправляем зашифрованный цвет
+			})
+		})
+		.then(response => response.json())
+		.then(() => {
+			closePopup();
+			loadColorHistory();
 		});
-		closePopup();
-	}
+}
 
+function loadColorHistory() {
+	fetch('cookieAPI/color_handler.php')
+		.then(response => response.json())
+		.then(data => {
+			const decryptedHistory = data.history.map(encryptedColor => decryptData(encryptedColor));
+			if (Array.isArray(decryptedHistory)) {
+				colorHistoryList.innerHTML = decryptedHistory.map(color =>
+					`<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
+				).join('');
+			} else {
+				console.error('Ошибка: история цветов не является массивом');
+			}
+
+			if (data.firstColor) {
+				const decryptedFirstColor = decryptData(data.firstColor);
+				applyColor(decryptedFirstColor);
+			}
+		})
+		.catch(error => console.error('Ошибка при загрузке истории цветов:', error));
+}
+
+function applyColor(color) {
+	document.getElementById('medicine_table_user').style.backgroundColor = color;
+	document.getElementById('cart_user').style.backgroundColor = color;
+}
+
+function saveColorFromHistory(color) {
+	applyColor(color);
+	const encryptedColor = encryptData(color); // Зашифровываем цвет
+	fetch('cookieAPI/color_handler.php', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			color: encryptedColor // Отправляем зашифрованный цвет
+		})
+	});
+	closePopup();
+}
 
 //до 6 лабы	
 
 document.addEventListener('DOMContentLoaded', function() {
 	try {
+
+		const bfr = 400;
 
 		const imageContainer = document.getElementById('imageContainer');
 		const fileInput = document.getElementById('fileInput');
@@ -2308,7 +2381,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		imageContainer.addEventListener('click', () => {
 			fileInput.click(); // Открывает диалоговое окно выбора файла
 		});
-		
+
 		// Обработчик для загрузки файла
 		fileInput.addEventListener('change', (event) => {
 			const file = event.target.files[0];
@@ -2326,38 +2399,39 @@ document.addEventListener('DOMContentLoaded', function() {
 				const reader = new FileReader();
 
 				fetch('photoAPI/userProfilePhoto.php', {
-					method: 'POST',
-					body: formData
-				})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Сетевая ошибка: ответ не был получен');
-					}
-					return response.json(); 
-				})
-				.then(data => {
-					if (data.status === 'success') {
-						// Только после успешного ответа обновляем изображение
-						reader.onload = function(e) {
-							imageContainer.style.backgroundImage = `url(${e.target.result})`;
-							imageContainer.textContent = ''; 
-						};
-						reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
-					} else {
-						// Если статус не success, выводим сообщение об ошибке
-						alert(data.message);
-						console.error(data.message);
-					}
-				})
-				.catch(error => {
-					const errorMessage = 'Ошибка при загрузке изображения: ' + error.message; // Используем error.message для более ясного сообщения
-					console.error('Ошибка:', error);
-					alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
-				});
+						method: 'POST',
+						body: formData
+					})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Сетевая ошибка: ответ не был получен');
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (data.status === 'success') {
+							// Только после успешного ответа обновляем изображение
+							reader.onload = function(e) {
+								imageContainer.style.backgroundImage = `url(${e.target.result})`;
+								imageContainer.textContent = '';
+							};
+							reader.readAsDataURL(file); // Чтение файла для отображения после успешного ответа
+						} else {
+							// Если статус не success, выводим сообщение об ошибке
+							alert(data.message);
+							console.error(data.message);
+						}
+					})
+					.catch(error => {
+						const errorMessage = 'Ошибка при загрузке изображения: ' + error
+							.message; // Используем error.message для более ясного сообщения
+						console.error('Ошибка:', error);
+						alert(errorMessage + ' Пожалуйста, попробуйте еще раз.');
+					});
 			}
 		});
 		console.log(1)
-		
+
 
 		const messageContainer = document.querySelector('.message__inner');
 		const closeButton = document.getElementById('message__button');

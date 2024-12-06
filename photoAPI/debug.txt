@@ -1,9 +1,8 @@
 Array
 (
-    [name] => восемьмб.png
-    [full_path] => восемьмб.png
+    [name] => newdesign2.png
     [type] => image/png
-    [tmp_name] => C:\XAMPP\tmp\php1CCF.tmp
+    [tmp_name] => C:\xampp\tmp\phpFFCF.tmp
     [error] => 0
-    [size] => 8388608
+    [size] => 1809231
 )
