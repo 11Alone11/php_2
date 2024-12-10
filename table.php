@@ -1314,29 +1314,29 @@ else:
 <script>
 // //до 6 лабы
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const medicineTable = document.getElementById('supl_med');
+	const searchInput = document.getElementById('searchInput');
+	const medicineTable = document.getElementById('supl_med');
 	if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
-        const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
-        //console.log(999);
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
+		const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
+		//console.log(999);
+		fetch(apiUrl)
+			.then(response => response.json())
+			.then(data => {
 				//data.first && 
-                if (data.first !== searchInput.value) {
+				if (data.first !== searchInput.value) {
 					
-                    fetch('cookieAPI/insertNewSuccesSearch.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: `search_result=${encodeURIComponent(searchInput.value)}`
-                    });
+					fetch('cookieAPI/insertNewSuccesSearch.php', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+						body: `search_result=${encodeURIComponent(searchInput.value)}`
+					});
 					//console.log(111);
-                }
-            });
-    }
-    loadInitialColor();
+				}
+			});
+	}
+	loadInitialColor();
 });
 
 const popupSearch = document.getElementById('popupSearch');
