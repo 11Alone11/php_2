@@ -55,6 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Защита от SQL-инъекций и XSS
             $input_username = $conn->real_escape_string(htmlspecialchars($input_username, ENT_QUOTES, 'UTF-8'));
 
+            // Генерация KEY_TYPE
+            $encryption_methods = ['aes-128-cbc', 'aes-192-cbc', 'aes-256-cbc'];
+            $key_type = $encryption_methods[array_rand($encryption_methods)];
+            
             // Проверяем, существует ли пользователь
             $query = "SELECT * FROM users WHERE name='$input_username'";
             $result = $conn->query($query);
@@ -65,12 +69,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Хеширование пароля перед сохранением
                 $hashed_password = password_hash($input_password, PASSWORD_BCRYPT);
 
-                // Вставка нового пользователя в базу данных
-                $insert_query = "INSERT INTO users (name, password, type) VALUES ('$input_username', '$hashed_password', $roleUoD)";
+                // Вставка нового пользователя в базу данных с KEY_TYPE
+                $insert_query = "INSERT INTO users (name, password, type, KEY_TYPE) VALUES ('$input_username', '$hashed_password', $roleUoD, '$key_type')";
 
                 if ($conn->query($insert_query) === TRUE) {
                     $_SESSION['user'] = $input_username;
                     $_SESSION['user_type'] = $roleUoD;
+                    $_SESSION['KEY_TYPE'] = $key_type;
                     $select_string = "SELECT id, type FROM users WHERE name LIKE '%$input_username%'";
                     $user_info = $conn->query($select_string);
                     $row = $user_info->fetch_assoc(); // Получаем ассоциативный массив

@@ -1,0 +1,76 @@
+<script>
+const encryptionMethods = ['aes-128-cbc', 'aes-192-cbc', 'aes-256-cbc'];
+const password = 'ANDREYPROHOR';
+let currentMethod = null;
+
+async function tryMethod(data, method) {
+    const encrypted = CryptoJS.AES.encrypt(data, password, {
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    }).toString();
+    
+    const formData = new FormData();
+    formData.append('data', encrypted);
+    formData.append('method', method);
+    
+    try {
+        const response = await fetch('cookieAPI/check_encryption.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        return result.success;
+    } catch (error) {
+        return false;
+    }
+}
+
+async function encryptData(data) {
+    if (!currentMethod) {
+        for (const method of encryptionMethods) {
+            if (await tryMethod(data, method)) {
+                currentMethod = method;
+                break;
+            }
+        }
+    }
+    
+    // Используем найденный метод
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(data, password, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+        keySize: currentMethod.includes('128') ? 128/32 : currentMethod.includes('192') ? 192/32 : 256/32
+    });
+    
+    console.log('hello');
+    return encrypted.toString();
+}
+
+async function decryptData(ciphertext) {
+    if (!ciphertext) {
+        console.error('Ошибка: пустое значение для дешифрования');
+        return '';
+    }
+
+    if (!currentMethod) {
+        for (const method of encryptionMethods) {
+            if (await tryMethod(ciphertext, method)) {
+                currentMethod = method;
+                break;
+            }
+        }
+    }
+
+    // Используем найденный метод
+    const bytes = CryptoJS.AES.decrypt(ciphertext, password, {
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+        keySize: currentMethod.includes('128') ? 128/32 : currentMethod.includes('192') ? 192/32 : 256/32
+    });
+    
+    return bytes.toString(CryptoJS.enc.Utf8);
+}
+</script>

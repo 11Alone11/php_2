@@ -1,10 +1,11 @@
 <?php
+// cookieAPI/getAllSuccesSearch.php
 try {
-    //cookieAPI/getAllSuccesSearch.php
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
     header('Content-Type: application/json');
+
     if (!isset($_SESSION['user'])) {
         echo json_encode(['cache' => []]);
         exit;
@@ -13,18 +14,16 @@ try {
     $allElements = [];
     $cookieName = "search_cache_$userId";
     $encryption_key = 'ANDREYPROHOR';
-    $encryption_method = 'AES-256-CBC';
+    $key_type = $_SESSION['KEY_TYPE'] ?? 'aes-128-cbc';
 
-    function encrypt($plaintext, $password) {
-        $method = 'AES-256-CBC';
+    function encrypt($plaintext, $password, $method) {
         $key = hash('sha256', $password, true);
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($method));
         $ciphertext = openssl_encrypt($plaintext, $method, $key, OPENSSL_RAW_DATA, $iv);
         return base64_encode($iv . $ciphertext);
     }
 
-    function decrypt($ciphertext, $password) {
-        $method = 'AES-256-CBC';
+    function decrypt($ciphertext, $password, $method) {
         $key = hash('sha256', $password, true);
         $ciphertext = base64_decode($ciphertext);
         $iv_length = openssl_cipher_iv_length($method);
@@ -35,9 +34,10 @@ try {
 
     if (isset($_COOKIE[$cookieName])) {
         $encrypted_cache = $_COOKIE[$cookieName];
-        $allElements = json_decode(decrypt($encrypted_cache, $encryption_key), true);
+        $decrypted_cache = decrypt($encrypted_cache, $encryption_key, $key_type);
+        $allElements = json_decode($decrypted_cache, true);
     }
-    echo json_encode(['cache' => $allElements]);
+    echo json_encode(['cache' => $allElements ?? []]);
 } catch (Exception $ex) {
     echo json_encode(['error' => $ex->getMessage()]);
 }

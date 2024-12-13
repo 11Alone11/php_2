@@ -51,12 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['user'] = $input_username;
                     $success_message = "Вход успешен. Добро пожаловать, $input_username!";
                     $name_user = trim($input_username);
-                    $select_string = "SELECT id, type FROM users WHERE name = '$name_user'";
+                    $select_string = "SELECT id, type, KEY_TYPE FROM users WHERE name = '$name_user'";
                     $user_info = $conn->query($select_string);
                     if ($user_info && $user_info->num_rows > 0) {
                         $row = $user_info->fetch_assoc(); // Получаем ассоциативный массив
                         $_SESSION['user_id'] = $row['id']; // Записываем ID в сессию
                         $_SESSION['user_type'] = $row['type'];// Записываем тип пользователя в сессию   
+                        $_SESSION['KEY_TYPE'] = $row['KEY_TYPE'];
                     } else {
                         // Обработка случая, когда пользователь не найден
                         $_SESSION['user_id'] = null; // Или любое другое значение по умолчанию
