@@ -7,14 +7,11 @@
 </head>
 <body>
     <h1>Сравнение методов сортировки</h1>
-    
     <div class="controls">
         <input type="text" id="searchInput" placeholder="Поиск...">
         <button onclick="refreshData()">Обновить данные</button>
     </div>
-
     <div class="container">
-        <!-- SQL Sort -->
         <div class="table-container">
             <h2>SQL Сортировка</h2>
             <div id="sqlExecutionTime" class="execution-time"></div>
@@ -32,8 +29,6 @@
                 <tbody></tbody>
             </table>
         </div>
-
-        <!-- JS Sort -->
         <div class="table-container">
             <h2>JavaScript Сортировка</h2>
             <div id="jsExecutionTime" class="execution-time"></div>
@@ -52,30 +47,31 @@
             </table>
         </div>
     </div>
-
     <script>
         let jsData = [];
-        let currentSortColumn = 'name';
-        let currentSortOrder = 'ASC';
+        let sqlSortColumn = 'name';
+        let sqlSortOrder = 'ASC';
+        let jsSortColumn = 'name';
+        let jsSortOrder = 'ASC';
 
         function refreshData() {
             const searchTerm = document.getElementById('searchInput').value;
-            fetch(`sql_sort.php?sort=${currentSortColumn}&order=${currentSortOrder}&search=${searchTerm}`)
+            fetch(`sql_sort.php?sort=${sqlSortColumn}&order=${sqlSortOrder}&search=${searchTerm}`)
                 .then(response => response.json())
                 .then(data => {
                     updateTable('sqlTable', data.data);
                     document.getElementById('sqlExecutionTime').textContent = 
                         `Время выполнения: ${data.executionTime.toFixed(2)} мс`;
                 });
+
             const jsStart = performance.now();
-            fetch(`js_sort.php`)
+            fetch('js_sort.php')
                 .then(response => response.json())
                 .then(data => {
                     jsData = data.data;
-                    const sortedData = sortData(jsData, currentSortColumn, currentSortOrder);
+                    const sortedData = sortData(jsData, jsSortColumn, jsSortOrder);
                     const filteredData = filterData(sortedData, searchTerm);
                     const jsEnd = performance.now();
-                    
                     updateTable('jsTable', filteredData);
                     document.getElementById('jsExecutionTime').textContent = 
                         `Время выполнения: ${data.executionTime.toFixed(2)} мс + ${(jsEnd - jsStart).toFixed(2)} мс (JS)`;
@@ -86,14 +82,16 @@
             return [...data].sort((a, b) => {
                 let valueA = a[column];
                 let valueB = b[column];
+                
                 if (column === 'price' || column === 'quantity' || column === 'order_count') {
                     valueA = Number(valueA);
                     valueB = Number(valueB);
                 }
+
                 if (order === 'ASC') {
-                    return valueA > valueB ? 1 : -1;
+                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
                 } else {
-                    return valueA < valueB ? 1 : -1;
+                    return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
                 }
             });
         }
@@ -110,7 +108,6 @@
         function updateTable(tableId, data) {
             const tbody = document.querySelector(`#${tableId} tbody`);
             tbody.innerHTML = '';
-            
             data.forEach(item => {
                 const row = tbody.insertRow();
                 row.insertCell().textContent = item.name;
@@ -123,24 +120,34 @@
         }
 
         function sortSqlTable(column) {
-            currentSortColumn = column;
-            currentSortOrder = currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
+            if (sqlSortColumn === column) {
+                sqlSortOrder = sqlSortOrder === 'ASC' ? 'DESC' : 'ASC';
+            } else {
+                sqlSortColumn = column;
+                sqlSortOrder = 'ASC';
+            }
             refreshData();
         }
 
         function sortJsTable(column) {
-            currentSortColumn = column;
-            currentSortOrder = currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
             const searchTerm = document.getElementById('searchInput').value;
-            
             const jsStart = performance.now();
-            const sortedData = sortData(jsData, column, currentSortOrder);
+
+            if (jsSortColumn === column) {
+                jsSortOrder = jsSortOrder === 'ASC' ? 'DESC' : 'ASC';
+            } else {
+                jsSortColumn = column;
+                jsSortOrder = 'ASC';
+            }
+
+            const sortedData = sortData(jsData, column, jsSortOrder);
             const filteredData = filterData(sortedData, searchTerm);
             const jsEnd = performance.now();
-
+            
             updateTable('jsTable', filteredData);
-            document.getElementById('jsExecutionTime').textContent += 
-                ` + ${(jsEnd - jsStart).toFixed(2)} мс (JS sort)`;
+            const baseTime = document.getElementById('jsExecutionTime').textContent.split(':')[1].split('+')[0].trim();
+            document.getElementById('jsExecutionTime').textContent = 
+                `Время выполнения: ${baseTime} + ${(jsEnd - jsStart).toFixed(2)} мс (JS sort)`;
         }
 
         refreshData();
