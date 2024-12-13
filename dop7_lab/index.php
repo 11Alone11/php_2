@@ -56,25 +56,36 @@
 
         function refreshData() {
             const searchTerm = document.getElementById('searchInput').value;
+            
+            // SQL Sort с учетом времени сети
+            const sqlStart = performance.now();
             fetch(`sql_sort.php?sort=${sqlSortColumn}&order=${sqlSortOrder}&search=${searchTerm}`)
                 .then(response => response.json())
                 .then(data => {
+                    const sqlEnd = performance.now();
+                    const totalSqlTime = (sqlEnd - sqlStart).toFixed(2);
                     updateTable('sqlTable', data.data);
                     document.getElementById('sqlExecutionTime').textContent = 
-                        `Время выполнения: ${data.executionTime.toFixed(2)} мс`;
+                        `Время выполнения: ${data.executionTime.toFixed(2)} мс (SQL) + ${(totalSqlTime - data.executionTime).toFixed(2)} мс (сеть) = ${totalSqlTime} мс`;
                 });
 
+            // JS Sort
             const jsStart = performance.now();
             fetch('js_sort.php')
                 .then(response => response.json())
                 .then(data => {
                     jsData = data.data;
+                    const networkEnd = performance.now();
+                    const networkTime = (networkEnd - jsStart).toFixed(2);
+                    
                     const sortedData = sortData(jsData, jsSortColumn, jsSortOrder);
                     const filteredData = filterData(sortedData, searchTerm);
                     const jsEnd = performance.now();
+                    const jsTime = (jsEnd - networkEnd).toFixed(2);
+                    
                     updateTable('jsTable', filteredData);
                     document.getElementById('jsExecutionTime').textContent = 
-                        `Время выполнения: ${data.executionTime.toFixed(2)} мс + ${(jsEnd - jsStart).toFixed(2)} мс (JS)`;
+                        `Время выполнения: ${data.executionTime.toFixed(2)} мс (SQL) + ${(networkTime - data.executionTime).toFixed(2)} мс (сеть) + ${jsTime} мс (JS) = ${(jsEnd - jsStart).toFixed(2)} мс`;
                 });
         }
 
@@ -121,13 +132,20 @@
                 totalSum += parseFloat(item.price) * parseInt(item.quantity);
             });
 
+            // Форматируем сумму для лучшей читаемости
+            const formattedSum = new Intl.NumberFormat('ru-RU', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true
+            }).format(totalSum);
+
             // Добавляем строку с общей суммой
             const totalRow = tbody.insertRow();
             totalRow.style.fontWeight = 'bold';
             totalRow.style.backgroundColor = '#f0f0f0';
             const cell = totalRow.insertCell();
             cell.colSpan = 6;
-            cell.textContent = `Общая сумма: ${totalSum.toFixed(2)}`;
+            cell.textContent = `Общая сумма: ${formattedSum}`;
             cell.style.textAlign = 'right';
         }
 
@@ -157,9 +175,12 @@
             const jsEnd = performance.now();
             
             updateTable('jsTable', filteredData);
-            const baseTime = document.getElementById('jsExecutionTime').textContent.split(':')[1].split('+')[0].trim();
+            const baseTime = document.getElementById('jsExecutionTime').textContent.split(':')[1].split('=')[0].trim();
+            const jsTime = (jsEnd - jsStart).toFixed(2);
+            const [phpTime] = baseTime.split('+')[0].trim().split(' ');
+            const totalTime = (parseFloat(phpTime) + parseFloat(jsTime)).toFixed(2);
             document.getElementById('jsExecutionTime').textContent = 
-                `Время выполнения: ${baseTime} + ${(jsEnd - jsStart).toFixed(2)} мс (JS sort)`;
+                `Время выполнения: ${phpTime} мс + ${jsTime} мс (JS sort) = ${totalTime} мс`;
         }
 
         refreshData();
