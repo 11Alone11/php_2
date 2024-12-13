@@ -2162,261 +2162,266 @@ function getQuantity(drugId) {
 
 <!-- 6 лаба -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
-    integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ==" crossorigin="anonymous"
-    referrerpolicy="no-referrer">
+	integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ==" crossorigin="anonymous"
+	referrerpolicy="no-referrer">
 </script>
 
 <script>
 const _0x366143 = _0x22c8;
 (function(_0x322e75, _0x126fdb) {
-    const _0xae97fa = _0x22c8,
-        _0x582e71 = _0x322e75();
-    while (!![]) {
-        try {
-            const _0x287c97 = parseInt(_0xae97fa(0x1b2)) / 0x1 * (-parseInt(_0xae97fa(0x1ba)) / 0x2) + -parseInt(_0xae97fa(0x1b5)) / 0x3 +
-                parseInt(_0xae97fa(0x1b7)) / 0x4 + -parseInt(_0xae97fa(0x1b1)) / 0x5 * (parseInt(_0xae97fa(0x1b6)) / 0x6) + parseInt(_0xae97fa(
-                    0x1b3)) / 0x7 + -parseInt(_0xae97fa(0x1b0)) / 0x8 * (-parseInt(_0xae97fa(0x1b4)) / 0x9) + parseInt(_0xae97fa(0x1b9)) / 0xa;
-            if (_0x287c97 === _0x126fdb) break;
-            else _0x582e71['push'](_0x582e71['shift']());
-        } catch (_0x475a5c) {
-            _0x582e71['push'](_0x582e71['shift']());
-        }
-    }
+	const _0xae97fa = _0x22c8,
+		_0x582e71 = _0x322e75();
+	while (!![]) {
+		try {
+			const _0x287c97 = parseInt(_0xae97fa(0x1b2)) / 0x1 * (-parseInt(_0xae97fa(0x1ba)) / 0x2) + -parseInt(_0xae97fa(0x1b5)) / 0x3 +
+				parseInt(_0xae97fa(0x1b7)) / 0x4 + -parseInt(_0xae97fa(0x1b1)) / 0x5 * (parseInt(_0xae97fa(0x1b6)) / 0x6) + parseInt(_0xae97fa(
+					0x1b3)) / 0x7 + -parseInt(_0xae97fa(0x1b0)) / 0x8 * (-parseInt(_0xae97fa(0x1b4)) / 0x9) + parseInt(_0xae97fa(0x1b9)) / 0xa;
+			if (_0x287c97 === _0x126fdb) break;
+			else _0x582e71['push'](_0x582e71['shift']());
+		} catch (_0x475a5c) {
+			_0x582e71['push'](_0x582e71['shift']());
+		}
+	}
 }(_0x126f, 0xf360b));
 
 function _0x22c8(_0x3f926f, _0x5d1f0f) {
-    const _0x126f14 = _0x126f();
-    return _0x22c8 = function(_0x22c8d4, _0x140b6d) {
-        _0x22c8d4 = _0x22c8d4 - 0x1b0;
-        let _0x2d4e58 = _0x126f14[_0x22c8d4];
-        return _0x2d4e58;
-    }, _0x22c8(_0x3f926f, _0x5d1f0f);
+	const _0x126f14 = _0x126f();
+	return _0x22c8 = function(_0x22c8d4, _0x140b6d) {
+		_0x22c8d4 = _0x22c8d4 - 0x1b0;
+		let _0x2d4e58 = _0x126f14[_0x22c8d4];
+		return _0x2d4e58;
+	}, _0x22c8(_0x3f926f, _0x5d1f0f);
 }
 
 // const password = _0x366143(0x1b8);
 
 function _0x126f() {
-    const _0x1d2af8 = ['10869876HoMyxk', '3050692LwROeS', 'ANDREYPROHOR', '20866450XdIKCZ', '20IzrGMK', '5608xLpQxa', '5UxPRny', '80447bBXZFB',
-        '7346857QyaPlB', '7929MyqRdJ', '2710377pWnmfB'
-    ];
-    _0x126f = function() {
-        return _0x1d2af8;
-    };
-    return _0x126f();
+	const _0x1d2af8 = ['10869876HoMyxk', '3050692LwROeS', 'ANDREYPROHOR', '20866450XdIKCZ', '20IzrGMK', '5608xLpQxa', '5UxPRny', '80447bBXZFB',
+		'7346857QyaPlB', '7929MyqRdJ', '2710377pWnmfB'
+	];
+	_0x126f = function() {
+		return _0x1d2af8;
+	};
+	return _0x126f();
 }
 
 const encryptionMethods = ['aes-128-cbc', 'aes-192-cbc', 'aes-256-cbc'];
 
 // Function to check allowed encryption method
 async function isEncryptionMethodAllowed(method) {
-    try {
-        const response = await fetch('./cookieAPI/check_encryption.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ method })
-        });
-        if (!response.ok) {
-            console.error(`Сервер вернул ошибку: ${response.status}`);
-            return false;
-        }
-        const result = await response.json();
-        return result.allowed;
-    } catch (error) {
-        console.error('Ошибка при проверке метода шифрования:', error);
-        return false;
-    }
+	try {
+		const response = await fetch('./cookieAPI/check_encryption.php', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				method
+			})
+		});
+		if (!response.ok) {
+			console.error(`Сервер вернул ошибку: ${response.status}`);
+			return false;
+		}
+		const result = await response.json();
+		return result.allowed;
+	} catch (error) {
+		console.error('Ошибка при проверке метода шифрования:', error);
+		return false;
+	}
 }
 
 async function selectAllowedEncryptionMethod() {
-    for (let method of encryptionMethods) {
-        console.log(`Проверка метода шифрования: ${method}`);
-        const allowed = await isEncryptionMethodAllowed(method);
-        if (allowed) {
-            console.log(`Метод шифрования ${method} разрешён сервером.`);
-            return method;
-        } else {
-            console.warn(`Метод шифрования ${method} не разрешён сервером.`);
-        }
-    }
-    console.error('Не найден ни один разрешённый метод шифрования.');
-    return null;
+	for (let method of encryptionMethods) {
+		console.log(`Проверка метода шифрования: ${method}`);
+		const allowed = await isEncryptionMethodAllowed(method);
+		if (allowed) {
+			console.log(`Метод шифрования ${method} разрешён сервером.`);
+			return method;
+		} else {
+			console.warn(`Метод шифрования ${method} не разрешён сервером.`);
+		}
+	}
+	console.error('Не найден ни один разрешённый метод шифрования.');
+	return null;
 }
 async function encryptData(data) {
-    console.log('Начало процесса шифрования данных');
+	console.log('Начало процесса шифрования данных');
 
-    const method = await selectAllowedEncryptionMethod();
-    if (!method) {
-        console.error('Шифрование невозможно: подходящий метод не найден.');
-        return null;
-    }
+	const method = await selectAllowedEncryptionMethod();
+	if (!method) {
+		console.error('Шифрование невозможно: подходящий метод не найден.');
+		return null;
+	}
 
-    const keyString = _0x366143(0x1b8); // Ensure this returns a correct key
-    const key = CryptoJS.enc.Utf8.parse(keyString);
+	const keyString = _0x366143(0x1b8); // Ensure this returns a correct key
+	const key = CryptoJS.enc.Utf8.parse(keyString);
 
-    let keySize;
-    switch(method) {
-        case 'aes-128-cbc':
-            keySize = 128;
-            break;
-        case 'aes-192-cbc':
-            keySize = 192;
-            break;
-        case 'aes-256-cbc':
-            keySize = 256;
-            break;
-        default:
-            console.error('Unsupported encryption method');
-            return null;
-    }
+	let keySize;
+	switch (method) {
+		case 'aes-128-cbc':
+			keySize = 128;
+			break;
+		case 'aes-192-cbc':
+			keySize = 192;
+			break;
+		case 'aes-256-cbc':
+			keySize = 256;
+			break;
+		default:
+			console.error('Unsupported encryption method');
+			return null;
+	}
 
-    const iv = CryptoJS.lib.WordArray.random(16);
+	const iv = CryptoJS.lib.WordArray.random(16);
 
-    const encrypted = CryptoJS.AES.encrypt(data, key, {
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-        iv: iv,
-        keySize: keySize / 32
-    });
+	const encrypted = CryptoJS.AES.encrypt(data, key, {
+		mode: CryptoJS.mode.CBC,
+		padding: CryptoJS.pad.Pkcs7,
+		iv: iv,
+		keySize: keySize / 32
+	});
 
-    const encryptedData = iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Base64);
+	const encryptedData = iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Base64);
 
-    console.log('Данные успешно зашифрованы.');
-    return `${method}|${encryptedData}`;
+	console.log('Данные успешно зашифрованы.');
+	return `${method}|${encryptedData}`;
 }
 
 function decryptData(encryptedCombinedData) {
-    if (!encryptedCombinedData) {
-        console.error('Ошибка: пустое значение для дешифрования');
-        return '';
-    }
+	if (!encryptedCombinedData) {
+		console.error('Ошибка: пустое значение для дешифрования');
+		return '';
+	}
 
-    const [method, encryptedData] = encryptedCombinedData.split('|', 2);
-    if (!method || !encryptedData) {
-        console.error('Неверный формат зашифрованных данных');
-        return '';
-    }
+	const [method, encryptedData] = encryptedCombinedData.split('|', 2);
+	if (!method || !encryptedData) {
+		console.error('Неверный формат зашифрованных данных');
+		return '';
+	}
 
-    let keySize;
-    switch(method) {
-        case 'aes-128-cbc':
-            keySize = 128;
-            break;
-        case 'aes-192-cbc':
-            keySize = 192;
-            break;
-        case 'aes-256-cbc':
-            keySize = 256;
-            break;
-        default:
-            console.error('Unsupported decryption method');
-            return '';
-    }
+	let keySize;
+	switch (method) {
+		case 'aes-128-cbc':
+			keySize = 128;
+			break;
+		case 'aes-192-cbc':
+			keySize = 192;
+			break;
+		case 'aes-256-cbc':
+			keySize = 256;
+			break;
+		default:
+			console.error('Unsupported decryption method');
+			return '';
+	}
 
-    const keyString = _0x366143(0x1b8); // Ensure this returns a correct key
-    const key = CryptoJS.enc.Utf8.parse(keyString);
+	const keyString = _0x366143(0x1b8); // Ensure this returns a correct key
+	const key = CryptoJS.enc.Utf8.parse(keyString);
 
-    const encryptedWordArray = CryptoJS.enc.Base64.parse(encryptedData);
+	const encryptedWordArray = CryptoJS.enc.Base64.parse(encryptedData);
 
-    const iv = CryptoJS.lib.WordArray.create(encryptedWordArray.words.slice(0, 4)); // 16 байт
-    const ciphertext = CryptoJS.lib.WordArray.create(encryptedWordArray.words.slice(4));
+	const iv = CryptoJS.lib.WordArray.create(encryptedWordArray.words.slice(0, 4)); // 16 байт
+	const ciphertext = CryptoJS.lib.WordArray.create(encryptedWordArray.words.slice(4));
 
-    try {
-        const decrypted = CryptoJS.AES.decrypt(
-            { ciphertext: ciphertext },
-            key,
-            {
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7,
-                iv: iv,
-                keySize: keySize / 32
-            }
-        );
+	try {
+		const decrypted = CryptoJS.AES.decrypt({
+				ciphertext: ciphertext
+			},
+			key, {
+				mode: CryptoJS.mode.CBC,
+				padding: CryptoJS.pad.Pkcs7,
+				iv: iv,
+				keySize: keySize / 32
+			}
+		);
 
-        const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
-        console.log('Данные успешно дешифрованы.');
-        return decryptedData;
-    } catch (error) {
-        console.error('Ошибка при дешифровании данных:', error);
-        return '';
-    }
+		const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
+		console.log('Данные успешно дешифрованы.');
+		return decryptedData;
+	} catch (error) {
+		console.error('Ошибка при дешифровании данных:', error);
+		return '';
+	}
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
-    const searchInput = document.getElementById('searchInput');
-    const medicineTable = document.getElementById('medicine_table_user');
-    if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
-        const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
-        try {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            if (data.first) {
-                const decryptedFirst = decryptData(data.first);
-                if (decryptedFirst !== searchInput.value) {
-                    const encryptedSearchResult = await encryptData(searchInput.value);
-                    if (encryptedSearchResult) {
-                        const [method, encryptedData] = encryptedSearchResult.split('|', 2);
-                        fetch('cookieAPI/insertNewSuccesSearch.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: `search_result=${encodeURIComponent(encryptedSearchResult)}&method=${encodeURIComponent(method)}`
-                        });
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Ошибка при обработке шифрования/дешифрования:', error);
-        }
-    }
+	const searchInput = document.getElementById('searchInput');
+	const medicineTable = document.getElementById('medicine_table_user');
+	if (searchInput.value.trim() !== '' && medicineTable.rows.length > 1) {
+		const apiUrl = 'cookieAPI/getFirstSuccesSearch.php';
+		try {
+			const response = await fetch(apiUrl);
+			const data = await response.json();
+			if (data.first) {
+				const decryptedFirst = decryptData(data.first);
+				if (decryptedFirst !== searchInput.value) {
+					const encryptedSearchResult = await encryptData(searchInput.value);
+					if (encryptedSearchResult) {
+						const [method, encryptedData] = encryptedSearchResult.split('|', 2);
+						fetch('cookieAPI/insertNewSuccesSearch.php', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded'
+							},
+							body: `search_result=${encodeURIComponent(encryptedSearchResult)}&method=${encodeURIComponent(method)}`
+						});
+					}
+				}
+			}
+		} catch (error) {
+			console.error('Ошибка при обработке шифрования/дешифрования:', error);
+		}
+	}
+
+	await loadInitialSearchHistory();
+	await loadColorHistory();
 });
 
 const popupSearch = document.getElementById('popupSearch');
 
 function openPopupSearch() {
-    popupSearch.style.display = 'flex';
-    loadInitialSearchHistory();
+	popupSearch.style.display = 'flex';
+	loadInitialSearchHistory();
 }
 
 function closePopupSearch() {
-    popupSearch.style.display = 'none';
+	popupSearch.style.display = 'none';
 }
 
 async function loadInitialSearchHistory() {
-    try {
-        const response = await fetch('cookieAPI/getAllSuccesSearch.php');
-        const data = await response.json();
-        const searchHistory = document.getElementById('searchHistory');
-        const searchInputButton = document.getElementById('searchInputButton');
-        searchHistory.innerHTML = '';
-        data.cache.forEach(encryptedResult => {
-            const result = decryptData(encryptedResult);
-            const li = document.createElement('li');
-            li.textContent = result;
-            console.log("hello " + result);
-            li.onclick = function() {
-                document.getElementById('searchInput').value = result;
-                closePopupSearch();
-                searchInputButton.click();
-            };
-            searchHistory.appendChild(li);
-        });
-    } catch (error) {
-        console.error('Ошибка при загрузке истории поиска:', error);
-    }
+	try {
+		const response = await fetch('cookieAPI/getAllSuccesSearch.php');
+		const data = await response.json();
+		const searchHistory = document.getElementById('searchHistory');
+		const searchInputButton = document.getElementById('searchInputButton');
+		searchHistory.innerHTML = '';
+		data.cache.forEach(encryptedResult => {
+			const result = decryptData(encryptedResult);
+			const li = document.createElement('li');
+			li.textContent = result;
+			console.log("hello " + result);
+			li.onclick = function() {
+				document.getElementById('searchInput').value = result;
+				closePopupSearch();
+				searchInputButton.click();
+			};
+			searchHistory.appendChild(li);
+		});
+	} catch (error) {
+		console.error('Ошибка при загрузке истории поиска:', error);
+	}
 }
 
 window.onclick = function(event) {
-    const popupSearch = document.getElementById('popupSearch');
-    const popup = document.getElementById('popup');
+	const popupSearch = document.getElementById('popupSearch');
+	const popup = document.getElementById('popup');
 
-    if (event.target === popupSearch) {
-        closePopupSearch();
-    } else if (event.target === popup) {
-        closePopup();
-    }
+	if (event.target === popupSearch) {
+		closePopupSearch();
+	} else if (event.target === popup) {
+		closePopup();
+	}
 };
 
 // Functions for settings popup
@@ -2424,78 +2429,78 @@ const popup = document.getElementById('popup');
 const colorHistoryList = document.getElementById('colorHistory');
 
 async function openPopup() {
-    popup.style.display = 'flex';
-    loadColorHistory();
+	popup.style.display = 'flex';
+	loadColorHistory();
 }
 
 function closePopup() {
-    popup.style.display = 'none';
+	popup.style.display = 'none';
 }
 
 async function saveColor(event) {
-    event.preventDefault();
-    const color = document.getElementById('colorInput').value;
-    const encryptedColor = await encryptData(color); // Зашифровываем цвет
+	event.preventDefault();
+	const color = document.getElementById('colorInput').value;
+	const encryptedColor = await encryptData(color); // Зашифровываем цвет
 
-    if (encryptedColor) {
-        applyColor(color);
+	if (encryptedColor) {
+		applyColor(color);
 
-        fetch('cookieAPI/color_handler.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `color=${encodeURIComponent(encryptedColor)}`
-        })
-        .then(response => response.json())
-        .then(() => {
-            closePopup();
-            loadColorHistory();
-        })
-        .catch(error => console.error('Ошибка при сохранении цвета:', error));
-    }
+		fetch('cookieAPI/color_handler.php', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: `color=${encodeURIComponent(encryptedColor)}`
+			})
+			.then(response => response.json())
+			.then(() => {
+				closePopup();
+				loadColorHistory();
+			})
+			.catch(error => console.error('Ошибка при сохранении цвета:', error));
+	}
 }
 
 async function loadColorHistory() {
-    try {
-        const response = await fetch('cookieAPI/color_handler.php');
-        const data = await response.json();
-        const decryptedHistory = data.history.map(encryptedColor => decryptData(encryptedColor));
-        if (Array.isArray(decryptedHistory)) {
-            colorHistoryList.innerHTML = decryptedHistory.map(color =>
-                `<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
-            ).join('');
-        } else {
-            console.error('Ошибка: история цветов не является массивом');
-        }
+	try {
+		const response = await fetch('cookieAPI/color_handler.php');
+		const data = await response.json();
+		const decryptedHistory = data.history.map(encryptedColor => decryptData(encryptedColor));
+		if (Array.isArray(decryptedHistory)) {
+			colorHistoryList.innerHTML = decryptedHistory.map(color =>
+				`<li style="color:${color}; cursor: pointer;" onclick="applyColor('${color}'); saveColorFromHistory('${color}')">${color}</li>`
+			).join('');
+		} else {
+			console.error('Ошибка: история цветов не является массивом');
+		}
 
-        if (data.firstColor) {
-            const decryptedFirstColor = decryptData(data.firstColor);
-            applyColor(decryptedFirstColor);
-        }
-    } catch (error) {
-        console.error('Ошибка при загрузке истории цветов:', error);
-    }
+		if (data.firstColor) {
+			const decryptedFirstColor = decryptData(data.firstColor);
+			applyColor(decryptedFirstColor);
+		}
+	} catch (error) {
+		console.error('Ошибка при загрузке истории цветов:', error);
+	}
 }
 
 function applyColor(color) {
-    document.getElementById('medicine_table_user').style.backgroundColor = color;
-    document.getElementById('cart_user').style.backgroundColor = color;
+	document.getElementById('medicine_table_user').style.backgroundColor = color;
+	document.getElementById('cart_user').style.backgroundColor = color;
 }
 
 async function saveColorFromHistory(color) {
-    applyColor(color);
-    const encryptedColor = await encryptData(color); // Зашифровываем цвет
-    if (encryptedColor) {
-        fetch('cookieAPI/color_handler.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `color=${encodeURIComponent(encryptedColor)}`
-        });
-    }
-    closePopup();
+	applyColor(color);
+	const encryptedColor = await encryptData(color); // Зашифровываем цвет
+	if (encryptedColor) {
+		fetch('cookieAPI/color_handler.php', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: `color=${encodeURIComponent(encryptedColor)}`
+		});
+	}
+	closePopup();
 }
 //до 6 лабы	
 

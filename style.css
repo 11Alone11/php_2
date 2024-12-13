@@ -750,11 +750,6 @@ tr:hover {
 	color: #000;
 }
 
-.tbody_drugs_shopper {
-	overflow-y: auto;
-	height: 50px;
-}
-
 .button_not_fixed {
 	width: 150px;
 	position: fixed;
@@ -906,20 +901,20 @@ input[type='range']::-ms-thumb {
 }
 
 .vsplyvImage {
-    display: none; /* Скрыто по умолчанию */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+	display: none; /* Скрыто по умолчанию */
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.8);
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
 }
 
 .vsplyvImage.open {
-    display: flex; /* Отображение при открытии */
+	display: flex; /* Отображение при открытии */
 }
 
 .vsplyvImage__content {
@@ -929,33 +924,32 @@ input[type='range']::-ms-thumb {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-  }
-  
-  .vsplyvImage__img {
+}
+
+.vsplyvImage__img {
 	aspect-ratio: 1;
 	width: 100%;
 	max-width: 400px;
 	object-fit: cover;
-  }
+}
 
-
-  .popup__content__cookie {
-    display: flex;
-    flex-direction: column; /* Align items in a column */
-    align-items: center; /* Center items horizontally */
-    justify-content: center; /* Center items vertically */
-    gap: 12px; /* Space between items */
-    padding: 24px;
-    background-color: #fff;
-    border-radius: 20px;
-    border: 2px solid #000;
+.popup__content__cookie {
+	display: flex;
+	flex-direction: column; /* Align items in a column */
+	align-items: center; /* Center items horizontally */
+	justify-content: center; /* Center items vertically */
+	gap: 12px; /* Space between items */
+	padding: 24px;
+	background-color: #fff;
+	border-radius: 20px;
+	border: 2px solid #000;
 }
 
 .popup__content__cookie_search_story {
-    display: flex;
-    flex-direction: column; /* Align items in a column */
-    align-items: center; /* Center items horizontally */
-    justify-content: center; /* Center items vertically */
-    gap: 6px; /* Space between items */
-    padding: 12px;
+	display: flex;
+	flex-direction: column; /* Align items in a column */
+	align-items: center; /* Center items horizontally */
+	justify-content: center; /* Center items vertically */
+	gap: 6px; /* Space between items */
+	padding: 12px;
 }
