@@ -108,6 +108,8 @@
         function updateTable(tableId, data) {
             const tbody = document.querySelector(`#${tableId} tbody`);
             tbody.innerHTML = '';
+            let totalSum = 0;
+            
             data.forEach(item => {
                 const row = tbody.insertRow();
                 row.insertCell().textContent = item.name;
@@ -116,7 +118,17 @@
                 row.insertCell().textContent = item.manufacturer;
                 row.insertCell().textContent = item.supplier;
                 row.insertCell().textContent = item.order_count;
+                totalSum += parseFloat(item.price) * parseInt(item.quantity);
             });
+
+            // Добавляем строку с общей суммой
+            const totalRow = tbody.insertRow();
+            totalRow.style.fontWeight = 'bold';
+            totalRow.style.backgroundColor = '#f0f0f0';
+            const cell = totalRow.insertCell();
+            cell.colSpan = 6;
+            cell.textContent = `Общая сумма: ${totalSum.toFixed(2)}`;
+            cell.style.textAlign = 'right';
         }
 
         function sortSqlTable(column) {
