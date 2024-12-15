@@ -1120,7 +1120,7 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
                 SELECT 
                     manufacturers.id as mid,
                     count(*) as supl_frequency,
-                    orders.manufacturer_id
+                    orders.manufacturer_id AS manufacturer_id
                 FROM
                     orders
                 LEFT JOIN 
@@ -1129,7 +1129,7 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
                     orders.manufacturer_id = manufacturers.id
                 WHERE is_hiden_byProvider <> 1
                 GROUP BY
-                    manufacturer_id
+                     orders.manufacturer_id
             ) AS manufSuplFrequency ON drugs.manufacturer_id = manufSuplFrequency.mid
             LEFT JOIN(
                 SELECT
@@ -1179,36 +1179,43 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
                 FROM 
                     drugs
             ) AS drugs_availability ON drugs.id = drugs_availability.id
+             
             WHERE 
                 drugs.is_hiden <> 1 
                 AND drugs.provider_id = ?
+            
         ";
+
+        $orderBy = trim($orderBy);
+        $orderBy = ltrim($orderBy, ',');
         
+        // Заменяем manufacturer_id на drugs.manufacturer_id
+        $orderBy = str_replace('manufacturer_id', 'drugs.manufacturer_id', $orderBy);
+        
+        // Проверка и замена других возможных колонок (пример)
+        $orderBy = str_replace('name', 'drugs.name', $orderBy);
+        
+        // Дальше логика остается той же
         if (!empty($this->searchParams)) {
             $query .= " AND drugs.name LIKE ? ";
-            $query .= "ORDER BY totalPoints DESC". $orderBy;
+            $query .= "ORDER BY " . $orderBy;
             $searchParam = '%' . $this->searchParams . '%';
             $statement = $this->conn->prepare($query);
             $statement->bind_param('iiis', $this->userId, $this->userId, $this->userId, $searchParam);
         } else {
-            $query .= "ORDER BY totalPoints DESC". $orderBy;
+            $query .= "ORDER BY " . $orderBy;
             $statement = $this->conn->prepare($query);
             $statement->bind_param('iii', $this->userId, $this->userId, $this->userId);
         }
-        //$statement->bind_param('i', $this->userId);
-        // $statement->execute();
-        // return $statement->get_result();
+        
+
         $statement->execute();
         $result = $statement->get_result();
         $resultFood = $result;
         self::checkImageAccesValid($result);
         $statement->execute();
         return $statement->get_result();
-        // $statement->execute();
-        // $result = $statement->get_result();
-        // $resultFood = $result;
-        // self::checkImageAccesValid($resultFood);
-        // return $result;
+
     }
 
     public function createOrderQuery() {
@@ -1302,7 +1309,7 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
                 SELECT 
                     manufacturers.id as mid,
                     count(*) as supl_frequency,
-                    orders.manufacturer_id
+                    orders.manufacturer_id AS manufacturer_id
                 FROM
                     orders
                 LEFT JOIN 
@@ -1311,8 +1318,9 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
                     orders.manufacturer_id = manufacturers.id
                 WHERE is_hiden_byShopper <> 1
                 GROUP BY
-                    manufacturer_id
+                    orders.manufacturer_id
             ) AS manufSuplFrequency ON drugs.manufacturer_id = manufSuplFrequency.mid
+             
             LEFT JOIN(
                 SELECT
                     count(*) AS gen_demand,
@@ -1364,6 +1372,7 @@ class SupplierQueryFactoryPointSystem extends QueryFactory {
             WHERE 
                 drugs.is_allowed = 'Одобрено' 
                 AND drugs.is_hiden <> 1
+            ORDER BY drugs.manufacturer_id ASC
         ";
 
         $statement = $this->conn->prepare($query);
@@ -1536,32 +1545,30 @@ class AdminQueryFactoryPointSystem extends QueryFactory {
                     drugs
             ) AS drugs_availability ON drugs.id = drugs_availability.id 
         ";
-        
+
+        $orderBy = trim($orderBy);
+        $orderBy = ltrim($orderBy, ','); 
+
         if (!empty($this->searchParams)) {
             $query .= " AND drugs.name LIKE ? ";
-            $query .= "ORDER BY totalPoints DESC". $orderBy;
+            $query .= " ORDER BY " . $orderBy;
             $searchParam = '%' . $this->searchParams . '%';
             $statement = $this->conn->prepare($query);
             $statement->bind_param('iis', $this->userId, $this->userId, $searchParam);
         } else {
-            $query .= "ORDER BY totalPoints DESC". $orderBy;
+            $query .= " ORDER BY " . $orderBy;
             $statement = $this->conn->prepare($query);
             $statement->bind_param('ii', $this->userId, $this->userId);
         }
-        //$statement->bind_param('i', $this->userId);
-        // $statement->execute();
-        // return $statement->get_result();
+        
+
         $statement->execute();
         $result = $statement->get_result();
         $resultFood = $result;
         self::checkImageAccesValid($result);
         $statement->execute();
         return $statement->get_result();
-        // $statement->execute();
-        // $result = $statement->get_result();
-        // $resultFood = $result;
-        // self::checkImageAccesValid($resultFood);
-        // return $result;
+
     }
 
     public function createOrderQuery() {

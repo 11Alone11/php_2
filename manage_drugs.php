@@ -51,14 +51,12 @@ try{
     $dbExecuter = new ActionLogger();
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        //var_dump($_POST); // Выводим все переменные POST для отладки
         if (isset($_POST['formType'], $_POST['formId'], $_POST['tableName'], $_POST['fieldName'])) {
             $formType = $_POST['formType'];
             $formId = $_POST['formId'];
             $tableName = $_POST['tableName'];
             $fieldName = $_POST['fieldName'];
             $inputValue = $_POST['input'];
-            //echo "Table: " . $tableName . " Field: " . $fieldName; // Для проверки
         if ($tableName === 'drugs' && $fieldName === 'name') {
             if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
                 $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
@@ -79,7 +77,6 @@ try{
             if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
                 $_SESSION['error_message'] = "ID производителя должен быть положительным целым числом и не превышать допустимый диапазон.";
             } else {
-                // Check if the manufacturer_id exists in the manufacturers table
                 $checkManufacturerQuery = $conn->prepare("SELECT COUNT(*) FROM manufacturers WHERE id = ?");
                 $checkManufacturerQuery->bind_param('i', $inputValue);
                 $checkManufacturerQuery->execute();
@@ -87,7 +84,6 @@ try{
                 $checkManufacturerQuery->fetch();
                 $checkManufacturerQuery->close();
         
-                // If manufacturer_id exists, proceed with the update
                 if ($count > 0) {
                     $stmt = $conn->prepare("UPDATE drugs SET manufacturer_id = ? WHERE id = ?");
                     if ($stmt) {
@@ -108,7 +104,6 @@ try{
             if (!filter_var($inputValue, FILTER_VALIDATE_FLOAT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
                 $_SESSION['error_message'] = "Цена должна быть положительным числом и не превышать допустимый диапазон.";
             } else {
-                // First, retrieve the current quantity of the drug
                 $quantityQuery = $conn->prepare("SELECT quantity FROM drugs WHERE id = ?");
                 $quantityQuery->bind_param('i', $formId);
                 $quantityQuery->execute();
@@ -116,10 +111,8 @@ try{
                 $quantityQuery->fetch();
                 $quantityQuery->close();
         
-                // Calculate the new cost
                 $cost = $inputValue * $quantity;
         
-                // Now update both price and cost
                 $stmt = $conn->prepare("UPDATE drugs SET price = ?, cost = ? WHERE id = ?");
                 if ($stmt) {
                     $stmt->bind_param('ddi', $inputValue, $cost, $formId);
@@ -136,7 +129,6 @@ try{
             if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
                 $_SESSION['error_message'] = "Количество должно быть положительным целым числом и не превышать допустимый диапазон.";
             } else {
-                // First, retrieve the price for the drug
                 $priceQuery = $conn->prepare("SELECT price FROM drugs WHERE id = ?");
                 $priceQuery->bind_param('i', $formId);
                 $priceQuery->execute();
@@ -144,10 +136,8 @@ try{
                 $priceQuery->fetch();
                 $priceQuery->close();
         
-                // Calculate the new cost
                 $cost = round((float)$price * $inputValue, 2);
         
-                // Now update both quantity and cost
                 $stmt = $conn->prepare("UPDATE drugs SET quantity = ?, cost = ? WHERE id = ?");
                 if ($stmt) {
                     $stmt->bind_param('idi', $inputValue, $cost, $formId);
@@ -164,7 +154,6 @@ try{
             if (!filter_var($inputValue, FILTER_VALIDATE_INT) || $inputValue <= 0 || $inputValue > PHP_INT_MAX) {
                 $_SESSION['error_message'] = "ID поставщика должен быть положительным целым числом и не превышать допустимый диапазон.";
             } else {
-                // Check if the provider_id exists in the users table
                 $checkProviderQuery = $conn->prepare("SELECT COUNT(*) FROM users WHERE id = ? and type <> 2");
                 $checkProviderQuery->bind_param('i', $inputValue);
                 $checkProviderQuery->execute();
@@ -172,7 +161,6 @@ try{
                 $checkProviderQuery->fetch();
                 $checkProviderQuery->close();
         
-                // If provider_id exists, proceed with the update
                 if ($count > 0) {
                     $stmt = $conn->prepare("UPDATE drugs SET provider_id = ? WHERE id = ?");
                     if ($stmt) {
@@ -237,20 +225,7 @@ try{
                 }
             }
         }
-        // if ($tableName === 'users' && $fieldName === 'name') {
-        //     if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
-        //     $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
-        //     }else{
-        //     $stmt = $conn->prepare("UPDATE users SET name = ? WHERE id = ?");
-        //     if ($stmt) {
-        //     $stmt->bind_param('si', $inputValue, $formId);
-        //     $stmt->execute();
-        //     $stmt->close();
-        //     } else {
-        //     echo "Ошибка подготовки запроса: " . $conn->error;
-        //     }
-        //     }
-        // }
+
         if ($tableName === 'users' && $fieldName === 'name') {
             if (!preg_match("/^[a-zA-Z0-9а-яА-ЯёЁ_ ]{3,50}$/u", $inputValue)) {
                 $_SESSION['error_message'] = 'Название должно содержать от 3 до 50 символов и может включать буквы, цифры и пробелы.';
@@ -370,12 +345,9 @@ try{
                 $quantityQuery->bind_result($quantity);
                 $quantityQuery->fetch();
                 $quantityQuery->close();
-        
-                // Calculate the new cost
-                
+    
                 $cost =  $inputValue * $quantity;
                
-                // Now update both price and cost
                 $stmt = $conn->prepare("UPDATE drugs SET price = ?, cost = ? WHERE id = ?");
                 if ($stmt) {
                     $stmt->bind_param('ddi', $inputValue, $cost, $formId);
@@ -401,10 +373,8 @@ try{
                 $priceQuery->fetch();
                 $priceQuery->close();
         
-                // Calculate the new cost
                 $cost = round((float)$price * $inputValue, 2);
         
-                // Now update both quantity and cost
                 $stmt = $conn->prepare("UPDATE drugs SET quantity = ?, cost = ? WHERE id = ?");
                 if ($stmt) {
                     $stmt->bind_param('idi', $inputValue, $cost, $formId);
@@ -538,108 +508,23 @@ try{
     $total_row = $total_result->fetch_assoc();
     $total_quantity = $total_row['total_quantity'] ?: 1;
 
-    // $uid = $_SESSION['user_id'];
-    // $query = "
-    //     SELECT DISTINCT
-    //         drugs.id AS id,
-    //         drugs.name AS name,
-    //         manufacturers.name AS manufacturer,
-    //         users.name AS supplier,
-    //         drugs.price AS price,
-    //         drugs.quantity AS quantity,
-    //         drugs.is_allowed,
-    //         COALESCE(order_counts.total_quantity, 0) AS total_quantity,
-    //         (drugs.quantity /$total_quantity * 100) as percent
-            
-    //     FROM 
-    //         drugs 
-    //     JOIN 
-    //         manufacturers ON drugs.manufacturer_id = manufacturers.id 
-    //     JOIN 
-    //         users ON drugs.provider_id = users.id 
-    //     LEFT JOIN (
-    //         SELECT 
-    //             drug_id,
-    //             SUM(quantity) AS total_quantity,
-    //             user_id
-    //         FROM 
-    //             orders
-    //         WHERE user_id = $uid
-    //         GROUP BY 
-    //             drug_id
-    //     ) AS order_counts ON drugs.id = order_counts.drug_id
-    //     WHERE 
-    //         drugs.is_allowed = 'Одобрено' 
-    //         AND drugs.is_hiden <> 1
-    // ";
-    
-    // if (!empty($search_query_shopper)) {
-    //     $query .= " AND drugs.name LIKE '%$search_query_shopper%' ";
-    // }
 
-    // $query .= "
-    //     ORDER BY 
-    //         total_quantity DESC, 
-    //         $order_by_shopper $order_dir_shopper
-    // ";
-    // $result_shopper = $conn->query($query);
     $orderByBuyerQuerry = $order_by_shopper . " " . $order_dir_shopper;
     $buyerWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByBuyerQuerry ", '', $conn);
     $result_shopper = $buyerWorker->createMedicineQuery();
     //search_btn_post
+    $uid = $_SESSION['user_id'];
     if (isset($_POST['search_us_btn'])) {
         $search_query_shopper = htmlspecialchars($_POST['search_for_shopper']);
         $Actstr = "Покупатель установил строку поиска '$search_query_shopper' для лекарств.";
         $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
-        $_SESSION['yummy'] = $search_query_shopper;
+        $_SESSION['sorted_by_shopper'] = $search_query_shopper;
     }
-    $uid = $_SESSION['user_id'];
-    if (isset($_SESSION['yummy'])){
-        $search_query_shopper = $_SESSION['yummy'];
-        
-            // $query = "
-            //     SELECT DISTINCT
-            //         drugs.id AS id,
-            //         drugs.name AS name,
-            //         manufacturers.name AS manufacturer,
-            //         users.name AS supplier,
-            //         drugs.price AS price,
-            //         drugs.quantity AS quantity,
-            //         drugs.is_allowed,
-            //         COALESCE(order_counts.total_quantity, 0) AS total_quantity,
-            //         (drugs.quantity / $total_quantity* 100) as percent
-            //     FROM 
-            //         drugs 
-            //     JOIN 
-            //         manufacturers ON drugs.manufacturer_id = manufacturers.id 
-            //     JOIN 
-            //         users ON drugs.provider_id = users.id 
-            //     LEFT JOIN (
-            //         SELECT 
-            //             drug_id,
-            //             SUM(quantity) AS total_quantity,
-            //             user_id
-            //         FROM 
-            //             orders
-            //         WHERE user_id = $uid
-            //         GROUP BY 
-            //             drug_id
-            //     ) AS order_counts ON drugs.id = order_counts.drug_id
-            //     WHERE 
-            //         drugs.is_allowed = 'Одобрено' 
-            //         AND drugs.is_hiden <> 1
-            // ";
-            
-            // if (!empty($search_query_shopper)) {
-            //     $query .= " AND drugs.name LIKE '%$search_query_shopper%' ";
-            // }
     
-            // $query .= "
-            //     ORDER BY 
-            //         total_quantity DESC, 
-            //         $order_by_shopper $order_dir_shopper
-            // ";
-            // $result_shopper = $conn->query($query);
+    if (isset($_SESSION['sorted_by_shopper'])){
+        $search_query_shopper = $_SESSION['sorted_by_shopper'];
+        
+           
             $orderByBuyerQuerry = $order_by_shopper . " " . $order_dir_shopper;
             $buyerWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByBuyerQuerry ", "$search_query_shopper", $conn);
             $result_shopper = $buyerWorker->createMedicineQuery();
@@ -812,55 +697,6 @@ try{
             $_SESSION['error_message'] = 'Недостаточно количества лекарства на складе.';
         }
     }
-
-    // $query = "
-    // SELECT 
-    //     drugs.id AS id, 
-    //     manufacturers.name AS manufacturer, 
-    //     drugs.name AS name, 
-    //     drugs.price AS price, 
-    //     drugs.quantity AS quantity, 
-    //     drugs.cost AS cost,
-    //     drugs.is_allowed,
-    //     drugs.is_hiden,
-    //     COALESCE(order_counts.total_quantity, 0) AS total_quantity
-    // FROM 
-    //     drugs 
-    // JOIN 
-    //     manufacturers ON drugs.manufacturer_id = manufacturers.id 
-    // LEFT JOIN (
-    //     SELECT 
-    //         drug_id,
-    //         SUM(quantity) AS total_quantity,
-    //         user_id
-    //     FROM 
-    //         orders
-    //     WHERE user_id IN (
-    //         SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
-    //     )
-    //     GROUP BY 
-    //         drug_id
-    // ) AS order_counts ON drugs.id = order_counts.drug_id    
-    // WHERE 
-    //     provider_id IN (
-    //         SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
-    //     ) AND is_hiden <> 1
-    // ";
-    // if (!empty($search_query_user)) {
-    //     if (is_numeric($search_query_user)) {
-    //         $query .= " AND (
-    //             drugs.cost = $search_query_user 
-    //             OR  drugs.price = $search_query_user 
-    //             OR  drugs.quantity = $search_query_user)";
-    //     } else {
-    //         $query .= " AND drugs.name LIKE '%$search_query_user%' OR manufacturers.name LIKE '%$search_query_user%'";
-    //     }
-    // }
-    
-    // // Добавляем условия сортировки
-    // $query .= " ORDER BY total_quantity DESC, 
-    //             $order_by_user $order_dir_user";
-    // $result_user = $conn->query($query);
     $orderByUserQuerry = $order_by_user . " " . $order_dir_user;
     $shopperWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByUserQuerry", '', $conn);
     $result_user = $shopperWorker->createMedicineQuery();
@@ -868,60 +704,12 @@ try{
         $search_query_user = htmlspecialchars($_POST['search_for_user']);
         $Actstr = "Поставщик установил строку поиска '$search_query_user' для лекарств.";
         $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
-        $_SESSION['yummy_1'] = $search_query_user;
+        $_SESSION['sorted_by_user'] = $search_query_user;
     }
     $uid = $_SESSION['user_id'];
-    if (isset($_SESSION['yummy_1'])){
-        $search_query_user = $_SESSION['yummy_1'];
-        // $query = "
-        // SELECT 
-        //     drugs.id AS id, 
-        //     manufacturers.name AS manufacturer, 
-        //     drugs.name AS name, 
-        //     drugs.price AS price, 
-        //     drugs.quantity AS quantity, 
-        //     drugs.cost AS cost,
-        //     drugs.is_allowed,
-        //     drugs.is_hiden,
-        //     COALESCE(order_counts.total_quantity, 0) AS total_quantity
-
-        // FROM 
-        //     drugs 
-        // JOIN 
-        //     manufacturers ON drugs.manufacturer_id = manufacturers.id 
-        // LEFT JOIN (
-        //     SELECT 
-        //         drug_id,
-        //         SUM(quantity) AS total_quantity,
-        //         user_id
-        //     FROM 
-        //         orders
-        //     WHERE user_id IN (
-        //         SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
-        //     )
-        //     GROUP BY 
-        //         drug_id
-        // ) AS order_counts ON drugs.id = order_counts.drug_id    
-        // WHERE 
-        //     provider_id IN (
-        //         SELECT id FROM users WHERE name LIKE '%" . $conn->real_escape_string($_SESSION['user']) . "%'
-        //     ) AND is_hiden <> 1
-        // ";
-        // if (!empty($search_query_user)) {
-        //     if (is_numeric($search_query_user)) {
-        //         $query .= " AND (
-        //             drugs.cost = $search_query_user 
-        //             OR  drugs.price = $search_query_user 
-        //             OR  drugs.quantity = $search_query_user)";
-        //     } else {
-        //         $query .= " AND drugs.name LIKE '%$search_query_user%' OR manufacturers.name LIKE '%$search_query_user%'";
-        //     }
-        // }
-        
-        // // Добавляем условия сортировки
-        // $query .= " ORDER BY total_quantity DESC, 
-        //             $order_by_user $order_dir_user";
-        // $result_user = $conn->query($query);
+    if (isset($_SESSION['sorted_by_user'])){
+        $search_query_user = $_SESSION['sorted_by_user'];
+       
         $orderByUserQuerry = $order_by_user . " " . $order_dir_user;
         $shopperWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByUserQuerry", "$search_query_user", $conn);
         $result_user = $shopperWorker->createMedicineQuery();
@@ -978,12 +766,9 @@ try{
         $provider_id = trim($_POST["provider_id"]);
         $price = trim($_POST['price']);
         $quantity = trim($_POST["quantity"]);
-        // $imgLink = '';
-        // Получаем данные производителя
         $manufacturer_query = "SELECT name FROM manufacturers WHERE id = $manufacturer_id";
         $manufacturer_result = $conn->query($manufacturer_query);
         $manufacturer = $manufacturer_result->fetch_assoc();
-        // Получаем данные поставщика
         $provider_query = "SELECT name FROM users WHERE id = $provider_id and type <> 2";
         $provider_result = $conn->query($provider_query);
         $provider = $provider_result->fetch_assoc();
@@ -1125,8 +910,6 @@ try{
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
-        //Уведомления покупатель
         if (isset($_POST['order_shopper_viewed'])) {
             $orderId = intval($_POST['order_shopper_viewed']);
             $updateOrderQuery = $conn->prepare("UPDATE orders SET checked_by_user = 1 WHERE id = ?");
@@ -1136,7 +919,6 @@ try{
             $Actstr = "Покупатель прочитал уведомление по заказу '$orderId'.";
             $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
         }
-        //уведомления поставщик
         if (isset($_POST['order_from_shopper_apply'])) {
             $orderId = intval($_POST['order_from_shopper_apply']);
             $query = $conn->prepare("SELECT quantity, drug_id FROM orders WHERE id = ?");
@@ -1197,7 +979,6 @@ try{
             $Actstr = "Администратор просмотрел результат заявки на поставку лекарства '$orderId'";
             $dbExecuter->insertAction($_SESSION['user_id'], $Actstr);
         }
-        //Уведомления администратор
         if (isset($_POST['drug_supply_apply'])) {
             $orderId = intval($_POST['drug_supply_apply']);
             $deleteQuery = $conn->prepare("UPDATE drugs SET is_allowed = 'Одобрено', last_updated = current_timestamp(), who_checked = ? WHERE id = ?");
@@ -1219,43 +1000,6 @@ try{
         header('Location: ' . $_SERVER['HTTP_REFERER']); 
         exit();
     }
-    // $uid = $_SESSION['user_id'];
-    // $query = "
-    //     SELECT 
-    //         drugs.*, 
-    //         COALESCE(order_counts.total_quantity, 0) AS total_quantity 
-    //     FROM 
-    //         drugs 
-    //     LEFT JOIN (
-    //         SELECT 
-    //             drug_id,
-    //             SUM(quantity) AS total_quantity,
-    //             provider_id
-    //         FROM 
-    //             orders
-    //         WHERE provider_id = $uid
-    //         GROUP BY 
-    //             drug_id
-    //     ) AS order_counts ON drugs.id = order_counts.drug_id
-    //     WHERE 
-    //         drugs.is_hiden <> 1
-    // ";
-
-    // if (!empty($search_query)) {
-    //     if (is_numeric($search_query)) {
-    //         $query .= " AND (drugs.manufacturer_id = $search_query 
-    //             OR drugs.provider_id = $search_query 
-    //             OR drugs.cost = $search_query 
-    //             OR drugs.price = $search_query 
-    //             OR drugs.quantity = $search_query)";
-    //     } else {
-    //         $query .= " AND drugs.name LIKE '%$search_query%'";
-    //     }
-    // }
-
-    // // Добавляем условия сортировки
-    // $query .= " ORDER BY total_quantity DESC, $order_by $order_dir";
-    // $result = $conn->query($query);
     $orderByAdminQuerry = $order_by . " " . $order_dir;
     $adminWorker = QueryFactory::getQueryFactory($_SESSION['user_id'], ", $orderByAdminQuerry", "$search_query", $conn);
     $result = $adminWorker->createMedicineQuery();    
@@ -1337,18 +1081,16 @@ try{
     WHERE 
         orders.provider_id = ? AND is_hiden_byProvider <> 1
     ";
-    // and status <> 'В обработке'
+
     $search_query_user_supplier = $search_query_user;
     if (!empty($search_query_user_supplier)) {
         $query .= " AND drugs.name LIKE '%$search_query_user_supplier%' ";
     }
 
-    // Добавляем сортировку
     $query .= "
         ORDER BY $order_by_supplier $order_dir_supplier
     ";
 
-    // Выполнение запроса
     $stmt = $conn->prepare($query);
     $stmt->bind_param('i', $User_Id); 
     $stmt->execute();

@@ -1,0 +1,78 @@
+@startuml
+entity "Drugs" as Drugs {
+    + id : int <<PK>>
+    --
+    name : varchar(50)
+    manufacturer_id : int <<FK>>
+    price : decimal(7,2)
+    quantity : int
+    provider_id : int
+    cost : decimal(7,2)
+    is_allowed : varchar(50)
+    last_updated : date
+    checked_by_user : tinyint
+    who_checked : int
+    is_hidden : tinyint
+    medicinePhoto : text
+}
+
+entity "Orders" as Orders {
+    + id : int <<PK>>
+    --
+    user_id : int <<FK>>
+    provider_id : int
+    manufacturer_id : int <<FK>>
+    drug_id : int <<FK>>
+    quantity : int
+    price : decimal(7,2)
+    cost : decimal(7,2)
+    status : varchar(50)
+    last_updated : date
+    checked_by_user : tinyint
+    is_hidden_byShopper : tinyint
+    is_hidden_byProvider : tinyint
+}
+
+entity "Users" as Users {
+    + id : int <<PK>>
+    --
+    name : varchar(30)
+    password : varchar(100)
+    type : int
+    profilePhoto : longblob
+}
+
+entity "Manufacturers" as Manufacturers {
+    + id : int <<PK>>
+    --
+    name : varchar(50)
+}
+
+entity "MedicineWeights" as MedicineWeights {
+    + id : int <<PK>>
+    --
+    user_id : int <<FK>>
+    last_updated : date
+    C_quantity_in_orders : decimal(3,2)
+    C_frequency_of_use : decimal(3,2)
+    C_availability_in_stock : decimal(3,2)
+    C_comparative_price : decimal(3,2)
+    C_demand_for_medicine : decimal(3,2)
+    C_manufacturer : decimal(3,2)
+}
+
+entity "SysActivityLog" as SysActivityLog {
+    + id : int <<PK>>
+    --
+    actor_id : int <<FK>>
+    action_datetime : datetime
+    action : text
+}
+
+' Исправленные связи между таблицами
+Drugs }o--|| Manufacturers : "manufacturer_id → id"
+Drugs }o--|| Orders : "id → drug_id"
+Users ||--o{ Orders : "id → user_id"
+Users ||--|| MedicineWeights : "id → user_id"
+SysActivityLog ||--|| Users : "actor_id → id"
+@enduml

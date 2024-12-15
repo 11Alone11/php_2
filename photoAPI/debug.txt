@@ -1,8 +1,1 @@
-Array
-(
-    [name] => depositphotos_5794543-stock-photo-3d-man-with-boxes.jpg
-    [type] => image/jpeg
-    [tmp_name] => C:\xampp\tmp\php4CAD.tmp
-    [error] => 0
-    [size] => 9306
-)
+SQLSTATE[08S01]: Communication link failure: 1153 Got a packet bigger than 'max_allowed_packet' bytes

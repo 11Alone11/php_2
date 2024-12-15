@@ -1,16 +1,13 @@
 <?php
-// Database configuration
-//session_start();
 include 'sessionConf.php';
 $servername = "localhost";
-$username = "root"; // Ваше имя пользователя MySQL
-$password = ""; // Ваш пароль MySQL
-$dbname = "pharmacy"; // Имя вашей базы данных
+$username = "root";
+$password = ""; 
+$dbname = "pharmacy"; 
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 try {
-    // Создание соединения
     $conn = new mysqli($servername, $username, $password, $dbname);
     $_SESSION['server_conn_error'] = false;
 } catch(mysqli_sql_exception $e){
