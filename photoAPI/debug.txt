@@ -1,1 +1,8 @@
-SQLSTATE[08S01]: Communication link failure: 1153 Got a packet bigger than 'max_allowed_packet' bytes
+Array
+(
+    [name] => images.png
+    [type] => image/png
+    [tmp_name] => C:\xampp\tmp\php14CB.tmp
+    [error] => 0
+    [size] => 1919
+)
